@@ -9,8 +9,8 @@ use std::time::Instant;
 fn read_input_file(filename: &str) -> Vec<String> {
     let file = match File::open(filename) {
         Ok(file) => file,
-        Err(_) => {
-            return Vec::new();
+        Err(e) => {
+            panic!("Missing input file: {}", e);
         }
     };
 
