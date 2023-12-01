@@ -3,26 +3,28 @@ mod solver01;
 use crate::solver01::solve01;
 use std::env;
 use std::fs::File;
-use std::io::Read;
+use std::io::{BufRead, BufReader};
 use std::time::Instant;
 
-fn read_input_file(filename: &str) -> Vec<u8> {
-    let mut file = match File::open(filename) {
+fn read_input_file(filename: &str) -> Vec<String> {
+    let file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => {
             return Vec::new();
         }
     };
 
-    let mut buffer = Vec::new();
-    match file.read_to_end(&mut buffer) {
-        Ok(_) => {}
-        Err(e) => {
-            panic!("Failed to read file: {}", e);
-        }
-    }
+    let reader = BufReader::new(file);
 
-    buffer
+    reader
+        .lines()
+        .map(|line| match line {
+            Ok(line) => line,
+            Err(e) => {
+                panic!("Error reading line: {}", e);
+            }
+        })
+        .collect()
 }
 
 fn run_one_day(day: i32, is_sample_mode: bool) {
