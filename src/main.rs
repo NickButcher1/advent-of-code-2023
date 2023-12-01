@@ -28,6 +28,8 @@ fn read_input_file(filename: &str) -> Vec<String> {
 }
 
 fn run_one_day(day: i32, is_sample_mode: bool) {
+    let time = Instant::now();
+
     let filename = format!(
         "input/input{:02}{}",
         day,
@@ -39,7 +41,10 @@ fn run_one_day(day: i32, is_sample_mode: bool) {
     } else {
         solve01(input_file)
     };
-    println!("{}  {}", result1, result2);
+
+    let elapsed_ms = time.elapsed().as_nanos() as f64 / 1_000_000.0;
+
+    println!("{}  {}  {}ms", result1, result2, elapsed_ms);
 }
 
 fn main() {
@@ -59,7 +64,6 @@ fn main() {
 
     let is_sample_mode = args.len() >= 3;
 
-    let time = Instant::now();
     if day != 0 {
         run_one_day(day, is_sample_mode);
     } else {
@@ -67,9 +71,4 @@ fn main() {
             run_one_day(day, is_sample_mode);
         }
     }
-    let elapsed_ms = time.elapsed().as_nanos() as f64 / 1_000_000.0;
-    println!(
-        "Solve day {}, sample mode: {}, took {}ms",
-        day, is_sample_mode, elapsed_ms
-    );
 }
