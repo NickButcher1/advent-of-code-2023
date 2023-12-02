@@ -101,23 +101,28 @@ fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) {
 
     let elapsed_ms = time.elapsed().as_nanos() as f64 / 1_000_000.0;
 
-    println!("{}  {}  {}ms", result1, result2, elapsed_ms);
+    println!(
+        "{:02}    {:12}  {:12}  {:12}ms",
+        day, result1, result2, elapsed_ms
+    );
 
-    let expected_result1 = &expected_outputs[day as usize * 2 - 2];
-    let expected_result2 = &expected_outputs[day as usize * 2 - 1];
+    if !is_sample_mode {
+        let expected_result1 = &expected_outputs[day as usize * 2 - 2];
+        let expected_result2 = &expected_outputs[day as usize * 2 - 1];
 
-    if expected_result1 != "-1" && result1.to_string() != *expected_result1 {
-        panic!(
-            "Day {}, incorrect result1: expected {}, actual {}",
-            day, expected_result1, result1
-        );
-    }
+        if expected_result1 != "-1" && result1.to_string() != *expected_result1 {
+            panic!(
+                "Day {}, incorrect result1: expected {}, actual {}",
+                day, expected_result1, result1
+            );
+        }
 
-    if expected_result2 != "-1" && result2.to_string() != *expected_result2 {
-        panic!(
-            "Day {}, incorrect result2: expected {}, actual {}",
-            day, expected_result2, result2
-        );
+        if expected_result2 != "-1" && result2.to_string() != *expected_result2 {
+            panic!(
+                "Day {}, incorrect result2: expected {}, actual {}",
+                day, expected_result2, result2
+            );
+        }
     }
 }
 
