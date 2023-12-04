@@ -71,7 +71,7 @@ pub fn solve03(input: Vec<String>) -> (i128, i128) {
                     this_number = (10 * this_number) + digit[r][cx].to_digit(10).unwrap();
                     is_allowed = is_allowed || is_adjacent_symbol[r][cx];
                     matching_star_numbers.append(&mut is_adjacent_star_numbers[r][cx]);
-                    cx = cx + 1
+                    cx += 1;
                 }
 
                 matching_star_numbers = matching_star_numbers
