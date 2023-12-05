@@ -1,8 +1,6 @@
 use std::cmp;
 
 pub fn solve05(input: Vec<String>) -> (i128, i128) {
-    let total_part_2 = 0;
-
     let mut seeds: Vec<u64> = Vec::new();
     let mut maps: Vec<Vec<Vec<u64>>> = vec![vec![vec![]]];
     let mut current_map_id: i32 = -1;
@@ -26,11 +24,21 @@ pub fn solve05(input: Vec<String>) -> (i128, i128) {
 
     // Part 1.
     let mut min_location: u64 = 999999999999999;
-    for seed in seeds {
-        min_location = cmp::min(seed_to_location(seed, &maps), min_location)
+    for seed in &seeds {
+        min_location = cmp::min(seed_to_location(*seed, &maps), min_location)
     }
 
-    (min_location as i128, total_part_2 as i128)
+    // Part 2.
+    let mut part_2_location = 0;
+    let mut found = false;
+    maps.reverse();
+
+    while !found {
+        part_2_location += 1;
+        found = try_location(&seeds, part_2_location, &maps);
+    }
+
+    (min_location as i128, part_2_location as i128)
 }
 
 fn map_a_to_b(value: u64, map: &Vec<Vec<u64>>) -> u64 {
@@ -51,4 +59,43 @@ fn seed_to_location(seed: u64, maps: &Vec<Vec<Vec<u64>>>) -> u64 {
         current_value = map_a_to_b(current_value, map)
     }
     current_value
+}
+
+fn map_b_to_a(value: u64, map: &Vec<Vec<u64>>) -> u64 {
+    for block in map {
+        let dest = block[0];
+        let src = block[1];
+        let block_len = block[2];
+
+        if value >= dest && value <= (dest + block_len - 1) {
+            return value - dest + src;
+        }
+    }
+
+    value
+}
+
+fn try_location(seeds: &Vec<u64>, location: u64, maps: &Vec<Vec<Vec<u64>>>) -> bool {
+    let mut current_value = location;
+    for map in maps {
+        current_value = map_b_to_a(current_value, map);
+    }
+
+    test_valid_seed(seeds, current_value)
+}
+
+fn test_valid_seed(seeds: &Vec<u64>, value: u64) -> bool {
+    let mut valid_seed = false;
+
+    for i in (0..seeds.len()).step_by(2) {
+        let first_seed = seeds[i];
+        let block_len = seeds[i + 1];
+
+        if value >= first_seed && value <= (first_seed + block_len - 1) {
+            valid_seed = true;
+            break;
+        }
+    }
+
+    valid_seed
 }
