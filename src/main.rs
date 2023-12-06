@@ -1,3 +1,4 @@
+mod common;
 mod solver01;
 mod solver02;
 mod solver03;

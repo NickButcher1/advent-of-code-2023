@@ -1,3 +1,4 @@
+use crate::common::string_to_vec_u64_ignore_prefix;
 use std::cmp;
 
 pub fn solve05(input: Vec<String>) -> (i128, i128) {
@@ -7,11 +8,7 @@ pub fn solve05(input: Vec<String>) -> (i128, i128) {
 
     for line in input {
         if line.starts_with("seeds:") {
-            let split_1: Vec<&str> = line.split("seeds: ").collect();
-            seeds = split_1[1]
-                .split(' ')
-                .map(|x| x.parse::<u64>().unwrap())
-                .collect();
+            seeds = string_to_vec_u64_ignore_prefix("seeds:", &line);
         } else if line.contains(" map:") {
             current_map_id += 1;
             maps.push(Vec::new());
