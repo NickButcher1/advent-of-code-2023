@@ -39,6 +39,7 @@ fn solve<'a>(
     let num_paths = locations.len();
     let mut steps = 0;
     let mut first_z_for_path: Vec<u64> = vec![0; num_paths];
+    let mut first_z_found_count = 0;
 
     loop {
         for direction in &directions {
@@ -55,10 +56,11 @@ fn solve<'a>(
             for (i, first_z) in first_z_for_path.iter_mut().enumerate() {
                 if *first_z == 0 && is_a_terminating_location(&locations, i) {
                     *first_z = steps;
+                    first_z_found_count += 1;
                 }
             }
 
-            if first_z_for_path.iter().filter(|z| **z != 0).count() == num_paths {
+            if first_z_found_count == num_paths {
                 let mut answer = first_z_for_path[0];
                 for first_z in first_z_for_path.iter() {
                     answer = lcm(answer, *first_z);
