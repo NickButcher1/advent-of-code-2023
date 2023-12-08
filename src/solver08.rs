@@ -20,14 +20,11 @@ use std::collections::HashMap;
 //   (LCM) of the number of steps to first terminate each path. The puzzle has been designed such
 //   that each path follows a repeating loop, with exactly one terminating location in its path.
 
-fn is_a_terminating_location(locations: &Vec<&str>, id: usize) -> bool {
-    if locations.len() == 1 {
-        // Part 1
-        locations[id] == "ZZZ"
-    } else {
-        // Par 2
-        locations[id].chars().collect::<Vec<char>>()[2] == 'Z'
-    }
+fn is_a_terminating_location_1(location: &str) -> bool {
+    location == "ZZZ"
+}
+fn is_a_terminating_location_2(location: &str) -> bool {
+    location.chars().collect::<Vec<char>>()[2] == 'Z'
 }
 
 fn solve<'a>(
@@ -35,6 +32,7 @@ fn solve<'a>(
     from_x_to_left: HashMap<&str, &'a str>,
     from_x_to_right: HashMap<&str, &'a str>,
     mut locations: Vec<&'a str>,
+    is_a_terminating_location: fn(&str) -> bool,
 ) -> i128 {
     let num_paths = locations.len();
     let mut steps = 0;
@@ -54,7 +52,7 @@ fn solve<'a>(
             }
 
             for (i, first_z) in first_z_for_path.iter_mut().enumerate() {
-                if *first_z == 0 && is_a_terminating_location(&locations, i) {
+                if *first_z == 0 && is_a_terminating_location(locations[i]) {
                     *first_z = steps;
                     first_z_found_count += 1;
                 }
@@ -94,12 +92,14 @@ pub fn solve08(input: Vec<String>) -> (i128, i128) {
             from_x_to_left.clone(),
             from_x_to_right.clone(),
             vec!["AAA"],
+            is_a_terminating_location_1,
         ),
         solve(
             directions,
             from_x_to_left,
             from_x_to_right,
             locations_part_2,
+            is_a_terminating_location_2,
         ),
     )
 }
