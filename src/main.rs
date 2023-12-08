@@ -103,7 +103,7 @@ fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) {
     let elapsed_ms = time.elapsed().as_nanos() as f64 / 1_000_000.0;
 
     println!(
-        "{:02}    {:12}  {:12}  {:12}ms",
+        "{:02}    {:12}  {:16}  {:12}ms",
         day, result1, result2, elapsed_ms
     );
 
