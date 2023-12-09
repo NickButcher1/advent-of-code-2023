@@ -1,28 +1,40 @@
 use crate::common::string_to_vec_i64;
 
-pub fn solve09(input: Vec<String>) -> (i128, i128) {
-    let mut total_part_1: i64 = 0;
-    let mut total_part_2: i64 = 0;
+// Build up a list of integers. Start from the input, then sum adjecent pairs to make a new list,
+// one shorter in length than the previous list. Repeat until the new list is all zeroes.
+//
+// We then need to add a new value to the end of each list, but there is an optimisation here -
+// simply sum the last value in each list, which gives the new last value of the first list. That's
+// the score we need for this input.
+//
+// Part 2 can be solved the same way as part 1 - the caller must simply reverse the input.
+pub fn score_line(mut ints: Vec<i64>) -> i64 {
+    let mut tails_of_lists: Vec<i64> = Vec::new();
 
-    for line in input {
-        let mut ints = string_to_vec_i64(&line);
-        let mut heads_of_lists: Vec<i64> = Vec::new();
-        let mut tails_of_lists: Vec<i64> = Vec::new();
-
-        while !ints.iter().all(|&x| x == 0) {
-            heads_of_lists.push(ints[0]);
-            tails_of_lists.push(*ints.last().unwrap());
-            ints = (0..ints.len() - 1).map(|i| ints[i + 1] - ints[i]).collect();
-        }
-        
-        for i in (0..(heads_of_lists.len() - 1)).rev() {
-            heads_of_lists[i] -= heads_of_lists[i + 1];
-            tails_of_lists[i] += tails_of_lists[i + 1];
-        }
-
-        total_part_1 += tails_of_lists[0];
-        total_part_2 += heads_of_lists[0];
+    while !ints.iter().all(|&x| x == 0) {
+        tails_of_lists.push(*ints.last().unwrap());
+        ints = (0..ints.len() - 1).map(|i| ints[i + 1] - ints[i]).collect();
     }
 
-    (total_part_1 as i128, total_part_2 as i128)
+    tails_of_lists.iter().sum::<i64>()
+}
+
+pub fn solve09(input: Vec<String>) -> (i128, i128) {
+    (
+        input
+            .iter()
+            .map(|line| score_line(string_to_vec_i64(line)) as i128)
+            .sum(),
+        input
+            .iter()
+            .map(|line| {
+                score_line(
+                    string_to_vec_i64(line)
+                        .into_iter()
+                        .rev()
+                        .collect::<Vec<i64>>(),
+                ) as i128
+            })
+            .sum(),
+    )
 }
