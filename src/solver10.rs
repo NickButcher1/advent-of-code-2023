@@ -11,7 +11,7 @@ enum PipeType {
 }
 
 type Board = Vec<Vec<PipeType>>;
-type Cell = (i32, i32);
+type Cell = (usize, usize);
 
 fn init_board(input: Vec<String>, num_rows: usize) -> Board {
     let mut board: Board = vec![vec![]; num_rows];
@@ -40,36 +40,34 @@ fn build_start_cell_goes_to(
     board: &mut Board,
     num_rows: usize,
     num_cols: usize,
-    r: i32,
-    c: i32,
+    row: usize,
+    col: usize,
 ) -> (Cell, Cell) {
-    let row: usize = r as usize;
-    let col: usize = c as usize;
     let mut start_cell_exit_up = false;
     let mut start_cell_exit_down = false;
     let mut start_cell_exit_right = false;
     let mut start_cell_exit_left = false;
 
     let mut start_cell_goes_to: Vec<Cell> = vec![];
-    if r != 0 {
+    if row != 0 {
         let cell = &board[row - 1][col];
         if *cell == PipeType::Vertical || *cell == PipeType::TopLeft || *cell == PipeType::TopRight
         {
-            start_cell_goes_to.push((r - 1, c));
+            start_cell_goes_to.push((row - 1, col));
             start_cell_exit_up = true;
         }
     }
-    if r != (num_rows as i32 - 1) {
+    if row != (num_rows - 1) {
         let cell = &board[row + 1][col];
         if *cell == PipeType::Vertical
             || *cell == PipeType::BottomLeft
             || *cell == PipeType::BottomRight
         {
-            start_cell_goes_to.push((r + 1, c));
+            start_cell_goes_to.push((row + 1, col));
             start_cell_exit_down = true;
         }
     }
-    if c != 0 {
+    if col != 0 {
         let cell = &board[row][col - 1];
         if *cell == PipeType::Horizontal
             || *cell == PipeType::TopLeft
@@ -77,11 +75,11 @@ fn build_start_cell_goes_to(
             || *cell == PipeType::BottomLeft
             || *cell == PipeType::BottomRight
         {
-            start_cell_goes_to.push((r, c - 1));
+            start_cell_goes_to.push((row, col - 1));
             start_cell_exit_left = true;
         }
     }
-    if c != (num_cols as i32 - 1) {
+    if col != (num_cols - 1) {
         let cell = &board[row][col + 1];
         if *cell == PipeType::Horizontal
             || *cell == PipeType::TopLeft
@@ -89,7 +87,7 @@ fn build_start_cell_goes_to(
             || *cell == PipeType::BottomLeft
             || *cell == PipeType::BottomRight
         {
-            start_cell_goes_to.push((r, c + 1));
+            start_cell_goes_to.push((row, col + 1));
             start_cell_exit_right = true;
         }
     }
@@ -108,7 +106,7 @@ fn build_start_cell_goes_to(
     } else {
         unreachable!();
     };
-    board[r as usize][c as usize] = start_cell_type;
+    board[row][col] = start_cell_type;
     (start_cell_goes_to[0], start_cell_goes_to[1])
 }
 
@@ -121,20 +119,18 @@ fn build_cell_goes_to(
     let mut goes_to: Vec<Vec<(Cell, Cell)>> = vec![vec![]; num_rows];
     for row in 0..num_rows {
         for col in 0..num_cols {
-            let r = row as i32;
-            let c = col as i32;
-            let x = match &board[r as usize][c as usize] {
-                PipeType::Horizontal => ((r, c - 1), (r, c + 1)),
-                PipeType::Vertical => ((r - 1, c), (r + 1, c)),
-                PipeType::TopLeft => ((r, c + 1), (r + 1, c)),
-                PipeType::TopRight => ((r, c - 1), (r + 1, c)),
-                PipeType::BottomLeft => ((r, c + 1), (r - 1, c)),
-                PipeType::BottomRight => ((r, c - 1), (r - 1, c)),
+            let x = match &board[row][col] {
+                PipeType::Horizontal => ((row, col - 1), (row, col + 1)),
+                PipeType::Vertical => ((row - 1, col), (row + 1, col)),
+                PipeType::TopLeft => ((row, col + 1), (row + 1, col)),
+                PipeType::TopRight => ((row, col - 1), (row + 1, col)),
+                PipeType::BottomLeft => ((row, col + 1), (row - 1, col)),
+                PipeType::BottomRight => ((row, col - 1), (row - 1, col)),
                 PipeType::Start => {
-                    *start_cell = (r, c);
-                    build_start_cell_goes_to(board, num_rows, num_cols, r, c)
+                    *start_cell = (row, col);
+                    build_start_cell_goes_to(board, num_rows, num_cols, row, col)
                 }
-                PipeType::Empty => ((-1, -1), (-1, -1)),
+                PipeType::Empty => ((0, 0), (0, 0)),
             };
             goes_to[row].push(x);
         }
@@ -145,12 +141,12 @@ fn build_cell_goes_to(
 fn build_path(start_cell: Cell, cell_goes_to: Vec<Vec<(Cell, Cell)>>) -> Vec<Cell> {
     let mut path: Vec<Cell> = vec![];
     path.push(start_cell);
-    path.push(cell_goes_to[start_cell.0 as usize][start_cell.1 as usize].0);
+    path.push(cell_goes_to[start_cell.0][start_cell.1].0);
 
     loop {
         let prev_cell = path[path.len() - 1];
-        let goes_to_a = cell_goes_to[prev_cell.0 as usize][prev_cell.1 as usize].0;
-        let goes_to_b = cell_goes_to[prev_cell.0 as usize][prev_cell.1 as usize].1;
+        let goes_to_a = cell_goes_to[prev_cell.0][prev_cell.1].0;
+        let goes_to_b = cell_goes_to[prev_cell.0][prev_cell.1].1;
 
         if path.len() > 2 && (goes_to_a == start_cell || goes_to_b == start_cell) {
             break;
@@ -211,7 +207,7 @@ pub fn solve10(input: Vec<String>) -> (i128, i128) {
 
     let mut cell_type_is_part_of_loop: Vec<Vec<bool>> = vec![vec![false; num_cols]; num_rows];
     for cell in path {
-        cell_type_is_part_of_loop[cell.0 as usize][cell.1 as usize] = true;
+        cell_type_is_part_of_loop[cell.0][cell.1] = true;
     }
 
     // Remove all non-loop pipes from the board, leaving just the loop pipes and the empty cells.
@@ -238,6 +234,7 @@ pub fn solve10(input: Vec<String>) -> (i128, i128) {
     // - |
     // - FJ
     let mut num_empty_cells_inside_the_loop = 0;
+
     for r in 1..(num_rows - 1) {
         for c in 1..(num_cols - 1) {
             if !cell_type_is_part_of_loop[r][c] && is_cell_inside_loop(r, c, &board, num_cols) {
