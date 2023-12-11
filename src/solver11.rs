@@ -42,7 +42,9 @@ pub fn solve11(input: Vec<String>) -> (i128, i128) {
     // Second pass:
     // - Flip the board on the diagonal axis.
     // - Calculate is_row_id_empty.
+    // - Build a lookup of galaxy ID to its coordinates.
     let mut board_b: Board = vec![];
+    let mut galaxy_coordinates: HashMap<i32, Cell> = HashMap::new();
 
     for c in 0..input[0].len() {
         let mut is_empty_row = true;
@@ -51,21 +53,12 @@ pub fn solve11(input: Vec<String>) -> (i128, i128) {
         for r in 0..board_a.len() {
             this_row.push(board_a[r][c]);
             if board_a[r][c] != 0 {
+                galaxy_coordinates.insert(board_a[r][c], (c as i32, r as i32));
                 is_empty_row = false;
             }
         }
         is_row_id_empty.insert(c, is_empty_row);
         board_b.push(this_row);
-    }
-
-    // Build a lookup of galaxy ID to its coordinates.
-    let mut galaxy_coordinates: HashMap<i32, Cell> = HashMap::new();
-    for r in 0..board_b.len() {
-        for c in 0..board_b[0].len() {
-            if board_b[r][c] != 0 {
-                galaxy_coordinates.insert(board_b[r][c], (r as i32, c as i32));
-            }
-        }
     }
 
     // Calculate the shortest path from every galaxy to every other galaxy with a greater ID.
