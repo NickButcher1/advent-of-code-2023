@@ -1,98 +1,93 @@
 use std::cmp;
 use std::collections::HashMap;
 
+// The only difference between part 1 and part 2 is how many times empty rows and columns are expanded.
 const EXPANSION_FACTOR_PART_1: i64 = 2;
 const EXPANSION_FACTOR_PART_2: i64 = 1000000;
+
 type Board = Vec<Vec<i32>>;
-type Cell = (usize, usize);
+type Cell = (i32, i32);
 
 pub fn solve11(input: Vec<String>) -> (i128, i128) {
-    // Expand rows and replace '#' with numbers in one pass.
-    let num_rows_unexpanded = input.len();
-    let num_cols_unexpanded = input[0].len();
-    let mut next_galaxy_id = 0;
+    // Track which rows and columns are empty. Don't actually expand the board.
     let mut is_row_id_empty: HashMap<usize, bool> = HashMap::new();
     let mut is_col_id_empty: HashMap<usize, bool> = HashMap::new();
 
+    // First pass:
+    // - Replace '.' with zero to indicate no galaxy.
+    // - Replace '#' with unique galaxy IDs.
+    // - Calculate is_col_id_empty (yes, column not row because we're going to flip the board in part 2.
+    let num_rows_unexpanded = input.len();
+    let num_cols_unexpanded = input[0].len();
+    let mut num_galaxies = 0;
     let mut board_a: Board = vec![];
+
     for r in 0..num_rows_unexpanded {
         let row = &input[r];
-        let mut galaxy_this_row = false;
+        let mut is_empty_row = true;
         let mut this_row: Vec<i32> = vec![];
 
         for c in row.chars() {
             let galaxy_id = if c == '#' {
-                galaxy_this_row = true;
-                next_galaxy_id += 1;
-                next_galaxy_id
+                is_empty_row = false;
+                num_galaxies += 1;
+                num_galaxies
             } else {
                 0
             };
             this_row.push(galaxy_id);
         }
-        if !galaxy_this_row {
-            // col because will flip.
-            is_col_id_empty.insert(r, true);
-        } else {
-            is_col_id_empty.insert(r, false);
-        }
+        is_col_id_empty.insert(r, is_empty_row);
         board_a.push(this_row);
     }
 
+    // Second pass:
+    // - Flip the board on the diagonal axis.
+    // - Calculate is_row_id_empty.
     let num_rows = board_a.len();
-
-    // Flip the board and expand the columns.
     let mut board_b: Board = vec![];
+
     for c in 0..num_cols_unexpanded {
-        let mut galaxy_this_row = false;
+        let mut is_empty_row = true;
         let mut this_row: Vec<i32> = vec![];
+
         for r in 0..num_rows {
             this_row.push(board_a[r][c]);
             if board_a[r][c] != 0 {
-                galaxy_this_row = true;
+                is_empty_row = false;
             }
         }
-        if !galaxy_this_row {
-            is_row_id_empty.insert(c, true);
-        } else {
-            is_row_id_empty.insert(c, false);
-        }
+        is_row_id_empty.insert(c, is_empty_row);
         board_b.push(this_row);
     }
 
     let num_rows = board_b.len();
     let num_cols = board_b[0].len();
 
+    // Build a lookup of galaxy ID to its coordinates.
     let mut galaxy_coordinates: HashMap<i32, Cell> = HashMap::new();
     for r in 0..num_rows {
         for c in 0..num_cols {
-            let galaxy_id = board_b[r][c];
-            if galaxy_id != 0 {
-                galaxy_coordinates.insert(galaxy_id, (r, c));
+            if board_b[r][c] != 0 {
+                galaxy_coordinates.insert(board_b[r][c], (r as i32, c as i32));
             }
         }
     }
-    let num_galaxies = next_galaxy_id;
+
+    // Calculate the shortest path from every galaxy to every other galaxy with a greater ID.
+    // The sum of these is the solution.
     let mut part_1_solution = 0;
     let mut part_2_solution = 0;
+
     for g1_id in 1..(num_galaxies + 1) {
+        let g1_coordinates = galaxy_coordinates[&g1_id];
         for g2_id in (g1_id + 1)..(num_galaxies + 1) {
-            let max_row = cmp::max(
-                galaxy_coordinates[&g2_id].0 as i32,
-                galaxy_coordinates[&g1_id].0 as i32,
-            );
-            let min_row = cmp::min(
-                galaxy_coordinates[&g2_id].0 as i32,
-                galaxy_coordinates[&g1_id].0 as i32,
-            );
-            let max_col = cmp::max(
-                galaxy_coordinates[&g2_id].1 as i32,
-                galaxy_coordinates[&g1_id].1 as i32,
-            );
-            let min_col = cmp::min(
-                galaxy_coordinates[&g2_id].1 as i32,
-                galaxy_coordinates[&g1_id].1 as i32,
-            );
+            let g2_coordinates = galaxy_coordinates[&g2_id];
+
+            let max_row = cmp::max(g2_coordinates.0, g1_coordinates.0);
+            let min_row = cmp::min(g2_coordinates.0, g1_coordinates.0);
+            let max_col = cmp::max(g2_coordinates.1, g1_coordinates.1);
+            let min_col = cmp::min(g2_coordinates.1, g1_coordinates.1);
 
             let row_diff = max_row - min_row;
             let col_diff = max_col - min_col;
@@ -100,7 +95,8 @@ pub fn solve11(input: Vec<String>) -> (i128, i128) {
             part_1_solution += path_len;
             part_2_solution += path_len;
 
-            // Add empty rows/cols.
+            // So far we've got the path lengths based on the unexpanded board.
+            // Every path length increases by one for every empty row or column that it crosses.
             if row_diff > 1 {
                 for r in (min_row + 1)..max_row {
                     if is_row_id_empty[&(r as usize)] {
