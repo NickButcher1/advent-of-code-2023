@@ -1,39 +1,27 @@
 use std::collections::HashMap;
 
-const OPERATIONAL_CHAR: char = '.';
-const DAMAGED_CHAR: char = '#';
-const UNKNOWN_CHAR: char = '?';
-
 const OPERATIONAL: u8 = 0;
 const DAMAGED: u8 = 1;
 const UNKNOWN: u8 = 2;
 const UNWANTED: u8 = 3;
 
 pub fn solve12(input: Vec<String>) -> (i128, i128) {
-    (solve_part(input.clone(), true), solve_part(input, false))
+    (solve_part(input.clone(), false), solve_part(input, true))
 }
-pub fn solve_part(input: Vec<String>, is_part_one: bool) -> i128 {
+pub fn solve_part(input: Vec<String>, is_part_two: bool) -> i128 {
     let mut sum_arrangements: i128 = 0;
 
     for line in &input {
         let mut line_ints: Vec<u8> = line
             .chars()
             .map(|c| match c {
-                OPERATIONAL_CHAR => OPERATIONAL,
-                DAMAGED_CHAR => DAMAGED,
-                UNKNOWN_CHAR => UNKNOWN,
+                '.' => OPERATIONAL,
+                '#' => DAMAGED,
+                '?' => UNKNOWN,
                 _ => UNWANTED,
             })
             .filter(|i| *i != UNWANTED)
             .collect();
-
-        if !is_part_one {
-            let copy_line_ints = line_ints.clone().to_owned();
-            for _i in 0..4 {
-                line_ints.append(&mut vec![UNKNOWN]);
-                line_ints.append(&mut copy_line_ints.clone().to_owned());
-            }
-        }
 
         let split_1: Vec<&str> = line.split(' ').collect();
         let mut counts: Vec<u8> = split_1[1]
@@ -41,10 +29,16 @@ pub fn solve_part(input: Vec<String>, is_part_one: bool) -> i128 {
             .map(|x| x.parse::<u8>().unwrap())
             .collect();
 
-        if !is_part_one {
-            let copy_counts = counts.clone().to_owned();
-            for _i in 0..4 {
-                counts.append(&mut copy_counts.clone().to_owned());
+        if is_part_two {
+            let copy_line_ints = line_ints.clone();
+            for _ in 0..4 {
+                line_ints.push(UNKNOWN);
+                line_ints.append(&mut copy_line_ints.clone());
+            }
+
+            let copy_counts = counts.clone();
+            for _ in 0..4 {
+                counts.append(&mut copy_counts.clone());
             }
         }
 
@@ -63,13 +57,6 @@ fn solve_subset(
 ) -> u64 {
     return if line_ints.is_empty() {
         0
-    } else if line_ints[line_ints.len() - 1] == OPERATIONAL {
-        // Chop trailing '.'
-        solve_subset(
-            line_ints[..line_ints.len() - 1].to_vec().as_ref(),
-            counts,
-            cache,
-        )
     } else if line_ints[0] == OPERATIONAL {
         // Chop leading '.'
         solve_subset(line_ints[1..].to_vec().as_ref(), counts, cache)
@@ -78,44 +65,38 @@ fn solve_subset(
             return *cache.get(&(line_ints.clone(), counts.clone())).unwrap();
         }
 
-        // Must start with either '?' or '#'. Find all possible positions for first block.
-        let mut min_for_block: Vec<u8> = vec![];
-        if line_ints[0] == DAMAGED {
-            min_for_block.push(0);
-        } else {
+        // Find all possible positions for the first block.
+        let mut min_for_block: u8 = 0;
+        if line_ints[0] != DAMAGED {
             let mut pos = 0;
-            for count in counts {
-                while !can_block_fit_in_pos_forward(line_ints, pos, *count) {
-                    pos += 1;
-                }
-                min_for_block.push(pos);
-                pos += *count + 1;
+            while !can_block_fit_in_pos_forward(line_ints, pos, counts[0]) {
+                pos += 1;
             }
+            min_for_block = pos;
         }
 
-        let mut max_for_block: Vec<u8> = vec![];
+        let mut max_for_block: u8 = 0;
         if line_ints[0] == DAMAGED {
-            max_for_block.push(counts[0] - 1);
+            max_for_block = counts[0] - 1;
         } else {
             let mut pos = line_ints.len() as u8 - 1;
             for i in (0..counts.len()).rev() {
                 while !can_block_fit_in_pos_backward(line_ints, pos, counts[i]) {
                     pos -= 1;
                 }
-                max_for_block.insert(0, pos);
+                max_for_block = pos;
                 pos -= counts[i] + 1;
             }
         }
 
-        // Now place all possible positions of first block.
-        let ways = max_for_block[0] - min_for_block[0] - counts[0] + 2;
-
+        // Try all possible positions of the first block.
         let mut sum: u64 = 0;
-        for i in 0..ways {
-            let offset = min_for_block[0] as usize + i as usize + counts[0] as usize + 1;
+        // The code from here onwards is terrible and needs a complete rewrite to simplify it!
+        for i in 0..(max_for_block - min_for_block - counts[0] + 2) {
+            let offset = min_for_block as usize + i as usize + counts[0] as usize + 1;
 
             // Check if block can actually fit here.
-            let start_pos = min_for_block[0] as usize + i as usize;
+            let start_pos = min_for_block as usize + i as usize;
 
             let mut bad_ops = false;
             if start_pos != 0 {
@@ -134,7 +115,7 @@ fn solve_subset(
                 continue;
             }
 
-            let end_pos = min_for_block[0] as usize + i as usize + counts[0] as usize - 1;
+            let end_pos = min_for_block as usize + i as usize + counts[0] as usize - 1;
             if end_pos != (line_ints.len() - 1) && line_ints[end_pos + 1] == DAMAGED {
                 continue;
             }
