@@ -1,13 +1,10 @@
+use crate::board::Board;
+
 const EMPTY: char = '.';
 const MOVABLE: char = 'O';
 
-type Board = Vec<Vec<char>>;
-
 pub fn solve14(input: Vec<String>) -> (i128, i128) {
-    let mut board: Board = input
-        .iter()
-        .map(|line| line.chars().collect::<Vec<char>>())
-        .collect();
+    let mut board: Board = Board::from_input(input);
 
     (
         solve_part_1(&mut board) as i128,
@@ -15,24 +12,14 @@ pub fn solve14(input: Vec<String>) -> (i128, i128) {
     )
 }
 
-fn rotate_clockwise(board: &mut Board) {
-    let old_board = board.clone();
-
-    for r in 0..board.len() {
-        for c in 0..board[0].len() {
-            board[c][old_board.len() - 1 - r] = old_board[r][c];
-        }
-    }
-}
-
 fn tilt_north(board: &mut Board) {
-    for r in 1..board.len() {
-        for c in 0..board[0].len() {
-            if board[r][c] == MOVABLE {
+    for r in 1..board.num_rows {
+        for c in 0..board.num_cols {
+            if board.cells[r][c] == MOVABLE {
                 for r2 in (0..r).rev() {
-                    if board[r2][c] == EMPTY {
-                        board[r2][c] = MOVABLE;
-                        board[r2 + 1][c] = EMPTY;
+                    if board.cells[r2][c] == EMPTY {
+                        board.cells[r2][c] = MOVABLE;
+                        board.cells[r2 + 1][c] = EMPTY;
                     } else {
                         break;
                     }
@@ -45,10 +32,10 @@ fn tilt_north(board: &mut Board) {
 fn score_board(board: &Board) -> usize {
     let mut score = 0;
 
-    for r in 0..board.len() {
-        for c in 0..board[0].len() {
-            if board[r][c] == MOVABLE {
-                score += board.len() - r;
+    for r in 0..board.num_rows {
+        for c in 0..board.num_cols {
+            if board.cells[r][c] == MOVABLE {
+                score += board.num_rows - r;
             }
         }
     }
@@ -59,17 +46,8 @@ fn score_board(board: &Board) -> usize {
 fn one_cycle(board: &mut Board) {
     for _ in 0..4 {
         tilt_north(board);
-        rotate_clockwise(board);
+        board.rotate_clockwise();
     }
-}
-
-fn are_boards_equal(board_1: &Board, board_2: &Board) -> bool {
-    for r in 0..board_1.len() {
-        if board_1[r] != board_2[r] {
-            return false;
-        }
-    }
-    true
 }
 
 fn solve_part_1(board: &mut Board) -> usize {
@@ -90,7 +68,7 @@ fn solve_part_2(board: &mut Board) -> usize {
         one_cycle(board);
 
         for i in 0..seen_boards.len() {
-            if are_boards_equal(&seen_boards[i], board) {
+            if *board == seen_boards[i] {
                 first_board_in_cycle = i;
             }
         }
