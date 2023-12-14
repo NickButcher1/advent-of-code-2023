@@ -30,7 +30,16 @@ pub fn solve14(input: Vec<String>) -> (i128, i128) {
     )
 }
 
-// No doubt I could refactor these four into a single tilt function, but I've done enough for today.
+fn rotate_clockwise(board: &mut Board) {
+    let old_board = board.clone();
+
+    for r in 0..board.len() {
+        for c in 0..board[0].len() {
+            board[c][old_board.len() - 1 - r] = old_board[r][c];
+        }
+    }
+}
+
 fn tilt_north(board: &mut Board) {
     for r in 1..board.len() {
         for c in 0..board[0].len() {
@@ -45,39 +54,6 @@ fn tilt_north(board: &mut Board) {
                 }
             }
         }
-    }
-}
-
-fn tilt_south(board: &mut Board) {
-    board.reverse();
-    tilt_north(board);
-    board.reverse();
-}
-
-fn tilt_west(board: &mut Board) {
-    for c in 1..board[0].len() {
-        for r in 0..board.len() {
-            if board[r][c] == MOVABLE {
-                for c2 in (0..c).rev() {
-                    if board[r][c2] == EMPTY {
-                        board[r][c2] = MOVABLE;
-                        board[r][c2 + 1] = EMPTY;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-}
-
-fn tilt_east(board: &mut Board) {
-    for r in 0..board.len() {
-        board[r].reverse();
-    }
-    tilt_west(board);
-    for r in 0..board.len() {
-        board[r].reverse();
     }
 }
 
@@ -96,10 +72,10 @@ fn score_board(board: &Board) -> usize {
 }
 
 fn one_cycle(board: &mut Board) {
-    tilt_north(board);
-    tilt_west(board);
-    tilt_south(board);
-    tilt_east(board);
+    for _ in 0..4 {
+        tilt_north(board);
+        rotate_clockwise(board);
+    }
 }
 
 fn are_boards_equal(board_1: &Board, board_2: &Board) -> bool {
@@ -113,7 +89,7 @@ fn are_boards_equal(board_1: &Board, board_2: &Board) -> bool {
 
 fn solve_part_1(board: &mut Board) -> usize {
     tilt_north(board);
-    score_board(&board)
+    score_board(board)
 }
 
 // There is a repeating cycle but it doesn't begin from the first board. Loop over last_board_in_cycle and for
