@@ -1,28 +1,13 @@
-const EMPTY: usize = 0;
-const MOVABLE: usize = 1;
-const FIXED: usize = 2;
+const EMPTY: char = '.';
+const MOVABLE: char = 'O';
 
-type Board = Vec<Vec<usize>>;
+type Board = Vec<Vec<char>>;
 
 pub fn solve14(input: Vec<String>) -> (i128, i128) {
-    let mut board: Board = vec![];
-
-    for line in &input {
-        let chars: Vec<char> = line.chars().collect();
-        let mut row_vec: Vec<usize> = vec![];
-
-        for c in chars {
-            let c_int = match c {
-                'O' => MOVABLE,
-                '#' => FIXED,
-                '.' => EMPTY,
-                _ => panic!("ERROR!"),
-            };
-            row_vec.push(c_int);
-        }
-
-        board.push(row_vec);
-    }
+    let mut board: Board = input
+        .iter()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect();
 
     (
         solve_part_1(&mut board) as i128,
