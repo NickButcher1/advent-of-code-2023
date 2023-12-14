@@ -151,7 +151,7 @@ fn main() {
     if day != 0 {
         run_one_day(day, is_sample_mode, expected_outputs);
     } else {
-        for day in 1..25 {
+        for day in 1..=25 {
             run_one_day(day, is_sample_mode, expected_outputs.clone());
         }
     }
