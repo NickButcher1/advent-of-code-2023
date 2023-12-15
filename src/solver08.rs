@@ -3,7 +3,7 @@ use regex::Regex;
 use std::collections::HashMap;
 
 // There are N parallel paths that all need to terminate at the same time.
-// - In part 1, N=1 (terminate on location 'ZZZ'.
+// - In part 1, N=1 (terminate on location 'ZZZ').
 // - In part 2, N is calculated (terminate on any location that ends with 'Z').
 //
 // We start with the first location for each path.

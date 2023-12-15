@@ -42,7 +42,7 @@ pub fn solve_part(input: Vec<String>, is_part_two: bool) -> i128 {
             }
         }
 
-        let mut cache: HashMap<(Vec<usize>, Vec<usize>), u64> = HashMap::new();
+        let mut cache: HashMap<(&[usize], &[usize]), u64> = HashMap::new();
         let arrangements = solve_subset(&line_ints, &counts, &mut cache);
 
         sum_arrangements += arrangements as i128;
@@ -50,19 +50,20 @@ pub fn solve_part(input: Vec<String>, is_part_two: bool) -> i128 {
     sum_arrangements
 }
 
-fn solve_subset(
-    line_ints: &Vec<usize>,
-    counts: &Vec<usize>,
-    cache: &mut HashMap<(Vec<usize>, Vec<usize>), u64>,
+fn solve_subset<'a>(
+    line_ints: &'a [usize],
+    counts: &'a [usize],
+    cache: &mut HashMap<(&'a [usize], &'a [usize]), u64>,
 ) -> u64 {
     return if line_ints.is_empty() {
         0
     } else if line_ints[0] == OPERATIONAL {
         // Chop leading '.'
-        solve_subset(line_ints[1..].to_vec().as_ref(), counts, cache)
+        solve_subset(&line_ints[1..], counts, cache)
     } else {
-        if cache.contains_key(&(line_ints.clone(), counts.clone())) {
-            return *cache.get(&(line_ints.clone(), counts.clone())).unwrap();
+        let key = (line_ints, counts);
+        if cache.contains_key(&key) {
+            return *cache.get(&key).unwrap();
         }
 
         // Find all possible positions for the first block.
@@ -93,29 +94,15 @@ fn solve_subset(
             return 0;
         }
 
-        // Try all possible positions of the first block.
+        // Try all possible positions of the first block, then recurse.
         let mut sum: u64 = 0;
-        // The code from here onwards is terrible and needs a complete rewrite to simplify it!
         for i in 0..(max_for_block - min_for_block - counts[0] + 2) {
             let offset = min_for_block + i + counts[0] + 1;
 
             // Check if block can actually fit here.
             let start_pos = min_for_block + i;
 
-            let mut bad_ops = false;
-            if start_pos != 0 {
-                for i in 0..start_pos {
-                    if line_ints[i] == DAMAGED {
-                        bad_ops = true;
-                        break;
-                    }
-                }
-            }
-            if bad_ops {
-                continue;
-            }
-
-            if start_pos != 0 && line_ints[start_pos - 1] == DAMAGED {
+            if line_ints[0..start_pos].contains(&DAMAGED) {
                 continue;
             }
 
@@ -123,34 +110,25 @@ fn solve_subset(
             if end_pos != (line_ints.len() - 1) && line_ints[end_pos + 1] == DAMAGED {
                 continue;
             }
-            for x in start_pos..=end_pos {
-                if line_ints[x] == OPERATIONAL {
-                    bad_ops = true;
-                    break;
-                }
-            }
-            if bad_ops {
+
+            if line_ints[start_pos..=end_pos].contains(&OPERATIONAL) {
                 continue;
             }
 
             if counts.len() > 1 {
-                let x = solve_subset(
-                    line_ints[offset..].to_vec().as_ref(),
-                    counts[1..].to_vec().as_ref(),
-                    cache,
-                );
+                let x = solve_subset(&line_ints[offset..], &counts[1..], cache);
                 sum += x;
-            } else {
-                let x = 1;
-                let temp_vec: Vec<usize> = line_ints[(offset - 1)..].to_vec();
-                let num_damaged_leftover = temp_vec.into_iter().filter(|i| *i == DAMAGED).count();
-                if num_damaged_leftover == 0 {
-                    sum += x;
-                }
+            } else if line_ints[offset - 1..]
+                .iter()
+                .filter(|i| **i == DAMAGED)
+                .count()
+                == 0
+            {
+                sum += 1;
             }
         }
 
-        cache.insert((line_ints.clone(), counts.clone()), sum);
+        cache.insert(key, sum);
         sum
     };
 }

@@ -23,15 +23,12 @@ pub fn solve02(input: Vec<String>) -> (i128, i128) {
 
             for colour in turn {
                 let items: Vec<&str> = colour.split(' ').collect();
-
-                if items[2] == "red" {
-                    red = items[1].parse::<u32>().unwrap();
-                } else if items[2] == "green" {
-                    green = items[1].parse::<u32>().unwrap();
-                } else if items[2] == "blue" {
-                    blue = items[1].parse::<u32>().unwrap();
-                } else {
-                    panic!("Unexpected colour");
+                let num_colour = items[1].parse::<u32>().unwrap();
+                match items[2] {
+                    "red" => red = num_colour,
+                    "green" => green = num_colour,
+                    "blue" => blue = num_colour,
+                    _ => unreachable!(),
                 }
             }
 
