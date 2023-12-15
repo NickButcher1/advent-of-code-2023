@@ -1,56 +1,22 @@
-const ASH: usize = 0;
-const ROCK: usize = 1;
+use crate::board::Board;
 
-type Board = Vec<Vec<usize>>;
+const ASH: char = '.';
+const ROCK: char = '#';
 
 pub fn solve13(input: Vec<String>) -> (i128, i128) {
     let mut part_1_total: usize = 0;
     let mut part_2_total: usize = 0;
 
-    let mut board: Board = vec![];
+    let boards: Vec<Board> = Board::from_input_multiple(input);
 
-    for line in &input {
-        if line.is_empty() {
-            part_1_total +=
-                score_board_part_1(&board, true) + score_board_part_1(&flip_board(&board), false);
-            part_2_total +=
-                score_board_part_2(&board, true) + score_board_part_2(&flip_board(&board), false);
-            board.clear();
-        } else {
-            let chars: Vec<char> = line.chars().collect();
-            let mut row_vec: Vec<usize> = vec![];
-
-            for c in chars {
-                let c_int = if c == '.' { ASH } else { ROCK };
-                row_vec.push(c_int);
-            }
-
-            board.push(row_vec);
-        }
+    for board in boards {
+        part_1_total +=
+            score_board_part_1(&board, true) + score_board_part_1(board.clone().flip(), false);
+        part_2_total +=
+            score_board_part_2(&board, true) + score_board_part_2(board.clone().flip(), false);
     }
-
-    // Get the last board.
-    part_1_total +=
-        score_board_part_1(&board, true) + score_board_part_1(&flip_board(&board), false);
-    part_2_total +=
-        score_board_part_2(&board, true) + score_board_part_2(&flip_board(&board), false);
 
     (part_1_total as i128, part_2_total as i128)
-}
-
-// Flip the board on the diagonal axis. We can then use the same logic to solve for columns instead of rows.
-fn flip_board(board: &Board) -> Board {
-    let mut flip_board: Board = vec![];
-
-    for c in 0..board[0].len() {
-        let mut row_vec: Vec<usize> = vec![];
-        for r in 0..board.len() {
-            row_vec.push(board[r][c]);
-        }
-        flip_board.push(row_vec);
-    }
-
-    flip_board
 }
 
 fn score_board_part_1(board: &Board, is_flipped: bool) -> usize {
@@ -63,16 +29,13 @@ fn score_board_part_1(board: &Board, is_flipped: bool) -> usize {
 fn score_board_part_2(board: &Board, is_flipped: bool) -> usize {
     let (part_1_score, part_1_row) = score_board(board, is_flipped, -1);
     // Try all possible flips until we find a new line of reflection.
-    let num_rows = board.len();
-    let num_cols = board[0].len();
-
-    for r in 0..num_rows {
-        for c in 0..num_cols {
+    for r in 0..board.num_rows {
+        for c in 0..board.num_cols {
             let mut new_board = board.clone().to_owned();
-            if new_board[r][c] == ASH {
-                new_board[r][c] = ROCK;
+            if new_board.cells[r][c] == ASH {
+                new_board.cells[r][c] = ROCK;
             } else {
-                new_board[r][c] = ASH;
+                new_board.cells[r][c] = ASH;
             }
 
             let (new_score, _) = score_board(&new_board, is_flipped, part_1_row as i32);
@@ -86,21 +49,19 @@ fn score_board_part_2(board: &Board, is_flipped: bool) -> usize {
 }
 
 fn score_board(board: &Board, is_flipped: bool, ignore_row: i32) -> (usize, usize) {
-    let num_rows = board.len();
-
-    for r in 1..num_rows {
+    for r in 1..board.num_rows {
         // Test if there is a line of symmetry between row r and row r+1. Do this by expanding outwards
         // towards the edge of the board, comparing pairs of rows.
         // - If we find a non-identical pair then stop because there is no line of symmetry.
         // - If we reach the edge of the board then we have found a line of symmetry.
         let mut is_symmetry = true;
-        for d in 0..num_rows {
+        for d in 0..board.num_rows {
             let top_row: i32 = r as i32 - d as i32 - 1;
             let bottom_row: i32 = r as i32 + d as i32;
-            if top_row < 0 || bottom_row == num_rows as i32 {
+            if top_row < 0 || bottom_row == board.num_rows as i32 {
                 break;
             }
-            if board[top_row as usize] != board[bottom_row as usize] {
+            if board.cells[top_row as usize] != board.cells[bottom_row as usize] {
                 is_symmetry = false;
                 break;
             }

@@ -1,15 +1,16 @@
 // Represents a mutable square or rectangular board of cells. Each cell is a character.
 
+type Cells = Vec<Vec<char>>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Board {
-    pub cells: Vec<Vec<char>>,
+    pub cells: Cells,
     pub num_rows: usize,
     pub num_cols: usize,
 }
 
 impl Board {
     pub fn from_input(input: Vec<String>) -> Board {
-        let cells: Vec<Vec<char>> = input
+        let cells: Cells = input
             .iter()
             .map(|line| line.chars().collect::<Vec<char>>())
             .collect();
@@ -24,6 +25,15 @@ impl Board {
         }
     }
 
+    // Input is multiple boards separated by blank lines.
+    pub fn from_input_multiple(input: Vec<String>) -> Vec<Board> {
+        let slices: Vec<_> = input.split(|x| x.is_empty()).collect();
+        slices
+            .iter()
+            .map(|slice| Board::from_input(slice.to_vec()))
+            .collect()
+    }
+
     pub(crate) fn rotate_clockwise(&mut self) {
         assert_eq!(self.num_rows, self.num_cols);
 
@@ -33,6 +43,31 @@ impl Board {
             for c in 0..self.num_cols {
                 self.cells[c][old_board.num_rows - 1 - r] = old_board.cells[r][c];
             }
+        }
+    }
+
+    // Flip the board on the diagonal axis.
+    pub fn flip(&mut self) -> &Board {
+        let mut new_cells: Cells = vec![];
+
+        for c in 0..self.num_cols {
+            let mut row_vec: Vec<char> = vec![];
+            for r in 0..self.num_rows {
+                row_vec.push(self.cells[r][c]);
+            }
+            new_cells.push(row_vec);
+        }
+
+        (self.num_rows, self.num_cols) = (self.num_cols, self.num_rows);
+        self.cells = new_cells;
+
+        self
+    }
+
+    #[allow(dead_code)]
+    pub fn print(&self) {
+        for row in &self.cells {
+            println!("{}", row.iter().collect::<String>());
         }
     }
 }
