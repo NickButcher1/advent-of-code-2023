@@ -86,7 +86,7 @@ fn read_input_file(filename: &str) -> Vec<String> {
         .collect()
 }
 
-fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) {
+fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) -> f64 {
     let time = Instant::now();
 
     let filename = format!(
@@ -126,6 +126,8 @@ fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) {
             );
         }
     }
+
+    elapsed_ms
 }
 
 fn main() {
@@ -152,8 +154,13 @@ fn main() {
     if day != 0 {
         run_one_day(day, is_sample_mode, expected_outputs);
     } else {
+        let mut total_ms: f64 = 0.0;
         for day in 1..=25 {
-            run_one_day(day, is_sample_mode, expected_outputs.clone());
+            total_ms += run_one_day(day, is_sample_mode, expected_outputs.clone());
         }
+        println!(
+            "TOTAL                                      {:.2}ms",
+            total_ms
+        );
     }
 }

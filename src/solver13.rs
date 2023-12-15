@@ -9,11 +9,11 @@ pub fn solve13(input: Vec<String>) -> (i128, i128) {
 
     let boards: Vec<Board> = Board::from_input_multiple(input);
 
-    for board in boards {
+    for mut board in boards {
         part_1_total +=
             score_board_part_1(&board, true) + score_board_part_1(board.clone().flip(), false);
-        part_2_total +=
-            score_board_part_2(&board, true) + score_board_part_2(board.clone().flip(), false);
+        part_2_total += score_board_part_2(&mut board, true)
+            + score_board_part_2(&mut board.clone().flip(), false);
     }
 
     (part_1_total as i128, part_2_total as i128)
@@ -26,22 +26,23 @@ fn score_board_part_1(board: &Board, is_flipped: bool) -> usize {
 
 // For part 2, try flipping every bit on the board in turn and calculating the score. Stop as soon
 // as we find a score that differs from part 1.
-fn score_board_part_2(board: &Board, is_flipped: bool) -> usize {
+fn score_board_part_2(board: &mut Board, is_flipped: bool) -> usize {
     let (part_1_score, part_1_row) = score_board(board, is_flipped, -1);
     // Try all possible flips until we find a new line of reflection.
     for r in 0..board.num_rows {
         for c in 0..board.num_cols {
-            let mut new_board = board.clone().to_owned();
-            if new_board.cells[r][c] == ASH {
-                new_board.cells[r][c] = ROCK;
+            let (old_value, new_value) = if board.cells[r][c] == ASH {
+                (ASH, ROCK)
             } else {
-                new_board.cells[r][c] = ASH;
-            }
+                (ROCK, ASH)
+            };
+            board.cells[r][c] = new_value;
 
-            let (new_score, _) = score_board(&new_board, is_flipped, part_1_row as i32);
+            let (new_score, _) = score_board(&board, is_flipped, part_1_row as i32);
             if new_score != 0 && new_score != part_1_score {
                 return new_score;
             }
+            board.cells[r][c] = old_value;
         }
     }
 

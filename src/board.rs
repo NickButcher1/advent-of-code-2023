@@ -47,7 +47,7 @@ impl Board {
     }
 
     // Flip the board on the diagonal axis.
-    pub fn flip(&mut self) -> &Board {
+    pub fn flip(&mut self) -> &mut Board {
         let mut new_cells: Cells = vec![];
 
         for c in 0..self.num_cols {
