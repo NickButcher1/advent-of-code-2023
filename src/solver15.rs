@@ -53,13 +53,9 @@ fn solve_part_2(input: Vec<&str>) -> usize {
 }
 
 fn hash(input: &str) -> usize {
-    let mut output: usize = 0;
-    for c in input.chars() {
-        output += c as u8 as usize;
-        output *= 17;
-        output %= 256;
-    }
-    output
+    input
+        .chars()
+        .fold(0, |acc, c| ((acc + c as usize) * 17) % 256)
 }
 
 // fn print_boxes(boxes: &Vec<Vec<(&str, usize)>>) {
