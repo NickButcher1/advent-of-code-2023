@@ -1,6 +1,7 @@
 use crate::board::Board;
+use std::collections::HashSet;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 enum Dir {
     Up,
     Right,
@@ -8,7 +9,7 @@ enum Dir {
     Left,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Eq, Debug, Hash, PartialEq)]
 struct Beam {
     r: i32,
     c: i32,
@@ -107,25 +108,30 @@ pub fn solve16(input: Vec<String>) -> (i128, i128) {
 fn solve_for_beam(beam: Beam, board: &Board) -> usize {
     let mut beams: Vec<Beam> = vec![beam];
     let mut energized: Vec<Vec<bool>> = vec![vec![false; board.num_cols]; board.num_rows];
-    let mut max_energized_cells_since = 0;
     let mut num_energized_cells = 0;
+    let mut seen_beams: HashSet<Beam> = HashSet::new();
 
     // Keep going until we haven't seen the number of energized cells change for some number of loops.
     // Some inputs might need a higher threshold, but this works for the sample and actual input.
-    while max_energized_cells_since < 10 {
-        // Move each beam forward one.
+    // while max_energized_cells_since < 10 {
+    while !beams.is_empty() {
         let old_beams = beams.clone();
         beams.clear();
 
         for mut beam in old_beams {
             beam.moveit();
 
+            // No need to process a beam in a given cell in a given direction more than once.
+            if seen_beams.contains(&beam) {
+                continue;
+            }
+            seen_beams.insert(beam.clone());
+
             // If it moved off the board, forget it.
             if beam.is_inside_board(board) {
                 if !energized[beam.r as usize][beam.c as usize] {
                     energized[beam.r as usize][beam.c as usize] = true;
                     num_energized_cells += 1;
-                    max_energized_cells_since = 0;
                 }
 
                 match board.cells[beam.r as usize][beam.c as usize] {
@@ -188,8 +194,6 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
                 }
             }
         }
-
-        max_energized_cells_since += 1;
     }
 
     num_energized_cells
