@@ -32,8 +32,8 @@ pub fn solve04(input: Vec<String>) -> (i128, i128) {
         }
         total_part_1 += line_points;
 
-        for c in (card_id + 1)..(card_id + line_total + 1) {
-            num_cards[c] += num_cards[card_id]
+        for c in (card_id + 1)..=(card_id + line_total) {
+            num_cards[c] += num_cards[card_id];
         }
         total_part_2 += num_cards[card_id];
     }

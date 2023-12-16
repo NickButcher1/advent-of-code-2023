@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 // The only difference between part 1 and part 2 is how many times empty rows and columns are expanded.
 const EXPANSION_FACTOR_PART_1: i64 = 2;
-const EXPANSION_FACTOR_PART_2: i64 = 1000000;
+const EXPANSION_FACTOR_PART_2: i64 = 1_000_000;
 
 type Board = Vec<Vec<i32>>;
 type Cell = (i32, i32);
@@ -62,9 +62,9 @@ pub fn solve11(input: Vec<String>) -> (i128, i128) {
     let mut part_1_solution = 0;
     let mut part_2_solution = 0;
 
-    for g1_id in 1..(num_galaxies + 1) {
+    for g1_id in 1..=num_galaxies {
         let g1_coordinates = galaxy_coordinates[&g1_id];
-        for g2_id in (g1_id + 1)..(num_galaxies + 1) {
+        for g2_id in (g1_id + 1)..=num_galaxies {
             let g2_coordinates = galaxy_coordinates[&g2_id];
 
             let max_row = cmp::max(g2_coordinates.0, g1_coordinates.0);

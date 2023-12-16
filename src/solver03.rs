@@ -33,8 +33,8 @@ pub fn solve03(input: Vec<String>) -> (i128, i128) {
     let mut is_adjacent_symbol = vec![vec![false; num_cols + 2]; num_rows + 2];
     let mut is_adjacent_star_numbers = vec![vec![Vec::<u32>::new(); num_cols + 2]; num_rows + 2];
 
-    for r in 1..(num_rows + 1) {
-        for c in 1..(num_cols + 1) {
+    for r in 1..=num_rows {
+        for c in 1..=num_cols {
             for (row, col) in [
                 (r, c),
                 (r, c - 1),
@@ -58,8 +58,8 @@ pub fn solve03(input: Vec<String>) -> (i128, i128) {
 
     let mut star_list = vec![Vec::<u32>::new(); next_star as usize + 1];
 
-    for r in 0..(num_rows + 1) {
-        for c in 0..(num_cols + 1) {
+    for r in 0..=num_rows {
+        for c in 0..=num_cols {
             let mut matching_star_numbers = Vec::<u32>::new();
             let mut is_allowed = false;
 

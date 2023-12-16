@@ -81,7 +81,7 @@ fn solve_part_2(board: &mut Board) -> usize {
     let cycle_len = last_board_in_cycle - first_board_in_cycle;
 
     for i in first_board_in_cycle..last_board_in_cycle {
-        if (1000000000 - i) % cycle_len == 0 {
+        if (1_000_000_000 - i) % cycle_len == 0 {
             return score_board(&seen_boards[i]);
         }
     }

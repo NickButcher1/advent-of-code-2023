@@ -69,7 +69,7 @@ fn read_input_file(filename: &str) -> Vec<String> {
     let file = match File::open(filename) {
         Ok(file) => file,
         Err(e) => {
-            panic!("Missing input file: {}", e);
+            panic!("Missing input file: {e}");
         }
     };
 
@@ -80,7 +80,7 @@ fn read_input_file(filename: &str) -> Vec<String> {
         .map(|line| match line {
             Ok(line) => line,
             Err(e) => {
-                panic!("Error reading line: {}", e);
+                panic!("Error reading line: {e}");
             }
         })
         .collect()
@@ -112,19 +112,15 @@ fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) ->
         let expected_result1 = &expected_outputs[day as usize * 2 - 2];
         let expected_result2 = &expected_outputs[day as usize * 2 - 1];
 
-        if expected_result1 != "-1" && result1.to_string() != *expected_result1 {
-            panic!(
-                "Day {}, incorrect result1: expected {}, actual {}",
-                day, expected_result1, result1
-            );
-        }
+        assert!(
+            expected_result1 == "-1" || result1.to_string() == *expected_result1,
+            "Day {day}, incorrect part 1: expected {expected_result1}, actual {result1}"
+        );
 
-        if expected_result2 != "-1" && result2.to_string() != *expected_result2 {
-            panic!(
-                "Day {}, incorrect result2: expected {}, actual {}",
-                day, expected_result2, result2
-            );
-        }
+        assert!(
+            expected_result2 == "-1" || result2.to_string() == *expected_result2,
+            "Day {day}, incorrect part 2: expected {expected_result2}, actual {result2}"
+        );
     }
 
     elapsed_ms
@@ -158,9 +154,6 @@ fn main() {
         for day in 1..=25 {
             total_ms += run_one_day(day, is_sample_mode, expected_outputs.clone());
         }
-        println!(
-            "TOTAL                                      {:.2}ms",
-            total_ms
-        );
+        println!("TOTAL                                      {total_ms:.2}ms");
     }
 }

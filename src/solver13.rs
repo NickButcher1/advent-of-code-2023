@@ -12,8 +12,8 @@ pub fn solve13(input: Vec<String>) -> (i128, i128) {
     for mut board in boards {
         part_1_total +=
             score_board_part_1(&board, true) + score_board_part_1(board.clone().flip(), false);
-        part_2_total += score_board_part_2(&mut board, true)
-            + score_board_part_2(&mut board.clone().flip(), false);
+        part_2_total +=
+            score_board_part_2(&mut board, true) + score_board_part_2(board.clone().flip(), false);
     }
 
     (part_1_total as i128, part_2_total as i128)
@@ -38,7 +38,7 @@ fn score_board_part_2(board: &mut Board, is_flipped: bool) -> usize {
             };
             board.cells[r][c] = new_value;
 
-            let (new_score, _) = score_board(&board, is_flipped, part_1_row as i32);
+            let (new_score, _) = score_board(board, is_flipped, part_1_row as i32);
             if new_score != 0 && new_score != part_1_score {
                 return new_score;
             }

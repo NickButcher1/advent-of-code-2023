@@ -1,6 +1,6 @@
 use crate::common::string_to_vec_u64_ignore_prefix;
 
-fn solve(times: Vec<u64>, distances: Vec<u64>) -> i128 {
+fn solve(times: Vec<u64>, distances: &[u64]) -> i128 {
     let mut total = 1;
     for i in 0..times.len() {
         let race_time = times[i];
@@ -38,7 +38,7 @@ pub fn solve06(input: Vec<String>) -> (i128, i128) {
         .collect();
 
     (
-        solve(times_part_1, distances_part_1),
-        solve(times_part_2, distances_part_2),
+        solve(times_part_1, &distances_part_1),
+        solve(times_part_2, &distances_part_2),
     )
 }

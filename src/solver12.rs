@@ -67,14 +67,15 @@ fn solve_subset<'a>(
         }
 
         // Find all possible positions for the first block.
-        let mut min_for_block: usize = 0;
-        if line_ints[0] != DAMAGED {
+        let min_for_block: usize = if line_ints[0] != DAMAGED {
             let mut pos: usize = 0;
             while !can_block_fit_in_pos_forward(line_ints, pos, counts[0]) {
                 pos += 1;
             }
-            min_for_block = pos;
-        }
+            pos
+        } else {
+            0
+        };
 
         let mut max_for_block: usize = 0;
         if line_ints[0] == DAMAGED {

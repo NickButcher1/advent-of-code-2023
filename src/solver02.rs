@@ -48,7 +48,7 @@ pub fn solve02(input: Vec<String>) -> (i128, i128) {
         }
 
         if game_possible {
-            total_part_1 += game_id
+            total_part_1 += game_id;
         }
 
         total_part_2 += red_max * blue_max * green_max;

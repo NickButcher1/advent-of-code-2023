@@ -35,7 +35,7 @@ fn score_for_hand(sorted_c: &Vec<u64>) -> u64 {
     } else {
         panic!("ERROR");
     };
-    score * 10000000000
+    score * 10_000_000_000
 }
 
 fn score_for_tiebreak(hand: &str, is_part_1: bool) -> u64 {
@@ -43,8 +43,8 @@ fn score_for_tiebreak(hand: &str, is_part_1: bool) -> u64 {
     tiebreak_score_for_card(hand_chars[4], is_part_1)
         + tiebreak_score_for_card(hand_chars[3], is_part_1) * 100
         + tiebreak_score_for_card(hand_chars[2], is_part_1) * 10000
-        + tiebreak_score_for_card(hand_chars[1], is_part_1) * 1000000
-        + tiebreak_score_for_card(hand_chars[0], is_part_1) * 100000000
+        + tiebreak_score_for_card(hand_chars[1], is_part_1) * 1_000_000
+        + tiebreak_score_for_card(hand_chars[0], is_part_1) * 100_000_000
 }
 
 fn collect_and_sort(counter: &HashMap<char, u64>) -> Vec<u64> {
@@ -53,8 +53,8 @@ fn collect_and_sort(counter: &HashMap<char, u64>) -> Vec<u64> {
     sorted_c
 }
 
-fn score_hand_1(hand: &str, counter: HashMap<char, u64>) -> u64 {
-    score_for_hand(&collect_and_sort(&counter)) + score_for_tiebreak(hand, true)
+fn score_hand_1(hand: &str, counter: &HashMap<char, u64>) -> u64 {
+    score_for_hand(&collect_and_sort(counter)) + score_for_tiebreak(hand, true)
 }
 
 fn score_hand_2(hand: &str, counter: &mut HashMap<char, u64>) -> u64 {
@@ -97,9 +97,9 @@ pub fn solve07(input: Vec<String>) -> (i128, i128) {
 
         scored_hands.push((
             split_1[1].parse().unwrap(),
-            score_hand_1(split_1[0], counter.clone()),
+            score_hand_1(split_1[0], &counter.clone()),
             score_hand_2(split_1[0], &mut counter),
-        ))
+        ));
     }
 
     scored_hands.sort_by_key(|k| k.1);

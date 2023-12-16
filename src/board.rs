@@ -1,7 +1,7 @@
 // Represents a mutable square or rectangular board of cells. Each cell is a character.
 
 type Cells = Vec<Vec<char>>;
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Board {
     pub cells: Cells,
     pub num_rows: usize,
@@ -9,7 +9,7 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn from_input(input: Vec<String>) -> Board {
+    pub fn from_input(input: Vec<String>) -> Self {
         let cells: Cells = input
             .iter()
             .map(|line| line.chars().collect::<Vec<char>>())
@@ -18,7 +18,7 @@ impl Board {
         let num_rows = cells.len();
         let num_cols = cells[0].len();
 
-        Board {
+        Self {
             cells,
             num_rows,
             num_cols,
@@ -26,11 +26,11 @@ impl Board {
     }
 
     // Input is multiple boards separated by blank lines.
-    pub fn from_input_multiple(input: Vec<String>) -> Vec<Board> {
-        let slices: Vec<_> = input.split(|x| x.is_empty()).collect();
+    pub fn from_input_multiple(input: Vec<String>) -> Vec<Self> {
+        let slices: Vec<_> = input.split(std::string::String::is_empty).collect();
         slices
             .iter()
-            .map(|slice| Board::from_input(slice.to_vec()))
+            .map(|slice| Self::from_input(slice.to_vec()))
             .collect()
     }
 
@@ -47,7 +47,7 @@ impl Board {
     }
 
     // Flip the board on the diagonal axis.
-    pub fn flip(&mut self) -> &mut Board {
+    pub fn flip(&mut self) -> &mut Self {
         let mut new_cells: Cells = vec![];
 
         for c in 0..self.num_cols {

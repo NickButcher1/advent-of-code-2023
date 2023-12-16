@@ -17,6 +17,10 @@ struct Beam {
 }
 
 impl Beam {
+    fn from(r: i32, c: i32, dir: Dir) -> Self {
+        Self { r, c, dir }
+    }
+
     fn moveit(&mut self) {
         match self.dir {
             Dir::Up => self.r -= 1,
@@ -51,32 +55,16 @@ fn beams_for_part_2(board: &Board) -> Vec<Beam> {
     for r in 0..board.num_rows {
         for c in 0..board.num_cols {
             if r == 0 {
-                beams_to_try.push(Beam {
-                    r: -1,
-                    c: c as i32,
-                    dir: Dir::Down,
-                });
+                beams_to_try.push(Beam::from(-1, c as i32, Dir::Down));
             }
             if r == board.num_rows - 1 {
-                beams_to_try.push(Beam {
-                    r: board.num_rows as i32,
-                    c: c as i32,
-                    dir: Dir::Up,
-                });
+                beams_to_try.push(Beam::from(board.num_rows as i32, c as i32, Dir::Up));
             }
             if c == 0 {
-                beams_to_try.push(Beam {
-                    r: r as i32,
-                    c: -1,
-                    dir: Dir::Right,
-                });
+                beams_to_try.push(Beam::from(r as i32, -1, Dir::Right));
             }
             if c == board.num_cols - 1 {
-                beams_to_try.push(Beam {
-                    r: r as i32,
-                    c: board.num_cols as i32,
-                    dir: Dir::Right,
-                });
+                beams_to_try.push(Beam::from(r as i32, board.num_cols as i32, Dir::Right));
             }
         }
     }
@@ -115,82 +103,60 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
     // Some inputs might need a higher threshold, but this works for the sample and actual input.
     // while max_energized_cells_since < 10 {
     while !beams.is_empty() {
-        let old_beams = beams.clone();
-        beams.clear();
+        let mut beam = beams.remove(0);
+        beam.moveit();
 
-        for mut beam in old_beams {
-            beam.moveit();
+        // No need to process a beam in a given cell in a given direction more than once.
+        if seen_beams.contains(&beam) {
+            continue;
+        }
+        seen_beams.insert(beam.clone());
 
-            // No need to process a beam in a given cell in a given direction more than once.
-            if seen_beams.contains(&beam) {
-                continue;
+        // If it moved off the board, forget it.
+        if beam.is_inside_board(board) {
+            if !energized[beam.r as usize][beam.c as usize] {
+                energized[beam.r as usize][beam.c as usize] = true;
+                num_energized_cells += 1;
             }
-            seen_beams.insert(beam.clone());
 
-            // If it moved off the board, forget it.
-            if beam.is_inside_board(board) {
-                if !energized[beam.r as usize][beam.c as usize] {
-                    energized[beam.r as usize][beam.c as usize] = true;
-                    num_energized_cells += 1;
+            match board.cells[beam.r as usize][beam.c as usize] {
+                '.' => beams.push(beam),
+                '|' => {
+                    if beam.dir == Dir::Up || beam.dir == Dir::Down {
+                        beams.push(beam);
+                    } else {
+                        beams.push(Beam::from(beam.r, beam.c, Dir::Up));
+                        beams.push(Beam::from(beam.r, beam.c, Dir::Down));
+                    }
                 }
-
-                match board.cells[beam.r as usize][beam.c as usize] {
-                    '.' => beams.push(beam),
-                    '|' => {
-                        if beam.dir == Dir::Up || beam.dir == Dir::Down {
-                            beams.push(beam)
-                        } else {
-                            beams.push(Beam {
-                                r: beam.r,
-                                c: beam.c,
-                                dir: Dir::Up,
-                            });
-                            beams.push(Beam {
-                                r: beam.r,
-                                c: beam.c,
-                                dir: Dir::Down,
-                            });
-                        }
-                    }
-                    '-' => {
-                        if beam.dir == Dir::Left || beam.dir == Dir::Right {
-                            beams.push(beam)
-                        } else {
-                            beams.push(Beam {
-                                r: beam.r,
-                                c: beam.c,
-                                dir: Dir::Left,
-                            });
-                            beams.push(Beam {
-                                r: beam.r,
-                                c: beam.c,
-                                dir: Dir::Right,
-                            });
-                        }
-                    }
-                    '/' => {
-                        let new_dir = match beam.dir {
-                            Dir::Up => Dir::Right,
-                            Dir::Right => Dir::Up,
-                            Dir::Down => Dir::Left,
-                            Dir::Left => Dir::Down,
-                        };
-                        beam.change_direction(new_dir);
+                '-' => {
+                    if beam.dir == Dir::Left || beam.dir == Dir::Right {
                         beams.push(beam);
+                    } else {
+                        beams.push(Beam::from(beam.r, beam.c, Dir::Left));
+                        beams.push(Beam::from(beam.r, beam.c, Dir::Right));
                     }
-                    '\\' => {
-                        let new_dir = match beam.dir {
-                            Dir::Up => Dir::Left,
-                            Dir::Right => Dir::Down,
-                            Dir::Down => Dir::Right,
-                            Dir::Left => Dir::Up,
-                        };
-                        beam.change_direction(new_dir);
-                        beams.push(beam);
-                    }
-                    _ => {
-                        unreachable!();
-                    }
+                }
+                '/' => {
+                    beam.change_direction(match beam.dir {
+                        Dir::Up => Dir::Right,
+                        Dir::Right => Dir::Up,
+                        Dir::Down => Dir::Left,
+                        Dir::Left => Dir::Down,
+                    });
+                    beams.push(beam);
+                }
+                '\\' => {
+                    beam.change_direction(match beam.dir {
+                        Dir::Up => Dir::Left,
+                        Dir::Right => Dir::Down,
+                        Dir::Down => Dir::Right,
+                        Dir::Left => Dir::Up,
+                    });
+                    beams.push(beam);
+                }
+                _ => {
+                    unreachable!();
                 }
             }
         }

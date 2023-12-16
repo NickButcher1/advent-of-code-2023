@@ -34,9 +34,9 @@ pub fn solve05(input: Vec<String>) -> (i128, i128) {
     }
 
     // Part 1.
-    let mut min_location: u64 = 999999999999999;
+    let mut min_location: u64 = 999_999_999_999_999;
     for seed in &seeds {
-        min_location = cmp::min(seed_to_location(*seed, &maps), min_location)
+        min_location = cmp::min(seed_to_location(*seed, &maps), min_location);
     }
 
     // Part 2.
@@ -66,7 +66,7 @@ fn map_a_to_b(value: u64, map: &Map) -> u64 {
 fn seed_to_location(seed: u64, maps: &Maps) -> u64 {
     let mut current_value = seed;
     for range_map in maps {
-        current_value = map_a_to_b(current_value, range_map)
+        current_value = map_a_to_b(current_value, range_map);
     }
     current_value
 }
