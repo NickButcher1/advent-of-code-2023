@@ -20,7 +20,7 @@ fn solve(times: Vec<u64>, distances: &[u64]) -> i128 {
     total
 }
 
-pub fn solve06(input: Vec<String>) -> (i128, i128) {
+pub fn solve06(input: &[String]) -> (i128, i128) {
     let times_part_1 = string_to_vec_u64_ignore_prefix("Time:", &input[0]);
     let times_line: Vec<&str> = input[0].split("Time:").collect();
     let times_part_2: Vec<u64> = times_line[1]

@@ -84,7 +84,7 @@ fn solve_part_2(board: &Board) -> usize {
     best_energy
 }
 
-pub fn solve16(input: Vec<String>) -> (i128, i128) {
+pub fn solve16(input: &[String]) -> (i128, i128) {
     let board: Board = Board::from_input(input);
 
     (

@@ -84,10 +84,10 @@ fn count_winnings(scored_hands: &Vec<(u64, u64, u64)>) -> u64 {
     }
     winnings
 }
-pub fn solve07(input: Vec<String>) -> (i128, i128) {
+pub fn solve07(input: &[String]) -> (i128, i128) {
     let mut scored_hands: Vec<(u64, u64, u64)> = Vec::new();
 
-    for line in &input {
+    for line in input {
         let split_1: Vec<&str> = line.split(' ').collect();
 
         let mut counter: HashMap<char, u64> = HashMap::new();

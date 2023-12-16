@@ -2,7 +2,7 @@ const RED_MAX: u32 = 12;
 const GREEN_MAX: u32 = 13;
 const BLUE_MAX: u32 = 14;
 
-pub fn solve02(input: Vec<String>) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> (i128, i128) {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
 

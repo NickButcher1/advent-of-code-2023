@@ -151,7 +151,7 @@ fn is_cell_inside_loop(r: usize, c: usize, board: &Board) -> bool {
     count_to_left % 2 == 1
 }
 
-pub fn solve10(input: Vec<String>) -> (i128, i128) {
+pub fn solve10(input: &[String]) -> (i128, i128) {
     let mut board: Board = Board::from_input(input);
 
     // For each cell, build a pair of cells that its pipe joins to. Also (both done inside build_cell_goes_to):

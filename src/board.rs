@@ -9,7 +9,7 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn from_input(input: Vec<String>) -> Self {
+    pub fn from_input(input: &[String]) -> Self {
         let cells: Cells = input
             .iter()
             .map(|line| line.chars().collect::<Vec<char>>())
@@ -26,12 +26,9 @@ impl Board {
     }
 
     // Input is multiple boards separated by blank lines.
-    pub fn from_input_multiple(input: Vec<String>) -> Vec<Self> {
+    pub fn from_input_multiple(input: &[String]) -> Vec<Self> {
         let slices: Vec<_> = input.split(std::string::String::is_empty).collect();
-        slices
-            .iter()
-            .map(|slice| Self::from_input(slice.to_vec()))
-            .collect()
+        slices.iter().map(|slice| Self::from_input(slice)).collect()
     }
 
     pub(crate) fn rotate_clockwise(&mut self) {

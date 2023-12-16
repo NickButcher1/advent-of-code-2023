@@ -10,14 +10,14 @@ struct RangeMap {
 type Map = Vec<RangeMap>;
 type Maps = Vec<Map>;
 
-pub fn solve05(input: Vec<String>) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> (i128, i128) {
     let mut seeds: Vec<u64> = Vec::new();
     let mut maps: Maps = vec![vec![]];
     let mut current_map_id: i32 = -1;
 
     for line in input {
         if line.starts_with("seeds:") {
-            seeds = string_to_vec_u64_ignore_prefix("seeds:", &line);
+            seeds = string_to_vec_u64_ignore_prefix("seeds:", line);
         } else if line.contains(" map:") {
             current_map_id += 1;
             maps.push(Vec::new());

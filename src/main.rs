@@ -56,10 +56,9 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::time::Instant;
 
-type SolverFunction = fn(Vec<String>) -> (i128, i128);
+type SolverFunction = fn(&[String]) -> (i128, i128);
 
 const SOLVER_FUNCTIONS: [SolverFunction; 25] = [
-    // Display row 1 (top edge).
     solve01, solve02, solve03, solve04, solve05, solve06, solve07, solve08, solve09, solve10,
     solve11, solve12, solve13, solve14, solve15, solve16, solve17, solve18, solve19, solve20,
     solve21, solve22, solve23, solve24, solve25,
@@ -86,7 +85,7 @@ fn read_input_file(filename: &str) -> Vec<String> {
         .collect()
 }
 
-fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) -> f64 {
+fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) -> u128 {
     let time = Instant::now();
 
     let filename = format!(
@@ -98,19 +97,16 @@ fn run_one_day(day: i32, is_sample_mode: bool, expected_outputs: Vec<String>) ->
     let (result1, result2) = if input_file.is_empty() {
         (-1, -1)
     } else {
-        SOLVER_FUNCTIONS[day as usize - 1](input_file)
+        SOLVER_FUNCTIONS[day - 1](&input_file)
     };
 
-    let elapsed_ms = time.elapsed().as_nanos() as f64 / 1_000_000.0;
+    let elapsed_ms = time.elapsed().as_nanos() / 1_000_000;
 
-    println!(
-        "{:02}    {:12}  {:16}  {:12}ms",
-        day, result1, result2, elapsed_ms
-    );
+    println!("{day:02}    {result1:12}  {result2:16}  {elapsed_ms:12}ms",);
 
     if !is_sample_mode {
-        let expected_result1 = &expected_outputs[day as usize * 2 - 2];
-        let expected_result2 = &expected_outputs[day as usize * 2 - 1];
+        let expected_result1 = &expected_outputs[day * 2 - 2];
+        let expected_result2 = &expected_outputs[day * 2 - 1];
 
         assert!(
             expected_result1 == "-1" || result1.to_string() == *expected_result1,
@@ -130,7 +126,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let day = if args.len() >= 2 {
-        match args[1].parse::<i32>() {
+        match args[1].parse::<usize>() {
             Ok(number) => number,
             Err(_) => {
                 // Parsing failed
@@ -148,12 +144,12 @@ fn main() {
         .unwrap();
 
     if day != 0 {
-        run_one_day(day, is_sample_mode, expected_outputs);
+        run_one_day(day, is_sample_mode, &expected_outputs);
     } else {
-        let mut total_ms: f64 = 0.0;
+        let mut total_ms: u128 = 0;
         for day in 1..=25 {
-            total_ms += run_one_day(day, is_sample_mode, expected_outputs.clone());
+            total_ms += run_one_day(day, is_sample_mode, &expected_outputs);
         }
-        println!("TOTAL                                      {total_ms:.2}ms");
+        println!("TOTAL                                         {total_ms:.2}ms");
     }
 }

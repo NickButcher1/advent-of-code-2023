@@ -5,13 +5,13 @@ const DAMAGED: usize = 1;
 const UNKNOWN: usize = 2;
 const UNWANTED: usize = 3;
 
-pub fn solve12(input: Vec<String>) -> (i128, i128) {
-    (solve_part(input.clone(), false), solve_part(input, true))
+pub fn solve12(input: &[String]) -> (i128, i128) {
+    (solve_part(input, false), solve_part(input, true))
 }
-pub fn solve_part(input: Vec<String>, is_part_two: bool) -> i128 {
+pub fn solve_part(input: &[String], is_part_two: bool) -> i128 {
     let mut sum_arrangements: i128 = 0;
 
-    for line in &input {
+    for line in input {
         let mut line_ints: Vec<usize> = line
             .chars()
             .map(|c| match c {

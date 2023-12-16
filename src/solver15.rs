@@ -67,7 +67,7 @@ fn hash(input: &str) -> usize {
 //     }
 // }
 
-pub fn solve15(input: Vec<String>) -> (i128, i128) {
+pub fn solve15(input: &[String]) -> (i128, i128) {
     let split_1: Vec<&str> = input[0].split(',').collect();
 
     (

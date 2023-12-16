@@ -1,4 +1,4 @@
-fn solve_part_1(input: Vec<String>) -> i128 {
+fn solve_part_1(input: &[String]) -> i128 {
     let mut numbers = Vec::new();
     let mut first_digit = 0;
     let mut last_digit = 0;
@@ -44,7 +44,7 @@ fn get_last_digit_from_substring(substring: &str, number_map: &Vec<(&str, u32)>)
     0
 }
 
-fn solve_part_2(input: Vec<String>) -> i128 {
+fn solve_part_2(input: &[String]) -> i128 {
     let number_map = vec![
         ("one", 1),
         ("two", 2),
@@ -93,6 +93,6 @@ fn solve_part_2(input: Vec<String>) -> i128 {
     total as i128
 }
 
-pub fn solve01(input: Vec<String>) -> (i128, i128) {
-    (solve_part_1(input.clone()), solve_part_2(input))
+pub fn solve01(input: &[String]) -> (i128, i128) {
+    (solve_part_1(input), solve_part_2(input))
 }

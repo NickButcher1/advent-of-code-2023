@@ -3,7 +3,7 @@ use crate::board::Board;
 const ASH: char = '.';
 const ROCK: char = '#';
 
-pub fn solve13(input: Vec<String>) -> (i128, i128) {
+pub fn solve13(input: &[String]) -> (i128, i128) {
     let mut part_1_total: usize = 0;
     let mut part_2_total: usize = 0;
 

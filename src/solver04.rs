@@ -1,4 +1,4 @@
-pub fn solve04(input: Vec<String>) -> (i128, i128) {
+pub fn solve04(input: &[String]) -> (i128, i128) {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
     let mut num_cards = vec![1; input.len()];

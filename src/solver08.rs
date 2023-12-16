@@ -69,7 +69,7 @@ fn solve<'a>(
     }
 }
 
-pub fn solve08(input: Vec<String>) -> (i128, i128) {
+pub fn solve08(input: &[String]) -> (i128, i128) {
     let directions: Vec<char> = input[0].chars().collect();
     let mut from_x_to_left: HashMap<&str, &str> = HashMap::new();
     let mut from_x_to_right: HashMap<&str, &str> = HashMap::new();

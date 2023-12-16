@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn solve03(input: Vec<String>) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> (i128, i128) {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
 

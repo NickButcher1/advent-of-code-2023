@@ -8,7 +8,7 @@ const EXPANSION_FACTOR_PART_2: i64 = 1_000_000;
 type Board = Vec<Vec<i32>>;
 type Cell = (i32, i32);
 
-pub fn solve11(input: Vec<String>) -> (i128, i128) {
+pub fn solve11(input: &[String]) -> (i128, i128) {
     // Track which rows and columns are empty. Don't actually expand the board.
     let mut is_row_id_empty: HashMap<usize, bool> = HashMap::new();
     let mut is_col_id_empty: HashMap<usize, bool> = HashMap::new();

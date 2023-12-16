@@ -19,7 +19,7 @@ pub fn score_line(mut ints: Vec<i64>) -> i128 {
     score
 }
 
-pub fn solve09(input: Vec<String>) -> (i128, i128) {
+pub fn solve09(input: &[String]) -> (i128, i128) {
     (
         input
             .iter()

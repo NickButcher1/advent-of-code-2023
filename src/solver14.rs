@@ -3,7 +3,7 @@ use crate::board::Board;
 const EMPTY: char = '.';
 const MOVABLE: char = 'O';
 
-pub fn solve14(input: Vec<String>) -> (i128, i128) {
+pub fn solve14(input: &[String]) -> (i128, i128) {
     let mut board: Board = Board::from_input(input);
 
     (
