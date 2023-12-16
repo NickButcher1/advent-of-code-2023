@@ -37,19 +37,6 @@ impl Beam {
     }
 }
 
-fn count_energized_cells(energized: &Vec<Vec<bool>>) -> usize {
-    let mut sum: usize = 0;
-    for row in energized {
-        for cell in row {
-            if *cell {
-                sum += 1;
-            }
-        }
-    }
-
-    sum
-}
-
 fn beam_for_part_1() -> Beam {
     Beam {
         r: 0,
@@ -120,12 +107,12 @@ pub fn solve16(input: Vec<String>) -> (i128, i128) {
 fn solve_for_beam(beam: Beam, board: &Board) -> usize {
     let mut beams: Vec<Beam> = vec![beam];
     let mut energized: Vec<Vec<bool>> = vec![vec![false; board.num_cols]; board.num_rows];
-    let mut max_energy = 0;
-    let mut max_energy_since = 0;
+    let mut max_energized_cells_since = 0;
+    let mut num_energized_cells = 0;
 
-    // Keep going until we haven't seen the energy level change for some number of loops. Some inputs
-    // might need a higher threshold, but this works for the sample and actual input.
-    while max_energy_since < 10 {
+    // Keep going until we haven't seen the number of energized cells change for some number of loops.
+    // Some inputs might need a higher threshold, but this works for the sample and actual input.
+    while max_energized_cells_since < 10 {
         // Move each beam forward one.
         let old_beams = beams.clone();
         beams.clear();
@@ -135,7 +122,11 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
 
             // If it moved off the board, forget it.
             if beam.is_inside_board(board) {
-                energized[beam.r as usize][beam.c as usize] = true;
+                if !energized[beam.r as usize][beam.c as usize] {
+                    energized[beam.r as usize][beam.c as usize] = true;
+                    num_energized_cells += 1;
+                    max_energized_cells_since = 0;
+                }
 
                 match board.cells[beam.r as usize][beam.c as usize] {
                     '.' => beams.push(beam),
@@ -198,13 +189,8 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
             }
         }
 
-        let new_max_energy = count_energized_cells(&energized);
-        if new_max_energy > max_energy {
-            max_energy = new_max_energy;
-            max_energy_since = 0;
-        }
-        max_energy_since += 1;
+        max_energized_cells_since += 1;
     }
 
-    max_energy
+    num_energized_cells
 }
