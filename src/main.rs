@@ -89,7 +89,7 @@ fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) ->
     let time = Instant::now();
 
     let filename = format!(
-        "input/input{:02}{}",
+        "input/2023/input{:02}{}",
         day,
         if is_sample_mode { "-sample" } else { "" }
     );
