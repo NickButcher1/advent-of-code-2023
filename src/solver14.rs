@@ -67,8 +67,8 @@ fn solve_part_2(board: &mut Board) -> usize {
         last_board_in_cycle += 1;
         one_cycle(board);
 
-        for i in 0..seen_boards.len() {
-            if *board == seen_boards[i] {
+        for (i, seen_board) in seen_boards.iter().enumerate() {
+            if board == seen_board {
                 first_board_in_cycle = i;
             }
         }
