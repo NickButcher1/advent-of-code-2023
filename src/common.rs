@@ -18,3 +18,9 @@ pub fn string_to_vec_i64(input: &str) -> Vec<i64> {
         .map(|x| x.parse::<i64>().unwrap())
         .collect()
 }
+
+pub fn split_string_to_u64(input: &str, split_on: char, index: usize) -> u64 {
+    input.split(split_on).collect::<Vec<&str>>()[index]
+        .parse::<u64>()
+        .unwrap()
+}
