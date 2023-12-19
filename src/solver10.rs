@@ -1,4 +1,4 @@
-use crate::board::Board;
+use aoc::board::Board;
 
 const PIPE_HORIZONTAL: char = '-';
 const PIPE_VERTICAL: char = '|';

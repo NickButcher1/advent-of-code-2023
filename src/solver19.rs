@@ -1,4 +1,4 @@
-use crate::common::split_string_to_u64;
+use aoc::common::split_string_to_u64;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -24,7 +24,7 @@ enum Rule {
 const MIN_XMAS: u64 = 1;
 const MAX_XMAS: u64 = 4000;
 
-fn xmas_to_index(xmas: &char) -> usize {
+fn xmas_to_index(xmas: char) -> usize {
     match xmas {
         'x' => 0,
         'm' => 1,
@@ -41,7 +41,7 @@ pub fn solve19(input: &[String]) -> (i128, i128) {
 
     for line in input {
         if line.is_empty() {
-            reached_blank_line = true
+            reached_blank_line = true;
         } else if reached_blank_line {
             let line_1: Vec<&str> = line[1..line.len() - 1].split(',').collect();
             let part = Part {
@@ -61,19 +61,19 @@ pub fn solve19(input: &[String]) -> (i128, i128) {
             let mut rules: Vec<Rule> = vec![];
             for r in line_2 {
                 if r == "A" {
-                    rules.push(Rule::Accept)
+                    rules.push(Rule::Accept);
                 } else if r == "R" {
-                    rules.push(Rule::Reject)
+                    rules.push(Rule::Reject);
                 } else {
                     let r2: Vec<&str> = r.split(':').collect();
                     if r2.len() == 1 {
-                        rules.push(Rule::ToWorkflow(r2[0].to_string()))
+                        rules.push(Rule::ToWorkflow(r2[0].to_string()));
                     } else {
                         let r3: Vec<&str> = r2[0].split('<').collect();
                         if r3.len() == 2 {
                             let num = r3[1].parse::<u64>().unwrap();
                             let rule = Rule::ComparisonLessThanToWorkflow(
-                                xmas_to_index(&r3[0].chars().next().unwrap()),
+                                xmas_to_index(r3[0].chars().next().unwrap()),
                                 num,
                                 r2[1].to_string(),
                             );
@@ -83,7 +83,7 @@ pub fn solve19(input: &[String]) -> (i128, i128) {
                             if r4.len() == 2 {
                                 let num = r4[1].parse::<u64>().unwrap();
                                 let rule = Rule::ComparisonGreaterThanToWorkflow(
-                                    xmas_to_index(&r4[0].chars().next().unwrap()),
+                                    xmas_to_index(r4[0].chars().next().unwrap()),
                                     num,
                                     r2[1].to_string(),
                                 );

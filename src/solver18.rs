@@ -1,4 +1,4 @@
-use crate::dir::Dir;
+use aoc::dir::Dir;
 
 #[derive(Debug)]
 struct Instruction {

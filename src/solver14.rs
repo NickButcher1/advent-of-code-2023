@@ -1,4 +1,4 @@
-use crate::board::Board;
+use aoc::board::Board;
 
 const EMPTY: char = '.';
 const MOVABLE: char = 'O';

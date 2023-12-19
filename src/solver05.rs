@@ -1,4 +1,4 @@
-use crate::common::string_to_vec_u64_ignore_prefix;
+use aoc::common::string_to_vec_u64_ignore_prefix;
 use std::cmp;
 
 struct RangeMap {

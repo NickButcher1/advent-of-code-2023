@@ -1,5 +1,5 @@
-use crate::board::Board;
-use crate::dir::Dir;
+use aoc::board::Board;
+use aoc::dir::Dir;
 use std::collections::HashSet;
 
 #[derive(Clone, Eq, Debug, Hash, PartialEq)]

@@ -8,6 +8,7 @@ pub struct Board {
     pub num_cols: usize,
 }
 
+#[allow(dead_code)]
 impl Board {
     pub fn from_input(input: &[String]) -> Self {
         let cells: Cells = input
@@ -31,7 +32,7 @@ impl Board {
         slices.iter().map(|slice| Self::from_input(slice)).collect()
     }
 
-    pub(crate) fn rotate_clockwise(&mut self) {
+    pub fn rotate_clockwise(&mut self) {
         assert_eq!(self.num_rows, self.num_cols);
 
         let old_board = self.clone();
