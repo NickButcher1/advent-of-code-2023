@@ -1,5 +1,6 @@
 mod board;
 mod common;
+mod dir;
 mod solver01;
 mod solver02;
 mod solver03;

@@ -1,10 +1,4 @@
-#[derive(Debug)]
-enum Dir {
-    Up,
-    Right,
-    Down,
-    Left,
-}
+use crate::dir::Dir;
 
 #[derive(Debug)]
 struct Instruction {
@@ -21,13 +15,7 @@ pub fn solve(input: &[String], is_part_one: bool) -> i64 {
     if is_part_one {
         for line in input {
             let split_1: Vec<&str> = line.split(' ').collect();
-            let dir = match split_1[0] {
-                "U" => Dir::Up,
-                "D" => Dir::Down,
-                "L" => Dir::Left,
-                "R" => Dir::Right,
-                _ => unreachable!(),
-            };
+            let dir = Dir::from_letter_str(split_1[0]);
             let distance = split_1[1].parse().unwrap();
             instructions.push(Instruction { dir, distance });
         }
@@ -36,16 +24,8 @@ pub fn solve(input: &[String], is_part_one: bool) -> i64 {
             // TODO: Use regex.
             let split_1: Vec<&str> = line.split(' ').collect();
             let split_2: &str = split_1[2];
-            let split_3 = &split_2[2..7];
-            let split_4 = &split_2[7..8];
-            let dir = match split_4 {
-                "3" => Dir::Up,
-                "1" => Dir::Down,
-                "2" => Dir::Left,
-                "0" => Dir::Right,
-                _ => unreachable!(),
-            };
-            let distance = i64::from_str_radix(split_3, 16).unwrap();
+            let dir = Dir::from_int_str(&split_2[7..8]);
+            let distance = i64::from_str_radix(&split_2[2..7], 16).unwrap();
             instructions.push(Instruction { dir, distance });
         }
     }

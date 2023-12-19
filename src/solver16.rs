@@ -1,13 +1,6 @@
 use crate::board::Board;
+use crate::dir::Dir;
 use std::collections::HashSet;
-
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
-enum Dir {
-    Up,
-    Right,
-    Down,
-    Left,
-}
 
 #[derive(Clone, Eq, Debug, Hash, PartialEq)]
 struct Beam {
@@ -122,7 +115,7 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
             match board.cells[beam.r as usize][beam.c as usize] {
                 '.' => beams.push(beam),
                 '|' => {
-                    if beam.dir == Dir::Up || beam.dir == Dir::Down {
+                    if beam.dir.is_vertical() {
                         beams.push(beam);
                     } else {
                         beams.push(Beam::from(beam.r, beam.c, Dir::Up));
@@ -130,7 +123,7 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
                     }
                 }
                 '-' => {
-                    if beam.dir == Dir::Left || beam.dir == Dir::Right {
+                    if beam.dir.is_horizontal() {
                         beams.push(beam);
                     } else {
                         beams.push(Beam::from(beam.r, beam.c, Dir::Left));
@@ -138,21 +131,11 @@ fn solve_for_beam(beam: Beam, board: &Board) -> usize {
                     }
                 }
                 '/' => {
-                    beam.change_direction(match beam.dir {
-                        Dir::Up => Dir::Right,
-                        Dir::Right => Dir::Up,
-                        Dir::Down => Dir::Left,
-                        Dir::Left => Dir::Down,
-                    });
+                    beam.change_direction(beam.dir.reflect_forward_slash());
                     beams.push(beam);
                 }
                 '\\' => {
-                    beam.change_direction(match beam.dir {
-                        Dir::Up => Dir::Left,
-                        Dir::Right => Dir::Down,
-                        Dir::Down => Dir::Right,
-                        Dir::Left => Dir::Up,
-                    });
+                    beam.change_direction(beam.dir.reflect_back_slash());
                     beams.push(beam);
                 }
                 _ => {

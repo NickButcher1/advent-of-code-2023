@@ -1,13 +1,6 @@
 use crate::board::Board;
+use crate::dir::Dir;
 use std::collections::HashMap;
-
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Copy)]
-enum Dir {
-    Up,
-    Right,
-    Down,
-    Left,
-}
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug)]
 struct Key {
