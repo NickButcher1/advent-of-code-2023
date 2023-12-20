@@ -21,6 +21,14 @@ enum Rule {
     ComparisonGreaterThanToWorkflow(usize, u64, String),
 }
 
+#[derive(Clone, Copy, Debug)]
+struct Range<'a> {
+    next_workflow: &'a str,
+    // Index with 0 for x, 1 for m, 2 for a, 3 for s.
+    min_xmas: [u64; 4],
+    max_xmas: [u64; 4],
+}
+
 const MIN_XMAS: u64 = 1;
 const MAX_XMAS: u64 = 4000;
 
@@ -34,84 +42,94 @@ fn xmas_to_index(xmas: char) -> usize {
     }
 }
 
-pub fn solve19(input: &[String]) -> (i128, i128) {
-    let mut reached_blank_line = false;
+fn read_workflows_from_input(input: &[String]) -> HashMap<String, Workflow> {
     let mut workflows: HashMap<String, Workflow> = HashMap::new();
-    let mut parts: Vec<Part> = vec![];
 
     for line in input {
-        if line.is_empty() {
-            reached_blank_line = true;
-        } else if reached_blank_line {
-            let line_1: Vec<&str> = line[1..line.len() - 1].split(',').collect();
-            let part = Part {
-                xmas: vec![
-                    split_string_to_u64(line_1[0], '=', 1),
-                    split_string_to_u64(line_1[1], '=', 1),
-                    split_string_to_u64(line_1[2], '=', 1),
-                    split_string_to_u64(line_1[3], '=', 1),
-                ],
-            };
-            parts.push(part);
-        } else {
-            // TODO: Use regex.
-            let line_1: Vec<&str> = line[0..line.len() - 1].split('{').collect();
-            let name = line_1[0];
-            let line_2: Vec<&str> = line_1[1].split(',').collect();
-            let mut rules: Vec<Rule> = vec![];
-            for r in line_2 {
-                if r == "A" {
-                    rules.push(Rule::Accept);
-                } else if r == "R" {
-                    rules.push(Rule::Reject);
+        // TODO: Use regex.
+        let line_1: Vec<&str> = line[0..line.len() - 1].split('{').collect();
+        let name = line_1[0];
+        let line_2: Vec<&str> = line_1[1].split(',').collect();
+        let mut rules: Vec<Rule> = vec![];
+        for r in line_2 {
+            if r == "A" {
+                rules.push(Rule::Accept);
+            } else if r == "R" {
+                rules.push(Rule::Reject);
+            } else {
+                let r2: Vec<&str> = r.split(':').collect();
+                if r2.len() == 1 {
+                    rules.push(Rule::ToWorkflow(r2[0].to_string()));
                 } else {
-                    let r2: Vec<&str> = r.split(':').collect();
-                    if r2.len() == 1 {
-                        rules.push(Rule::ToWorkflow(r2[0].to_string()));
+                    let r3: Vec<&str> = r2[0].split('<').collect();
+                    if r3.len() == 2 {
+                        let num = r3[1].parse::<u64>().unwrap();
+                        let rule = Rule::ComparisonLessThanToWorkflow(
+                            xmas_to_index(r3[0].chars().next().unwrap()),
+                            num,
+                            r2[1].to_string(),
+                        );
+                        rules.push(rule);
                     } else {
-                        let r3: Vec<&str> = r2[0].split('<').collect();
-                        if r3.len() == 2 {
-                            let num = r3[1].parse::<u64>().unwrap();
-                            let rule = Rule::ComparisonLessThanToWorkflow(
-                                xmas_to_index(r3[0].chars().next().unwrap()),
+                        let r4: Vec<&str> = r2[0].split('>').collect();
+                        if r4.len() == 2 {
+                            let num = r4[1].parse::<u64>().unwrap();
+                            let rule = Rule::ComparisonGreaterThanToWorkflow(
+                                xmas_to_index(r4[0].chars().next().unwrap()),
                                 num,
                                 r2[1].to_string(),
                             );
                             rules.push(rule);
                         } else {
-                            let r4: Vec<&str> = r2[0].split('>').collect();
-                            if r4.len() == 2 {
-                                let num = r4[1].parse::<u64>().unwrap();
-                                let rule = Rule::ComparisonGreaterThanToWorkflow(
-                                    xmas_to_index(r4[0].chars().next().unwrap()),
-                                    num,
-                                    r2[1].to_string(),
-                                );
-                                rules.push(rule);
-                            } else {
-                                panic!("Didn't decode this rule: {r}");
-                            }
+                            panic!("Didn't decode this rule: {r}");
                         }
                     }
                 }
             }
-            workflows.insert(name.to_string(), Workflow { rules });
         }
-
-        // Simplifies processing.
-        workflows.insert(
-            "A".to_string(),
-            Workflow {
-                rules: vec![Rule::Accept],
-            },
-        );
-        workflows.insert(
-            "R".to_string(),
-            Workflow {
-                rules: vec![Rule::Reject],
-            },
-        );
+        workflows.insert(name.to_string(), Workflow { rules });
     }
+
+    // Simplifies processing.
+    workflows.insert(
+        "A".to_string(),
+        Workflow {
+            rules: vec![Rule::Accept],
+        },
+    );
+    workflows.insert(
+        "R".to_string(),
+        Workflow {
+            rules: vec![Rule::Reject],
+        },
+    );
+
+    workflows
+}
+
+fn read_parts_from_input(input: &[String]) -> Vec<Part> {
+    let mut parts: Vec<Part> = vec![];
+
+    for line in input {
+        let line_1: Vec<&str> = line[1..line.len() - 1].split(',').collect();
+        let part = Part {
+            xmas: vec![
+                split_string_to_u64(line_1[0], '=', 1),
+                split_string_to_u64(line_1[1], '=', 1),
+                split_string_to_u64(line_1[2], '=', 1),
+                split_string_to_u64(line_1[3], '=', 1),
+            ],
+        };
+        parts.push(part);
+    }
+    parts
+}
+
+pub fn solve19(input: &[String]) -> (i128, i128) {
+    let blank_line_index = input.iter().position(|s| s.is_empty()).unwrap();
+
+    let workflows = read_workflows_from_input(&input[0..blank_line_index]);
+    let parts = read_parts_from_input(&input[blank_line_index + 1..]);
 
     (
         solve_part_1(&workflows, &parts) as i128,
@@ -164,25 +182,22 @@ fn solve_part_1(workflows: &HashMap<String, Workflow>, parts: &Vec<Part>) -> u64
     sum
 }
 
-#[derive(Clone, Copy, Debug)]
-struct Range<'a> {
-    next_workflow: &'a str,
-    // Index with 0 for x, 1 for m, 2 for a, 3 for s.
-    min_xmas: [u64; 4],
-    max_xmas: [u64; 4],
+fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
+    let accept_ranges = build_accept_ranges(workflows);
+    count_accept_ranges(&accept_ranges)
 }
 
-fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
-    let mut ranges: Vec<Range> = vec![];
+fn build_accept_ranges(workflows: &HashMap<String, Workflow>) -> Vec<Range> {
+    let mut ranges_to_process: Vec<Range> = vec![];
     let mut accept_ranges: Vec<Range> = vec![];
     let range = Range {
         next_workflow: "in",
         min_xmas: [MIN_XMAS; 4],
         max_xmas: [MAX_XMAS; 4],
     };
-    ranges.push(range);
+    ranges_to_process.push(range);
 
-    while let Some(mut range) = ranges.pop() {
+    while let Some(mut range) = ranges_to_process.pop() {
         let workflow = &workflows[range.next_workflow];
         let rules = &workflow.rules;
         for rule in rules {
@@ -196,7 +211,7 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
                 Rule::ToWorkflow(new_workflow_name) => {
                     let mut new_range = range;
                     new_range.next_workflow = new_workflow_name;
-                    ranges.push(new_range);
+                    ranges_to_process.push(new_range);
                 }
                 Rule::ComparisonLessThanToWorkflow(comp, amount, new_workflow_name) => {
                     let mut new_range = range;
@@ -209,7 +224,7 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
                             accept_ranges.push(new_range);
                         } else {
                             new_range.next_workflow = new_workflow_name;
-                            ranges.push(new_range);
+                            ranges_to_process.push(new_range);
                         }
                     }
                     // Also need to update the range that we'll process the next rule for.
@@ -226,7 +241,7 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
                             accept_ranges.push(new_range);
                         } else {
                             new_range.next_workflow = new_workflow_name;
-                            ranges.push(new_range);
+                            ranges_to_process.push(new_range);
                         }
                     }
                     range.max_xmas[i] = std::cmp::min(*amount, range.max_xmas[i]);
@@ -234,10 +249,13 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
             }
         }
     }
+    accept_ranges
+}
 
+fn count_accept_ranges(accept_ranges: &[Range]) -> u64 {
     let mut start_of: u64 = MIN_XMAS;
     let mut prev_ranges: Vec<usize> = vec![];
-    let mut x_ranges: Vec<(u64, Vec<usize>)> = vec![];
+    let mut ranges_at_depth: Vec<(u64, Vec<usize>)> = vec![];
 
     for i in MIN_XMAS..=MAX_XMAS {
         let mut ranges: Vec<usize> = vec![];
@@ -246,13 +264,13 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
                 ranges.push(range_id);
             }
         }
-        if i != 1 && ranges != prev_ranges || i == MAX_XMAS && !prev_ranges.is_empty() {
+        if i != MIN_XMAS && ranges != prev_ranges || i == MAX_XMAS && !prev_ranges.is_empty() {
             let r_new = if i == MAX_XMAS {
                 (1 + i - start_of, prev_ranges.clone())
             } else {
                 (i - start_of, prev_ranges.clone())
             };
-            x_ranges.push(r_new);
+            ranges_at_depth.push(r_new);
             start_of = i;
         }
         if ranges.is_empty() {
@@ -261,97 +279,48 @@ fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
         prev_ranges = ranges;
     }
 
-    let mut m_ranges: Vec<(u64, Vec<usize>)> = vec![];
-    for (ways, range_ids) in x_ranges {
+    let old_ranges_at_depth = ranges_at_depth;
+    let ranges_at_depth = calc_ranges_at_depth(1, accept_ranges, old_ranges_at_depth);
+    let old_ranges_at_depth = ranges_at_depth;
+    let ranges_at_depth = calc_ranges_at_depth(2, accept_ranges, old_ranges_at_depth);
+    let old_ranges_at_depth = ranges_at_depth;
+    let ranges_at_depth = calc_ranges_at_depth(3, accept_ranges, old_ranges_at_depth);
+
+    ranges_at_depth.iter().fold(0, |acc, range| acc + range.0)
+}
+
+fn calc_ranges_at_depth(
+    depth: usize,
+    accept_ranges: &[Range],
+    old_ranges: Vec<(u64, Vec<usize>)>,
+) -> Vec<(u64, Vec<usize>)> {
+    let mut ranges: Vec<(u64, Vec<usize>)> = vec![];
+    for (ways, range_ids) in old_ranges {
         let mut start_of: u64 = MIN_XMAS;
-        let mut prev_ranges: Vec<usize> = vec![];
+        let mut prev_range: Vec<usize> = vec![];
         for i in MIN_XMAS..=MAX_XMAS {
-            let mut ranges: Vec<usize> = vec![];
+            let mut new_range: Vec<usize> = vec![];
             for range_id in &range_ids {
                 let range = &accept_ranges[*range_id];
-                if i >= range.min_xmas[1] && i <= range.max_xmas[1] {
-                    ranges.push(*range_id);
+                if i >= range.min_xmas[depth] && i <= range.max_xmas[depth] {
+                    new_range.push(*range_id);
                 }
             }
-            if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
+            if i != MIN_XMAS && (new_range != prev_range) || i == MAX_XMAS && !prev_range.is_empty()
             {
                 let r_new = if i == MAX_XMAS {
-                    (ways * (1 + i - start_of), prev_ranges.clone())
+                    (ways * (1 + i - start_of), prev_range.clone())
                 } else {
-                    (ways * (i - start_of), prev_ranges.clone())
+                    (ways * (i - start_of), prev_range.clone())
                 };
-                m_ranges.push(r_new);
+                ranges.push(r_new);
                 start_of = i;
             }
-            if ranges.is_empty() {
+            if new_range.is_empty() {
                 start_of += 1;
             }
-            prev_ranges = ranges;
+            prev_range = new_range;
         }
     }
-
-    let mut a_ranges: Vec<(u64, Vec<usize>)> = vec![];
-    for (ways, range_ids) in m_ranges {
-        let mut start_of: u64 = MIN_XMAS;
-        let mut prev_ranges: Vec<usize> = vec![];
-        for i in MIN_XMAS..=MAX_XMAS {
-            let mut ranges: Vec<usize> = vec![];
-            for range_id in &range_ids {
-                let range = &accept_ranges[*range_id];
-                if i >= range.min_xmas[2] && i <= range.max_xmas[2] {
-                    ranges.push(*range_id);
-                }
-            }
-            if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
-            {
-                let r_new = if i == MAX_XMAS {
-                    (ways * (1 + i - start_of), prev_ranges.clone())
-                } else {
-                    (ways * (i - start_of), prev_ranges.clone())
-                };
-                a_ranges.push(r_new);
-                start_of = i;
-            }
-            if ranges.is_empty() {
-                start_of += 1;
-            }
-            prev_ranges = ranges;
-        }
-    }
-
-    let mut s_ranges: Vec<u64> = vec![];
-    for (ways, range_ids) in a_ranges {
-        let mut start_of: u64 = MIN_XMAS;
-        let mut prev_ranges: Vec<usize> = vec![];
-        for i in MIN_XMAS..=MAX_XMAS {
-            let mut ranges: Vec<usize> = vec![];
-            for range_id in &range_ids {
-                let range = &accept_ranges[*range_id];
-                if i >= range.min_xmas[3] && i <= range.max_xmas[3] {
-                    ranges.push(*range_id);
-                }
-            }
-            if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
-            {
-                let r_new = if i == MAX_XMAS {
-                    ways * (1 + i - start_of)
-                } else {
-                    ways * (i - start_of)
-                };
-                s_ranges.push(r_new);
-                start_of = i;
-            }
-            if ranges.is_empty() {
-                start_of += 1;
-            }
-            prev_ranges = ranges;
-        }
-    }
-
-    let mut total = 0;
-    for ways in s_ranges {
-        total += ways;
-    }
-
-    total
+    ranges
 }
