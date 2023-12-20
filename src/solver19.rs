@@ -115,7 +115,7 @@ pub fn solve19(input: &[String]) -> (i128, i128) {
 
     (
         solve_part_1(&workflows, &parts) as i128,
-        solve_part_2(&mut workflows) as i128,
+        solve_part_2(&workflows) as i128,
     )
 }
 
@@ -172,7 +172,7 @@ struct Range<'a> {
     max_xmas: [u64; 4],
 }
 
-fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
+fn solve_part_2(workflows: &HashMap<String, Workflow>) -> u64 {
     let mut ranges: Vec<Range> = vec![];
     let mut accept_ranges: Vec<Range> = vec![];
     let range = Range {
@@ -237,7 +237,7 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
 
     let mut start_of: u64 = MIN_XMAS;
     let mut prev_ranges: Vec<usize> = vec![];
-    let mut x_ranges: Vec<(u64, u64, Vec<usize>)> = vec![];
+    let mut x_ranges: Vec<(u64, Vec<usize>)> = vec![];
 
     for i in MIN_XMAS..=MAX_XMAS {
         let mut ranges: Vec<usize> = vec![];
@@ -248,9 +248,9 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
         }
         if i != 1 && ranges != prev_ranges || i == MAX_XMAS && !prev_ranges.is_empty() {
             let r_new = if i == MAX_XMAS {
-                (start_of, i, prev_ranges.clone())
+                (1 + i - start_of, prev_ranges.clone())
             } else {
-                (start_of, i - 1, prev_ranges.clone())
+                (i - start_of, prev_ranges.clone())
             };
             x_ranges.push(r_new);
             start_of = i;
@@ -261,13 +261,13 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
         prev_ranges = ranges;
     }
 
-    let mut m_ranges: Vec<(u64, u64, u64, u64, Vec<usize>)> = vec![];
-    for (range_min, range_max, m_range_ids) in x_ranges {
+    let mut m_ranges: Vec<(u64, Vec<usize>)> = vec![];
+    for (ways, range_ids) in x_ranges {
         let mut start_of: u64 = MIN_XMAS;
         let mut prev_ranges: Vec<usize> = vec![];
         for i in MIN_XMAS..=MAX_XMAS {
             let mut ranges: Vec<usize> = vec![];
-            for range_id in &m_range_ids {
+            for range_id in &range_ids {
                 let range = &accept_ranges[*range_id];
                 if i >= range.min_xmas[1] && i <= range.max_xmas[1] {
                     ranges.push(*range_id);
@@ -276,9 +276,9 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
             if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
             {
                 let r_new = if i == MAX_XMAS {
-                    (range_min, range_max, start_of, i, prev_ranges.clone())
+                    (ways * (1 + i - start_of), prev_ranges.clone())
                 } else {
-                    (range_min, range_max, start_of, i - 1, prev_ranges.clone())
+                    (ways * (i - start_of), prev_ranges.clone())
                 };
                 m_ranges.push(r_new);
                 start_of = i;
@@ -290,13 +290,13 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
         }
     }
 
-    let mut a_ranges: Vec<(u64, u64, u64, u64, u64, u64, Vec<usize>)> = vec![];
-    for (xmin, xmax, range_min, range_max, m_range_ids) in m_ranges {
+    let mut a_ranges: Vec<(u64, Vec<usize>)> = vec![];
+    for (ways, range_ids) in m_ranges {
         let mut start_of: u64 = MIN_XMAS;
         let mut prev_ranges: Vec<usize> = vec![];
         for i in MIN_XMAS..=MAX_XMAS {
             let mut ranges: Vec<usize> = vec![];
-            for range_id in &m_range_ids {
+            for range_id in &range_ids {
                 let range = &accept_ranges[*range_id];
                 if i >= range.min_xmas[2] && i <= range.max_xmas[2] {
                     ranges.push(*range_id);
@@ -305,25 +305,9 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
             if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
             {
                 let r_new = if i == MAX_XMAS {
-                    (
-                        xmin,
-                        xmax,
-                        range_min,
-                        range_max,
-                        start_of,
-                        i,
-                        prev_ranges.clone(),
-                    )
+                    (ways * (1 + i - start_of), prev_ranges.clone())
                 } else {
-                    (
-                        xmin,
-                        xmax,
-                        range_min,
-                        range_max,
-                        start_of,
-                        i - 1,
-                        prev_ranges.clone(),
-                    )
+                    (ways * (i - start_of), prev_ranges.clone())
                 };
                 a_ranges.push(r_new);
                 start_of = i;
@@ -335,13 +319,13 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
         }
     }
 
-    let mut s_ranges: Vec<(u64, u64, u64, u64, u64, u64, u64, u64)> = vec![];
-    for (xmin, xmax, mmin, mmax, range_min, range_max, m_range_ids) in a_ranges {
+    let mut s_ranges: Vec<u64> = vec![];
+    for (ways, range_ids) in a_ranges {
         let mut start_of: u64 = MIN_XMAS;
         let mut prev_ranges: Vec<usize> = vec![];
         for i in MIN_XMAS..=MAX_XMAS {
             let mut ranges: Vec<usize> = vec![];
-            for range_id in &m_range_ids {
+            for range_id in &range_ids {
                 let range = &accept_ranges[*range_id];
                 if i >= range.min_xmas[3] && i <= range.max_xmas[3] {
                     ranges.push(*range_id);
@@ -350,18 +334,9 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
             if i != MIN_XMAS && (ranges != prev_ranges) || i == MAX_XMAS && !prev_ranges.is_empty()
             {
                 let r_new = if i == MAX_XMAS {
-                    (xmin, xmax, mmin, mmax, range_min, range_max, start_of, i)
+                    ways * (1 + i - start_of)
                 } else {
-                    (
-                        xmin,
-                        xmax,
-                        mmin,
-                        mmax,
-                        range_min,
-                        range_max,
-                        start_of,
-                        i - 1,
-                    )
+                    ways * (i - start_of)
                 };
                 s_ranges.push(r_new);
                 start_of = i;
@@ -374,9 +349,8 @@ fn solve_part_2(workflows: &mut HashMap<String, Workflow>) -> u64 {
     }
 
     let mut total = 0;
-    for (xmin, xmax, mmin, mmax, amin, amax, smin, smax) in s_ranges {
-        let sum = (1 + xmax - xmin) * (1 + mmax - mmin) * (1 + amax - amin) * (1 + smax - smin);
-        total += sum;
+    for ways in s_ranges {
+        total += ways;
     }
 
     total

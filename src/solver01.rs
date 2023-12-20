@@ -21,7 +21,7 @@ fn solve_part_1(input: &[String]) -> i128 {
         numbers.push(first_digit * 10 + last_digit);
     }
     let total: u32 = numbers.iter().sum();
-    total as i128
+    i128::from(total)
 }
 
 fn get_first_digit_from_substring(substring: &str, number_map: &Vec<(&str, u32)>) -> u32 {
@@ -90,7 +90,7 @@ fn solve_part_2(input: &[String]) -> i128 {
         numbers.push(first_digit * 10 + last_digit);
     }
     let total: u32 = numbers.iter().sum();
-    total as i128
+    i128::from(total)
 }
 
 pub fn solve01(input: &[String]) -> (i128, i128) {

@@ -125,17 +125,12 @@ fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) ->
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let day = if args.len() >= 2 {
-        match args[1].parse::<usize>() {
-            Ok(number) => number,
-            Err(_) => {
-                // Parsing failed
-                panic!("Failed to parse the argument as an integer: {}", args[1]);
-            }
-        }
-    } else {
-        0
-    };
+    let day = args[1].parse::<usize>().map_or_else(
+        |_| {
+            panic!("Failed to parse the argument as an integer: {}", args[1]);
+        },
+        |number| number,
+    );
 
     let is_sample_mode = args.len() >= 3;
     let expected_outputs: Vec<String> = BufReader::new(File::open("expected_outputs.txt").unwrap())
