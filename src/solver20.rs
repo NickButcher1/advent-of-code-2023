@@ -28,43 +28,28 @@ const BROADCASTER: &str = "broadcaster";
 const PUSH_BUTTON: &str = "pushbutton";
 const OUTPUT: &str = "output";
 
-pub fn solve20(input: &[String]) -> (i128, i128) {
+fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
     let mut modules: HashMap<&str, Module> = HashMap::new();
 
-    // TODO: I really need to learn Rust regex.
-    for line_num in 0..input.len() {
-        let line = &input[line_num];
-        let line_1: Vec<&str> = line.split(' ').collect();
-        let targets_untrimmed = &line_1[2..];
+    for line in input {
+        let (module_type_and_name, targets_str) = line.split_once(" -> ").unwrap();
 
-        let mut targets: Vec<&str> = vec![];
-        for t in targets_untrimmed {
-            let t2 = t.strip_suffix(',');
-            if let Some(t3) = t2 {
-                targets.push(t3);
-            } else {
-                targets.push(t);
-            }
-        }
-        let (module_type, module_name) = if line_1[0] == BROADCASTER {
-            (ModuleType::Broadcast, BROADCASTER)
-        } else {
-            let type_and_name: Vec<char> = line_1[0].chars().collect();
-            let module_name = &input[line_num][1..type_and_name.len()];
-            if type_and_name[0] == '%' {
-                (ModuleType::FlipFlop, module_name)
-            } else {
-                (ModuleType::Conjunction, module_name)
-            }
+        let (module_type, module_name) = match &module_type_and_name[..1] {
+            "b" => (ModuleType::Broadcast, BROADCASTER),
+            "%" => (ModuleType::FlipFlop, &module_type_and_name[1..]),
+            "&" => (ModuleType::Conjunction, &module_type_and_name[1..]),
+            _ => unreachable!(),
         };
 
-        let module = Module {
-            module_type,
-            targets,
-            last_incoming: HashMap::new(),
-            state: false,
-        };
-        modules.insert(module_name, module);
+        modules.insert(
+            module_name,
+            Module {
+                module_type,
+                targets: targets_str.split(", ").collect(),
+                last_incoming: HashMap::new(),
+                state: false,
+            },
+        );
         // Only required for one of the the samples.
         modules.insert(
             OUTPUT,
@@ -100,6 +85,11 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
             to_module.last_incoming.insert(from_module_name, false);
         }
     }
+
+    modules
+}
+pub fn solve20(input: &[String]) -> (i128, i128) {
+    let mut modules = read_modules_from_input(input);
 
     // For part 1.
     let mut part_1: u64 = 0;
