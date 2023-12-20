@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "aoc", version = "0.1.0" }
+clap = { version = "4.4.11", features = ["derive"] }
 num-integer = "0.1.45"
 regex = "1.10.2"
 string-builder = "0.2.0"

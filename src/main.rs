@@ -1,3 +1,4 @@
+use clap::Parser;
 extern crate aoc;
 
 mod solver01;
@@ -51,10 +52,22 @@ use crate::solver22::solve22;
 use crate::solver23::solve23;
 use crate::solver24::solve24;
 use crate::solver25::solve25;
-use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::time::Instant;
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(short, long, default_value_t = (&"2023").to_string())]
+    year: String,
+
+    #[arg(short, long, default_value_t = 0)]
+    day: usize,
+
+    #[arg(short, long, default_value_t = false)]
+    sample: bool,
+}
 
 type SolverFunction = fn(&[String]) -> (i128, i128);
 
@@ -123,27 +136,20 @@ fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) ->
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
 
-    let day = args[1].parse::<usize>().map_or_else(
-        |_| {
-            panic!("Failed to parse the argument as an integer: {}", args[1]);
-        },
-        |number| number,
-    );
+    let expected_outputs: Vec<String> =
+        BufReader::new(File::open(format!("output/{}/expected_outputs.txt", args.year)).unwrap())
+            .lines()
+            .collect::<Result<_, _>>()
+            .unwrap();
 
-    let is_sample_mode = args.len() >= 3;
-    let expected_outputs: Vec<String> = BufReader::new(File::open("expected_outputs.txt").unwrap())
-        .lines()
-        .collect::<Result<_, _>>()
-        .unwrap();
-
-    if day != 0 {
-        run_one_day(day, is_sample_mode, &expected_outputs);
+    if args.day != 0 {
+        run_one_day(args.day, args.sample, &expected_outputs);
     } else {
         let mut total_ms: u128 = 0;
         for day in 1..=25 {
-            total_ms += run_one_day(day, is_sample_mode, &expected_outputs);
+            total_ms += run_one_day(day, args.sample, &expected_outputs);
         }
         println!("TOTAL                                         {total_ms:.2}ms");
     }

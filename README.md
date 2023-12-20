@@ -1,7 +1,7 @@
-Advent of Code 2023 in Rust.
+Advent of Code in Rust.
 
-- `cargo run -- <day>` to run a single day.
-- `cargo run -- 0` to run all days.
-- Add any extra parameter to run in sample mode. 
+- `cargo run -- --year 2023 --day 25` to run a single day.
+- `cargo run -- --year 2023 --day 25 -- sample` to run use the sample input.
+- `cargo run -- --year 2023` to run all days.
 
 There is one solver per day, in `solver<day>.rs`.
