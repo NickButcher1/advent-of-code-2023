@@ -62,6 +62,18 @@ impl Board {
         self
     }
 
+    pub fn find_and_replace(&mut self, find_char: char, replace_char: char) -> (usize, usize) {
+        for r in 0..self.num_rows {
+            for c in 0..self.num_cols {
+                if self.cells[r][c] == find_char {
+                    self.cells[r][c] = replace_char;
+                    return (r, c);
+                }
+            }
+        }
+        unreachable!();
+    }
+
     #[allow(dead_code)]
     pub fn print(&self) {
         for row in &self.cells {
