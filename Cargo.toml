@@ -1,4 +1,4 @@
-workspace = { members = ["aoc"] }
+workspace = { members = ["aoc", "year2021", "year2023"] }
 [package]
 name = "advent-of-code-2023"
 version = "0.1.0"
@@ -8,6 +8,8 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "aoc", version = "0.1.0" }
+year2021 = { path = "year2021", version = "0.1.0" }
+year2023 = { path = "year2023", version = "0.1.0" }
 clap = { version = "4.4.11", features = ["derive"] }
 num-integer = "0.1.45"
 regex = "1.10.2"

@@ -1,60 +1,12 @@
 use clap::Parser;
+use std::collections::HashMap;
 extern crate aoc;
+extern crate year2023;
 
-mod solver01;
-mod solver02;
-mod solver03;
-mod solver04;
-mod solver05;
-mod solver06;
-mod solver07;
-mod solver08;
-mod solver09;
-mod solver10;
-mod solver11;
-mod solver12;
-mod solver13;
-mod solver14;
-mod solver15;
-mod solver16;
-mod solver17;
-mod solver18;
-mod solver19;
-mod solver20;
-mod solver21;
-mod solver22;
-mod solver23;
-mod solver24;
-mod solver25;
-
-use crate::solver01::solve01;
-use crate::solver02::solve02;
-use crate::solver03::solve03;
-use crate::solver04::solve04;
-use crate::solver05::solve05;
-use crate::solver06::solve06;
-use crate::solver07::solve07;
-use crate::solver08::solve08;
-use crate::solver09::solve09;
-use crate::solver10::solve10;
-use crate::solver11::solve11;
-use crate::solver12::solve12;
-use crate::solver13::solve13;
-use crate::solver14::solve14;
-use crate::solver15::solve15;
-use crate::solver16::solve16;
-use crate::solver17::solve17;
-use crate::solver18::solve18;
-use crate::solver19::solve19;
-use crate::solver20::solve20;
-use crate::solver21::solve21;
-use crate::solver22::solve22;
-use crate::solver23::solve23;
-use crate::solver24::solve24;
-use crate::solver25::solve25;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::time::Instant;
+use year2023::SolverFunction;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -68,14 +20,6 @@ struct Args {
     #[arg(short, long, default_value_t = false)]
     sample: bool,
 }
-
-type SolverFunction = fn(&[String]) -> (i128, i128);
-
-const SOLVER_FUNCTIONS: [SolverFunction; 25] = [
-    solve01, solve02, solve03, solve04, solve05, solve06, solve07, solve08, solve09, solve10,
-    solve11, solve12, solve13, solve14, solve15, solve16, solve17, solve18, solve19, solve20,
-    solve21, solve22, solve23, solve24, solve25,
-];
 
 fn read_input_file(filename: &str) -> Vec<String> {
     let file = match File::open(filename) {
@@ -98,19 +42,24 @@ fn read_input_file(filename: &str) -> Vec<String> {
         .collect()
 }
 
-fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) -> u128 {
+fn run_one_day(
+    solver_fn: &SolverFunction,
+    year: &str,
+    day: usize,
+    is_sample_mode: bool,
+    expected_outputs: &[String],
+) -> u128 {
     let time = Instant::now();
 
     let filename = format!(
-        "input/2023/input{:02}{}",
-        day,
+        "input/{year}/input{day:02}{}",
         if is_sample_mode { "-sample" } else { "" }
     );
     let input_file = read_input_file(&filename);
     let (result1, result2) = if input_file.is_empty() {
         (-1, -1)
     } else {
-        SOLVER_FUNCTIONS[day - 1](&input_file)
+        solver_fn(&input_file)
     };
 
     let elapsed_ms = time.elapsed().as_nanos() / 1_000_000;
@@ -136,6 +85,11 @@ fn run_one_day(day: usize, is_sample_mode: bool, expected_outputs: &[String]) ->
 }
 
 fn main() {
+    let solver_fns: HashMap<String, &[SolverFunction; 25]> = HashMap::from([
+        ("2023".to_string(), &year2023::SOLVER_FUNCTIONS),
+        ("2021".to_string(), &year2021::SOLVER_FUNCTIONS),
+    ]);
+
     let args = Args::parse();
 
     let expected_outputs: Vec<String> =
@@ -145,11 +99,23 @@ fn main() {
             .unwrap();
 
     if args.day != 0 {
-        run_one_day(args.day, args.sample, &expected_outputs);
+        run_one_day(
+            &solver_fns.get(&args.year).unwrap()[args.day - 1],
+            &args.year,
+            args.day,
+            args.sample,
+            &expected_outputs,
+        );
     } else {
         let mut total_ms: u128 = 0;
         for day in 1..=25 {
-            total_ms += run_one_day(day, args.sample, &expected_outputs);
+            total_ms += run_one_day(
+                &solver_fns.get(&args.year).unwrap()[day - 1],
+                &args.year,
+                day,
+                args.sample,
+                &expected_outputs,
+            );
         }
         println!("TOTAL                                         {total_ms:.2}ms");
     }
