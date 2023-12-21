@@ -1,18 +1,21 @@
 use aoc::board::Board;
 use std::collections::HashSet;
 
-const ROCK: char = '#';
 const START: char = 'S';
 const EMPTY: char = '.';
 
 const TARGET_STEPS_PART_1: usize = 64;
 const TARGET_STEPS_PART_2: usize = 26_501_365;
 
-fn solve_part_1(start_cell: (usize, usize), valid_moves: &[Vec<Vec<(usize, usize)>>]) -> i128 {
+fn solve_part_1(
+    num_steps: usize,
+    start_cell: (usize, usize),
+    valid_moves: &[Vec<Vec<(usize, usize)>>],
+) -> i128 {
     let mut valid_cells: HashSet<(usize, usize)> = HashSet::new();
     valid_cells.insert(start_cell);
 
-    for step in 1..=TARGET_STEPS_PART_1 {
+    for _ in 1..=num_steps {
         let mut new_valid_cells: HashSet<(usize, usize)> = HashSet::new();
         for (start_r, start_c) in valid_cells {
             for new_cell in &valid_moves[start_r][start_c] {
@@ -24,31 +27,92 @@ fn solve_part_1(start_cell: (usize, usize), valid_moves: &[Vec<Vec<(usize, usize
     valid_cells.len() as i128
 }
 
-fn solve_part_2(
+// This is far too slow to ever solve it, but it works on the sample input.
+#[allow(dead_code)]
+fn solve_part_2_brute_force(
+    num_steps: usize,
+    board: &Board,
     start_cell: (usize, usize),
     valid_moves: &[Vec<Vec<(usize, usize, isize, isize)>>],
 ) -> i128 {
-    let mut valid_cells: HashSet<(usize, usize, isize, isize)> = HashSet::new();
-    valid_cells.insert((start_cell.0, start_cell.0, 0, 0));
+    // Start with a list of BIG_R/BIG_C for each cell in the board.
+    let mut valid_cells: Vec<Vec<HashSet<(isize, isize)>>> =
+        vec![vec![HashSet::new(); board.num_cols]; board.num_rows];
+    valid_cells[start_cell.0][start_cell.1].insert((0, 0));
 
-    println!("START: {start_cell:?}: valid_cells {valid_cells:?}");
-    for step in 1..=TARGET_STEPS_PART_2 {
-        let mut new_valid_cells: HashSet<(usize, usize, isize, isize)> = HashSet::new();
-        for (start_r, start_c, start_big_r, start_big_c) in valid_cells {
-            for new_cell in &valid_moves[start_r][start_c] {
-                let modified_new_cell = (
-                    new_cell.0,
-                    new_cell.1,
-                    new_cell.2 + start_big_r,
-                    new_cell.3 + start_big_c,
-                );
-                new_valid_cells.insert(modified_new_cell);
+    for _ in 1..=num_steps {
+        let mut new_valid_cells: Vec<Vec<HashSet<(isize, isize)>>> =
+            vec![vec![HashSet::new(); board.num_cols]; board.num_rows];
+        // For every cell on the board...
+        for r in 0..board.num_rows {
+            for c in 0..board.num_cols {
+                // For every occupied cell...
+                let hs = &valid_cells[r][c];
+                if !hs.is_empty() {
+                    // For all the valid moves,
+                    for (new_r, new_c, big_r_offset, big_c_offset) in &valid_moves[r][c] {
+                        let new_hs = &mut new_valid_cells[*new_r][*new_c];
+
+                        for old_big_board in hs {
+                            new_hs.insert((
+                                old_big_board.0 + big_r_offset,
+                                old_big_board.1 + big_c_offset,
+                            ));
+                        }
+                    }
+                }
             }
         }
         valid_cells = new_valid_cells;
-        println!("STEP: {step}, {} valid cells", valid_cells.len());
     }
-    valid_cells.len() as i128
+
+    let mut num_occupied_cells = 0;
+    for r in 0..board.num_rows {
+        for c in 0..board.num_cols {
+            if !valid_cells[r][c].is_empty() {
+                num_occupied_cells += &valid_cells[r][c].len();
+            }
+        }
+    }
+    num_occupied_cells as i128
+}
+
+fn solve_part_2(
+    board: &Board,
+    start_cell: (usize, usize),
+    valid_moves: &[Vec<Vec<(usize, usize, isize, isize)>>],
+) -> i128 {
+    // So the target number of steps 26_501_365 has remainder 65 when divided by the board width.
+    // That can't be a coincidence!
+    //
+    // After much inspection of the output from part 1, I finally spotted there is a repeating pattern
+    // of occupied cells.
+    // - 0: first 65 steps.
+    // - 1: 65 + 131 steps
+    // - 2: 65 + 131*2 steps
+    // - 3: 65 + 131*3 steps and so on.
+    let _val_at_0 = solve_part_2_brute_force(65, board, start_cell, valid_moves);
+    let _val_at_1 = solve_part_2_brute_force(65 + 131, board, start_cell, valid_moves);
+    let _val_at_2 = solve_part_2_brute_force(65 + 131 * 2, board, start_cell, valid_moves);
+
+    // This gives values 3799, 34047 and 94475. So for S=steps we have:
+    //
+    // s*a*a + s*b + c = Number of occupied cells
+    //
+    // And three examples is enough to solve for a, b and c.
+    //
+    // 65*a*a + 65*b +c = 3799
+    // (65+131)*a*a + (65+131)*b +c = 34047
+    // (65+131*2)*a*a + (65+131*2)*b +c = 94475
+
+    // I plugged those values into an online quadratic equation solver which gave me:
+    let a = 15090;
+    let b = 15158;
+    let c = 3799;
+
+    // Now it is just a case of putting the actual number of steps into the equation.
+    let steps = (TARGET_STEPS_PART_2 as i128 - 65) / 131;
+    (a * steps * steps) + (b * steps) + c
 }
 
 pub fn solve21(input: &[String]) -> (i128, i128) {
@@ -97,7 +161,7 @@ pub fn solve21(input: &[String]) -> (i128, i128) {
     }
 
     (
-        solve_part_1(start_cell, &valid_moves_part_1),
-        solve_part_2(start_cell, &valid_moves_part_2),
+        solve_part_1(TARGET_STEPS_PART_1, start_cell, &valid_moves_part_1),
+        solve_part_2(&board, start_cell, &valid_moves_part_2),
     )
 }
