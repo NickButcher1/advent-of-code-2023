@@ -66,7 +66,7 @@ fn read_bricks_from_input(input: &[String]) -> (Vec<Brick>, Vec<Vec<Vec<usize>>>
             for y in b.from.y..=b.to.y {
                 cells.push(Cell {
                     x: b.from.x,
-                    y: y,
+                    y,
                     z: b.from.z,
                 });
             }
