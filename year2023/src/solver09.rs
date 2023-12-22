@@ -23,13 +23,13 @@ pub fn solve09(input: &[String]) -> (i128, i128) {
     (
         input
             .iter()
-            .map(|line| score_line(string_to_vec_i64(line)))
+            .map(|line| score_line(string_to_vec_i64(line, ' ')))
             .sum(),
         input
             .iter()
             .map(|line| {
                 score_line(
-                    string_to_vec_i64(line)
+                    string_to_vec_i64(line, ' ')
                         .into_iter()
                         .rev()
                         .collect::<Vec<i64>>(),
