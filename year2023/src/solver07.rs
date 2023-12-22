@@ -49,7 +49,7 @@ fn score_for_tiebreak(hand: &str, is_part_1: bool) -> u64 {
 
 fn collect_and_sort(counter: &HashMap<char, u64>) -> Vec<u64> {
     let mut sorted_c: Vec<u64> = counter.values().cloned().collect();
-    sorted_c.sort();
+    sorted_c.sort_unstable();
     sorted_c
 }
 
@@ -108,5 +108,5 @@ pub fn solve07(input: &[String]) -> (i128, i128) {
     scored_hands.sort_by_key(|k| k.2);
     let winnings_2 = count_winnings(&scored_hands);
 
-    (winnings_1 as i128, winnings_2 as i128)
+    (i128::from(winnings_1), i128::from(winnings_2))
 }

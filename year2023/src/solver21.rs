@@ -7,16 +7,15 @@ const EMPTY: char = '.';
 const TARGET_STEPS_PART_1: usize = 64;
 const TARGET_STEPS_PART_2: usize = 26_501_365;
 
-fn solve_part_1(
-    num_steps: usize,
-    start_cell: (usize, usize),
-    valid_moves: &[Vec<Vec<(usize, usize)>>],
-) -> i128 {
-    let mut valid_cells: HashSet<(usize, usize)> = HashSet::new();
+type Cell = (usize, usize);
+type Offset = (isize, isize);
+
+fn solve_part_1(num_steps: usize, start_cell: Cell, valid_moves: &[Vec<Vec<Cell>>]) -> i128 {
+    let mut valid_cells: HashSet<Cell> = HashSet::new();
     valid_cells.insert(start_cell);
 
     for _ in 1..=num_steps {
-        let mut new_valid_cells: HashSet<(usize, usize)> = HashSet::new();
+        let mut new_valid_cells: HashSet<Cell> = HashSet::new();
         for (start_r, start_c) in valid_cells {
             for new_cell in &valid_moves[start_r][start_c] {
                 new_valid_cells.insert(*new_cell);
@@ -32,16 +31,16 @@ fn solve_part_1(
 fn solve_part_2_brute_force(
     num_steps: usize,
     board: &Board,
-    start_cell: (usize, usize),
-    valid_moves: &[Vec<Vec<(usize, usize, isize, isize)>>],
+    start_cell: Cell,
+    valid_moves: &[Vec<Vec<(Cell, Offset)>>],
 ) -> i128 {
     // Start with a list of BIG_R/BIG_C for each cell in the board.
-    let mut valid_cells: Vec<Vec<HashSet<(isize, isize)>>> =
+    let mut valid_cells: Vec<Vec<HashSet<Offset>>> =
         vec![vec![HashSet::new(); board.num_cols]; board.num_rows];
     valid_cells[start_cell.0][start_cell.1].insert((0, 0));
 
     for _ in 1..=num_steps {
-        let mut new_valid_cells: Vec<Vec<HashSet<(isize, isize)>>> =
+        let mut new_valid_cells: Vec<Vec<HashSet<Offset>>> =
             vec![vec![HashSet::new(); board.num_cols]; board.num_rows];
         // For every cell on the board...
         for r in 0..board.num_rows {
@@ -50,7 +49,7 @@ fn solve_part_2_brute_force(
                 let hs = &valid_cells[r][c];
                 if !hs.is_empty() {
                     // For all the valid moves,
-                    for (new_r, new_c, big_r_offset, big_c_offset) in &valid_moves[r][c] {
+                    for ((new_r, new_c), (big_r_offset, big_c_offset)) in &valid_moves[r][c] {
                         let new_hs = &mut new_valid_cells[*new_r][*new_c];
 
                         for old_big_board in hs {
@@ -66,22 +65,19 @@ fn solve_part_2_brute_force(
         valid_cells = new_valid_cells;
     }
 
-    let mut num_occupied_cells = 0;
-    for r in 0..board.num_rows {
-        for c in 0..board.num_cols {
-            if !valid_cells[r][c].is_empty() {
-                num_occupied_cells += &valid_cells[r][c].len();
+    valid_cells
+        .iter()
+        .take(board.num_rows)
+        .fold(0, |num_occupied_cells, valid_cell| {
+            if valid_cell.is_empty() {
+                num_occupied_cells
+            } else {
+                num_occupied_cells + valid_cell.len()
             }
-        }
-    }
-    num_occupied_cells as i128
+        }) as i128
 }
 
-fn solve_part_2(
-    board: &Board,
-    start_cell: (usize, usize),
-    valid_moves: &[Vec<Vec<(usize, usize, isize, isize)>>],
-) -> i128 {
+fn solve_part_2(board: &Board, start_cell: Cell, valid_moves: &[Vec<Vec<(Cell, Offset)>>]) -> i128 {
     // So the target number of steps 26_501_365 has remainder 65 when divided by the board width.
     // That can't be a coincidence!
     //
@@ -119,43 +115,43 @@ pub fn solve21(input: &[String]) -> (i128, i128) {
     let mut board: Board = Board::from_input(input);
     let start_cell = board.find_and_replace(START, EMPTY);
 
-    let mut valid_moves_part_1: Vec<Vec<Vec<(usize, usize)>>> =
+    let mut valid_moves_part_1: Vec<Vec<Vec<Cell>>> =
         vec![vec![vec![]; board.num_cols]; board.num_rows];
     // Also track the board offset.
-    let mut valid_moves_part_2: Vec<Vec<Vec<(usize, usize, isize, isize)>>> =
+    let mut valid_moves_part_2: Vec<Vec<Vec<(Cell, Offset)>>> =
         vec![vec![vec![]; board.num_cols]; board.num_rows];
 
     for r in 0..board.num_rows {
         for c in 0..board.num_cols {
             if r != 0 && board.cells[r - 1][c] == EMPTY {
                 valid_moves_part_1[r][c].push((r - 1, c));
-                valid_moves_part_2[r][c].push((r - 1, c, 0, 0));
+                valid_moves_part_2[r][c].push(((r - 1, c), (0, 0)));
             }
             if r != board.num_rows - 1 && board.cells[r + 1][c] == EMPTY {
                 valid_moves_part_1[r][c].push((r + 1, c));
-                valid_moves_part_2[r][c].push((r + 1, c, 0, 0));
+                valid_moves_part_2[r][c].push(((r + 1, c), (0, 0)));
             }
             if c != 0 && board.cells[r][c - 1] == EMPTY {
                 valid_moves_part_1[r][c].push((r, c - 1));
-                valid_moves_part_2[r][c].push((r, c - 1, 0, 0));
+                valid_moves_part_2[r][c].push(((r, c - 1), (0, 0)));
             }
             if c != board.num_cols - 1 && board.cells[r][c + 1] == EMPTY {
                 valid_moves_part_1[r][c].push((r, c + 1));
-                valid_moves_part_2[r][c].push((r, c + 1, 0, 0));
+                valid_moves_part_2[r][c].push(((r, c + 1), (0, 0)));
             }
 
             // These also have a change of board "big R".
             if r == 0 && board.cells[board.num_rows - 1][c] == EMPTY {
-                valid_moves_part_2[r][c].push((board.num_rows - 1, c, -1, 0));
+                valid_moves_part_2[r][c].push(((board.num_rows - 1, c), (-1, 0)));
             }
             if r == board.num_rows - 1 && board.cells[0][c] == EMPTY {
-                valid_moves_part_2[r][c].push((0, c, 1, 0));
+                valid_moves_part_2[r][c].push(((0, c), (1, 0)));
             }
             if c == 0 && board.cells[r][board.num_cols - 1] == EMPTY {
-                valid_moves_part_2[r][c].push((r, board.num_cols - 1, 0, -1));
+                valid_moves_part_2[r][c].push(((r, board.num_cols - 1), (0, -1)));
             }
             if c == board.num_cols - 1 && board.cells[r][0] == EMPTY {
-                valid_moves_part_2[r][c].push((r, 0, 0, 1));
+                valid_moves_part_2[r][c].push(((r, 0), (0, 1)));
             }
         }
     }

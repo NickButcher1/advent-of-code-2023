@@ -10,7 +10,7 @@ struct Beam {
 }
 
 impl Beam {
-    fn from(r: i32, c: i32, dir: Dir) -> Self {
+    const fn from(r: i32, c: i32, dir: Dir) -> Self {
         Self { r, c, dir }
     }
 
@@ -23,7 +23,7 @@ impl Beam {
         }
     }
 
-    fn is_inside_board(&self, board: &Board) -> bool {
+    const fn is_inside_board(&self, board: &Board) -> bool {
         self.r >= 0
             && self.r < board.num_rows as i32
             && self.c >= 0
@@ -35,7 +35,7 @@ impl Beam {
     }
 }
 
-fn beam_for_part_1() -> Beam {
+const fn beam_for_part_1() -> Beam {
     Beam {
         r: 0,
         c: -1,

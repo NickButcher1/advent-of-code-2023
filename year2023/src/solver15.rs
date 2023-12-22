@@ -6,10 +6,10 @@ fn solve_part_1(input: Vec<&str>) -> usize {
     output
 }
 
-fn solve_part_2(input: Vec<&str>) -> usize {
+fn solve_part_2(input: &[&str]) -> usize {
     let mut boxes: Vec<Vec<(&str, usize)>> = vec![vec![]; 256];
 
-    for s in &input {
+    for s in input {
         let chars: Vec<char> = s.chars().collect();
         let (focal_length, label) = if chars[chars.len() - 1] == '-' {
             (1000, &s[0..s.len() - 1])
@@ -30,9 +30,9 @@ fn solve_part_2(input: Vec<&str>) -> usize {
             // present, add the lens at the back of the list.
             let mut replaced = false;
 
-            for i in 0..current_box.len() {
-                if current_box[i].0 == label {
-                    current_box[i] = (label, focal_length);
+            for this_box in current_box.iter_mut() {
+                if this_box.0 == label {
+                    *this_box = (label, focal_length);
                     replaced = true;
                 }
             }
@@ -72,6 +72,6 @@ pub fn solve15(input: &[String]) -> (i128, i128) {
 
     (
         solve_part_1(split_1.clone()) as i128,
-        solve_part_2(split_1) as i128,
+        solve_part_2(&split_1) as i128,
     )
 }

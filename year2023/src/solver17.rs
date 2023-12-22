@@ -38,7 +38,7 @@ pub fn solve(board: &Board, min_blocks_in_a_row: usize, max_blocks_in_a_row: usi
         0,
     );
 
-    let mut best_solution = 999999999;
+    let mut best_solution = usize::MAX;
     let mut loops_with_no_better_solution = 0;
     loop {
         for r in 0..board.num_rows {

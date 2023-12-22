@@ -126,14 +126,14 @@ fn read_parts_from_input(input: &[String]) -> Vec<Part> {
 }
 
 pub fn solve19(input: &[String]) -> (i128, i128) {
-    let blank_line_index = input.iter().position(|s| s.is_empty()).unwrap();
+    let blank_line_index = input.iter().position(String::is_empty).unwrap();
 
     let workflows = read_workflows_from_input(&input[0..blank_line_index]);
     let parts = read_parts_from_input(&input[blank_line_index + 1..]);
 
     (
-        solve_part_1(&workflows, &parts) as i128,
-        solve_part_2(&workflows) as i128,
+        i128::from(solve_part_1(&workflows, &parts)),
+        i128::from(solve_part_2(&workflows)),
     )
 }
 

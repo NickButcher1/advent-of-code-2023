@@ -1,6 +1,6 @@
 type SolverFunction = fn(&[String]) -> (i128, i128);
 
-pub fn solve_blank(_input: &[String]) -> (i128, i128) {
+pub const fn solve_blank(_input: &[String]) -> (i128, i128) {
     (0, 0)
 }
 

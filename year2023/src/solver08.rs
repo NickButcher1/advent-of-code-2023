@@ -28,9 +28,9 @@ fn is_a_terminating_location_2(location: &str) -> bool {
 }
 
 fn solve<'a>(
-    directions: Vec<char>,
-    from_x_to_left: HashMap<&str, &'a str>,
-    from_x_to_right: HashMap<&str, &'a str>,
+    directions: &[char],
+    from_x_to_left: &HashMap<&str, &'a str>,
+    from_x_to_right: &HashMap<&str, &'a str>,
     mut locations: Vec<&'a str>,
     is_a_terminating_location: fn(&str) -> bool,
 ) -> i128 {
@@ -40,7 +40,7 @@ fn solve<'a>(
     let mut first_z_found_count = 0;
 
     loop {
-        for direction in &directions {
+        for direction in directions {
             steps += 1;
 
             for i in 0..num_paths {
@@ -60,7 +60,7 @@ fn solve<'a>(
 
             if first_z_found_count == num_paths {
                 let mut answer = first_z_for_path[0];
-                for first_z in first_z_for_path.iter() {
+                for first_z in &first_z_for_path {
                     answer = lcm(answer, *first_z);
                 }
                 return answer as i128;
@@ -88,16 +88,16 @@ pub fn solve08(input: &[String]) -> (i128, i128) {
 
     (
         solve(
-            directions.clone(),
-            from_x_to_left.clone(),
-            from_x_to_right.clone(),
+            &directions.clone(),
+            &from_x_to_left.clone(),
+            &from_x_to_right.clone(),
             vec!["AAA"],
             is_a_terminating_location_1,
         ),
         solve(
-            directions,
-            from_x_to_left,
-            from_x_to_right,
+            &directions,
+            &from_x_to_left,
+            &from_x_to_right,
             locations_part_2,
             is_a_terminating_location_2,
         ),

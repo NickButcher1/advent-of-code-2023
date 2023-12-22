@@ -49,7 +49,7 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
         found = is_valid_location(&seeds, part_2_location, &maps);
     }
 
-    (min_location as i128, part_2_location as i128)
+    (i128::from(min_location), i128::from(part_2_location))
 }
 
 fn map_a_to_b(value: u64, map: &Map) -> u64 {

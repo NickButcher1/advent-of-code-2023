@@ -97,5 +97,5 @@ pub fn solve03(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (total_part_1 as i128, total_part_2 as i128)
+    (i128::from(total_part_1), i128::from(total_part_2))
 }

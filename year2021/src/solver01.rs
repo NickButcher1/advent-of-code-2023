@@ -1,4 +1,4 @@
-fn solve_for(depths: &Vec<u64>) -> i128 {
+fn solve_for(depths: &[u64]) -> i128 {
     depths
         .iter()
         .zip(depths.iter().skip(1))

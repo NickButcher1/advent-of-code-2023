@@ -2,7 +2,7 @@ use num_integer::lcm;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
-enum ModuleType {
+enum ModuleKind {
     Broadcast,
     FlipFlop,
     Conjunction,
@@ -11,7 +11,7 @@ enum ModuleType {
 }
 #[derive(Debug)]
 struct Module<'a> {
-    module_type: ModuleType,
+    kind: ModuleKind,
     targets: Vec<&'a str>,
     last_incoming: HashMap<&'a str, bool>,
     state: bool,
@@ -32,19 +32,19 @@ fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
     let mut modules: HashMap<&str, Module> = HashMap::new();
 
     for line in input {
-        let (module_type_and_name, targets_str) = line.split_once(" -> ").unwrap();
+        let (kind_and_name, targets_str) = line.split_once(" -> ").unwrap();
 
-        let (module_type, module_name) = match &module_type_and_name[..1] {
-            "b" => (ModuleType::Broadcast, BROADCASTER),
-            "%" => (ModuleType::FlipFlop, &module_type_and_name[1..]),
-            "&" => (ModuleType::Conjunction, &module_type_and_name[1..]),
+        let (kind, module_name) = match &kind_and_name[..1] {
+            "b" => (ModuleKind::Broadcast, BROADCASTER),
+            "%" => (ModuleKind::FlipFlop, &kind_and_name[1..]),
+            "&" => (ModuleKind::Conjunction, &kind_and_name[1..]),
             _ => unreachable!(),
         };
 
         modules.insert(
             module_name,
             Module {
-                module_type,
+                kind,
                 targets: targets_str.split(", ").collect(),
                 last_incoming: HashMap::new(),
                 state: false,
@@ -54,7 +54,7 @@ fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
         modules.insert(
             OUTPUT,
             Module {
-                module_type: ModuleType::Output,
+                kind: ModuleKind::Output,
                 targets: vec![],
                 last_incoming: HashMap::new(),
                 state: false,
@@ -64,7 +64,7 @@ fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
         modules.insert(
             "rx",
             Module {
-                module_type: ModuleType::Rx,
+                kind: ModuleKind::Rx,
                 targets: vec![],
                 last_incoming: HashMap::new(),
                 state: false,
@@ -81,7 +81,7 @@ fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
 
     for (from_module_name, to_module_name) in incoming_mapping {
         let to_module = modules.get_mut(to_module_name).unwrap();
-        if to_module.module_type == ModuleType::Conjunction {
+        if to_module.kind == ModuleKind::Conjunction {
             to_module.last_incoming.insert(from_module_name, false);
         }
     }
@@ -121,8 +121,8 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
             }
             let module = modules.get_mut(&pulse.target).unwrap();
 
-            match module.module_type {
-                ModuleType::Broadcast => {
+            match module.kind {
+                ModuleKind::Broadcast => {
                     for target in &module.targets {
                         pulse_queue.push(Pulse {
                             from: pulse.target,
@@ -131,7 +131,7 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
                         });
                     }
                 }
-                ModuleType::FlipFlop => {
+                ModuleKind::FlipFlop => {
                     if !pulse.state {
                         module.state = !module.state;
 
@@ -144,7 +144,7 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
                         }
                     }
                 }
-                ModuleType::Conjunction => {
+                ModuleKind::Conjunction => {
                     // Super hacky - this relied on inspection of the input, noticing there was an
                     // "rx" terminating output, and then noticing that it was fed from a conjunction
                     // of four other inputs. I guessed that all four would be on a cycle and it was
@@ -199,7 +199,7 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
                         });
                     }
                 }
-                ModuleType::Output | ModuleType::Rx => {}
+                ModuleKind::Output | ModuleKind::Rx => {}
             }
         }
         if loop_id == 1000 {

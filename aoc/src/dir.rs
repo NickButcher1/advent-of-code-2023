@@ -10,20 +10,20 @@ pub enum Dir {
 impl Dir {
     pub fn from_letter_str(input: &str) -> Self {
         match input {
-            "R" => Dir::Right,
-            "D" => Dir::Down,
-            "L" => Dir::Left,
-            "U" => Dir::Up,
+            "R" => Self::Right,
+            "D" => Self::Down,
+            "L" => Self::Left,
+            "U" => Self::Up,
             _ => unreachable!(),
         }
     }
 
     pub fn from_int_str(input: &str) -> Self {
         match input {
-            "0" => Dir::Right,
-            "1" => Dir::Down,
-            "2" => Dir::Left,
-            "3" => Dir::Up,
+            "0" => Self::Right,
+            "1" => Self::Down,
+            "2" => Self::Left,
+            "3" => Self::Up,
             _ => unreachable!(),
         }
     }
@@ -38,28 +38,28 @@ impl Dir {
 
     pub fn reverse(&self) -> Self {
         match *self {
-            Dir::Right => Dir::Left,
-            Dir::Down => Dir::Up,
-            Dir::Left => Dir::Right,
-            Dir::Up => Dir::Down,
+            Self::Right => Self::Left,
+            Self::Down => Self::Up,
+            Self::Left => Self::Right,
+            Self::Up => Self::Down,
         }
     }
 
     pub fn reflect_forward_slash(&self) -> Self {
         match *self {
-            Dir::Up => Dir::Right,
-            Dir::Right => Dir::Up,
-            Dir::Down => Dir::Left,
-            Dir::Left => Dir::Down,
+            Self::Up => Self::Right,
+            Self::Right => Self::Up,
+            Self::Down => Self::Left,
+            Self::Left => Self::Down,
         }
     }
 
     pub fn reflect_back_slash(&self) -> Self {
         match *self {
-            Dir::Up => Dir::Left,
-            Dir::Right => Dir::Down,
-            Dir::Down => Dir::Right,
-            Dir::Left => Dir::Up,
+            Self::Up => Self::Left,
+            Self::Right => Self::Down,
+            Self::Down => Self::Right,
+            Self::Left => Self::Up,
         }
     }
 }

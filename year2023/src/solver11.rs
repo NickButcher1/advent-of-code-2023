@@ -20,8 +20,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
     let mut num_galaxies = 0;
     let mut board_a: Board = vec![];
 
-    for r in 0..input.len() {
-        let row = &input[r];
+    for (r, row) in input.iter().enumerate() {
         let mut is_empty_row = true;
         let mut this_row: Vec<i32> = vec![];
 
@@ -48,7 +47,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
     for c in 0..input[0].len() {
         let mut is_empty_row = true;
 
-        for r in 0..board_a.len() {
+        for (r, _) in board_a.iter().enumerate() {
             if board_a[r][c] != 0 {
                 galaxy_coordinates.insert(board_a[r][c], (c as i32, r as i32));
                 is_empty_row = false;
@@ -72,7 +71,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
             let max_col = cmp::max(g2_coordinates.1, g1_coordinates.1);
             let min_col = cmp::min(g2_coordinates.1, g1_coordinates.1);
 
-            let path_len: i64 = (max_row - min_row + max_col - min_col) as i64;
+            let path_len = i64::from(max_row - min_row + max_col - min_col);
             part_1_solution += path_len;
             part_2_solution += path_len;
 
@@ -94,5 +93,5 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (part_1_solution as i128, part_2_solution as i128)
+    (i128::from(part_1_solution), i128::from(part_2_solution))
 }

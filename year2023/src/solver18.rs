@@ -7,7 +7,10 @@ struct Instruction {
 }
 
 pub fn solve18(input: &[String]) -> (i128, i128) {
-    (solve(input, true) as i128, solve(input, false) as i128)
+    (
+        i128::from(solve(input, true)),
+        i128::from(solve(input, false)),
+    )
 }
 pub fn solve(input: &[String], is_part_one: bool) -> i64 {
     let mut instructions: Vec<Instruction> = vec![];
@@ -30,7 +33,7 @@ pub fn solve(input: &[String], is_part_one: bool) -> i64 {
         }
     }
 
-    area(vertices(&instructions), path_len(&instructions))
+    area(&vertices(&instructions), path_len(&instructions))
 }
 
 fn vertices(instructions: &Vec<Instruction>) -> Vec<(i64, i64)> {
@@ -64,7 +67,7 @@ fn calculate_interior_points(area: i64, path_len: i64) -> i64 {
 }
 
 // Combination of Pick's theorem and shoelace cobbled together from examples.
-fn area(vertices: Vec<(i64, i64)>, path_len: i64) -> i64 {
+fn area(vertices: &[(i64, i64)], path_len: i64) -> i64 {
     let mut area = 0;
     for i in 1..vertices.len() {
         let x: i64 = vertices[i].0 * vertices[i - 1].1 - vertices[i - 1].0 * vertices[i].1;
