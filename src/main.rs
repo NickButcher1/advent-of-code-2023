@@ -25,7 +25,8 @@ fn read_input_file(filename: &str) -> Vec<String> {
     let file = match File::open(filename) {
         Ok(file) => file,
         Err(e) => {
-            panic!("Missing input file: {e}");
+            println!("Missing input file: {e}");
+            return vec![];
         }
     };
 
@@ -87,7 +88,14 @@ fn run_one_day(
 fn main() {
     let solver_fns: HashMap<String, &[SolverFunction; 25]> = HashMap::from([
         ("2023".to_string(), &year2023::SOLVER_FUNCTIONS),
+        ("2022".to_string(), &year2022::SOLVER_FUNCTIONS),
         ("2021".to_string(), &year2021::SOLVER_FUNCTIONS),
+        ("2020".to_string(), &year2020::SOLVER_FUNCTIONS),
+        ("2019".to_string(), &year2019::SOLVER_FUNCTIONS),
+        ("2018".to_string(), &year2018::SOLVER_FUNCTIONS),
+        ("2017".to_string(), &year2017::SOLVER_FUNCTIONS),
+        ("2016".to_string(), &year2016::SOLVER_FUNCTIONS),
+        ("2015".to_string(), &year2015::SOLVER_FUNCTIONS),
     ]);
 
     let args = Args::parse();

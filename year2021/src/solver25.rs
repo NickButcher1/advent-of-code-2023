@@ -118,9 +118,8 @@ pub fn solve25(input: &[String]) -> (i128, i128) {
     let mut steps = 0;
     loop {
         steps += 1;
-        // print_board(&board, num_rows, num_cols);
         if move_one_step(&mut board, num_rows, num_cols) {
-            println!("Solved {}", steps);
+            // Solved.
             break;
         }
     }
