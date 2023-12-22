@@ -1,86 +1,107 @@
 use aoc::input::string_to_vec_usize;
 use std::collections::HashSet;
 
-#[derive(Clone)]
-struct BrickEnd {
+#[derive(Clone, Debug)]
+struct Cell {
     x: usize,
     y: usize,
     z: usize,
 }
 
-#[derive(Clone)]
+struct InputBrick {
+    id: usize,
+    from: Cell,
+    to: Cell,
+}
+
+#[derive(Clone, Debug)]
 struct Brick {
     id: usize,
-    from: BrickEnd,
-    to: BrickEnd,
-    brick_type: BrickType,
+    cells: Vec<Cell>,
 }
 
-#[derive(Clone)]
-enum BrickType {
-    Unknown,
-    Vertical,
-    HorizontalAlongX,
-    HorizontalAlongY,
-}
-
-pub fn solve22(input: &[String]) -> (i128, i128) {
-    let mut bricks: Vec<Brick> = vec![];
+fn read_bricks_from_input(input: &[String]) -> (Vec<Brick>, Vec<Vec<Vec<usize>>>) {
+    let mut input_bricks: Vec<InputBrick> = vec![];
     let mut next_brick_id = 1;
 
     for line in input {
         let split_1: Vec<&str> = line.split('~').collect();
-        let from_coords = string_to_vec_usize(split_1[0], ',');
-        let to_coords = string_to_vec_usize(split_1[1], ',');
+        let from_vec = string_to_vec_usize(split_1[0], ',');
+        let to_vec = string_to_vec_usize(split_1[1], ',');
+        let from = Cell {
+            x: from_vec[0],
+            y: from_vec[1],
+            z: from_vec[2],
+        };
+        let to = Cell {
+            x: to_vec[0],
+            y: to_vec[1],
+            z: to_vec[2],
+        };
 
-        let mut brick = Brick {
+        input_bricks.push(InputBrick {
             id: next_brick_id,
-            from: BrickEnd {
-                x: from_coords[0],
-                y: from_coords[1],
-                z: from_coords[2],
-            },
-            to: BrickEnd {
-                x: to_coords[0],
-                y: to_coords[1],
-                z: to_coords[2],
-            },
-            brick_type: BrickType::Unknown,
-        };
+            from,
+            to,
+        });
         next_brick_id += 1;
-
-        // Check assumption - first coordinate is always smaller.
-        assert!(brick.to.x >= brick.from.x);
-        assert!(brick.to.y >= brick.from.y);
-        assert!(brick.to.z >= brick.from.z);
-
-        // Check assumption - brick is a single cube or straight line.
-        assert!(
-            (brick.to.x == brick.from.x && (brick.to.y == brick.from.y))
-                || (brick.to.x == brick.from.x && (brick.to.z == brick.from.z))
-                || (brick.to.y == brick.from.y && (brick.to.z == brick.from.z))
-        );
-
-        brick.brick_type = if brick.to.x == brick.from.x && brick.to.y == brick.from.y {
-            BrickType::Vertical // Single cube counts as vertical.
-        } else if brick.to.x == brick.from.x && brick.to.z == brick.from.z {
-            BrickType::HorizontalAlongY
-        } else {
-            BrickType::HorizontalAlongX
-        };
-
-        bricks.push(brick);
     }
 
-    let max_x = bricks.iter().max_by_key(|brick| brick.to.x).unwrap().to.x;
-    let max_y = bricks.iter().max_by_key(|brick| brick.to.y).unwrap().to.y;
-    let max_z = bricks.iter().max_by_key(|brick| brick.to.z).unwrap().to.z;
+    let max_x = input_bricks.iter().max_by_key(|b| b.to.x).unwrap().to.x;
+    let max_y = input_bricks.iter().max_by_key(|b| b.to.y).unwrap().to.y;
+    let max_z = input_bricks.iter().max_by_key(|b| b.to.z).unwrap().to.z;
+
+    let mut bricks: Vec<Brick> = vec![];
+    for b in &input_bricks {
+        let mut cells = vec![];
+        if b.to.x == b.from.x && b.to.y == b.from.y {
+            for z in b.from.z..=b.to.z {
+                cells.push(Cell {
+                    x: b.from.x,
+                    y: b.from.y,
+                    z,
+                });
+            }
+        } else if b.to.x == b.from.x && b.to.z == b.from.z {
+            for y in b.from.y..=b.to.y {
+                cells.push(Cell {
+                    x: b.from.x,
+                    y: y,
+                    z: b.from.z,
+                });
+            }
+        } else {
+            for x in b.from.x..=b.to.x {
+                cells.push(Cell {
+                    x,
+                    y: b.from.y,
+                    z: b.from.z,
+                });
+            }
+        };
+
+        bricks.push(Brick { id: b.id, cells });
+    }
 
     // Build a 3D grid where each cell contains the ID of the brick occupying it, or zero if empty.
-    let mut occupied_by = build_occupied_by(&bricks, max_x, max_y, max_z);
+    let mut occupied_by: Vec<Vec<Vec<usize>>> =
+        vec![vec![vec![0; max_z + 1]; max_y + 1]; max_x + 1];
+    for brick in &bricks {
+        for cell in &brick.cells {
+            occupied_by[cell.x][cell.y][cell.z] = brick.id;
+        }
+    }
+
+    (bricks, occupied_by)
+}
+
+pub fn solve22(input: &[String]) -> (i128, i128) {
+    let (mut bricks, mut occupied_by) = read_bricks_from_input(input);
 
     // Drop all bricks as far as possible.
-    drop_bricks(&mut bricks, &mut occupied_by);
+    drop_bricks(&mut bricks, &mut occupied_by, 0);
+
+    // At this point, both bricks and occupied_by are now fixed, representing the state after dropping as far as possible.
 
     // Calculate part 1 and part 2 at the same time. Loop over each block and:
     // - Remove that block.
@@ -91,18 +112,10 @@ pub fn solve22(input: &[String]) -> (i128, i128) {
     let mut part_1_safe_to_disintegrate = 0;
     let mut part_2_total_bricks_dropped = 0;
 
-    for brick in &bricks {
-        let mut temp_bricks: Vec<Brick> = vec![];
-        for temp_brick in &bricks {
-            let temp_brick2 = temp_brick.clone();
-            if temp_brick2.id != brick.id {
-                temp_bricks.push(temp_brick2);
-            }
-        }
+    for brick_id in 1..=bricks.len() {
+        let num_bricks_dropped =
+            drop_bricks(&mut bricks.clone(), &mut occupied_by.clone(), brick_id);
 
-        let mut temp_brick_id = build_occupied_by(&temp_bricks, max_x, max_y, max_z);
-
-        let num_bricks_dropped = drop_bricks(&mut temp_bricks, &mut temp_brick_id);
         if num_bricks_dropped == 0 {
             part_1_safe_to_disintegrate += 1;
         }
@@ -115,103 +128,38 @@ pub fn solve22(input: &[String]) -> (i128, i128) {
     )
 }
 
-fn drop_bricks(bricks: &mut Vec<Brick>, occupied_by: &mut Vec<Vec<Vec<usize>>>) -> usize {
+fn drop_bricks(
+    bricks: &mut Vec<Brick>,
+    occupied_by: &mut [Vec<Vec<usize>>],
+    ignore_brick_id: usize,
+) -> usize {
     let mut brick_ids_dropped: HashSet<usize> = HashSet::new();
-    let mut num_bricks_dropped = usize::MAX;
-    while num_bricks_dropped != 0 {
-        num_bricks_dropped = 0;
+    let mut dropped_in_last_loop = true;
+
+    while dropped_in_last_loop {
+        dropped_in_last_loop = false;
         for brick in &mut *bricks {
             // Can't drop a brick at z=1. It is already on the ground.
-            if brick.from.z == 1 {
+            if brick.id == ignore_brick_id || brick.cells[0].z == 1 {
                 continue;
             }
-            match brick.brick_type {
-                BrickType::Unknown => {
-                    panic!("    ERROR!");
-                }
-                BrickType::Vertical => {
-                    if occupied_by[brick.from.x][brick.from.y][brick.from.z - 1] == 0 {
-                        brick.from.z -= 1;
-                        brick.to.z -= 1;
-                        num_bricks_dropped += 1;
-                        brick_ids_dropped.insert(brick.id);
-                        occupied_by[brick.from.x][brick.from.y][brick.from.z] = brick.id;
-                        occupied_by[brick.from.x][brick.from.y][brick.to.z + 1] = 0;
-                    }
-                }
-                BrickType::HorizontalAlongX => {
-                    let mut can_drop_by = 1;
-                    for x in brick.from.x..=brick.to.x {
-                        if occupied_by[x][brick.from.y][brick.from.z - 1] != 0 {
-                            can_drop_by = 0;
-                            break;
-                        }
-                    }
-                    if can_drop_by == 1 {
-                        brick.from.z -= 1;
-                        brick.to.z -= 1;
-                        num_bricks_dropped += 1;
-                        brick_ids_dropped.insert(brick.id);
-                        for x in brick.from.x..=brick.to.x {
-                            occupied_by[x][brick.from.y][brick.from.z] = brick.id;
-                            occupied_by[x][brick.from.y][brick.to.z + 1] = 0;
-                        }
-                    }
-                }
-                BrickType::HorizontalAlongY => {
-                    let mut can_drop_by = 1;
-                    for y in brick.from.y..=brick.to.y {
-                        if occupied_by[brick.from.x][y][brick.from.z - 1] != 0 {
-                            can_drop_by = 0;
-                            break;
-                        }
-                    }
-                    if can_drop_by == 1 {
-                        brick.from.z -= 1;
-                        brick.to.z -= 1;
-                        num_bricks_dropped += 1;
-                        brick_ids_dropped.insert(brick.id);
-                        for y in brick.from.y..=brick.to.y {
-                            occupied_by[brick.from.x][y][brick.from.z] = brick.id;
-                            occupied_by[brick.from.x][y][brick.to.z + 1] = 0;
-                        }
-                    }
-                }
+
+            // Check the cell directly under each cell in this brick. If they are all empty, or part
+            // of the brick to ignore or part of this brick (for vertical bricks only) then we can drop this brick.
+            if brick.cells.iter().all(|cell| {
+                let check_id = occupied_by[cell.x][cell.y][cell.z - 1];
+                check_id == 0 || check_id == ignore_brick_id || check_id == brick.id
+            }) {
+                // Move both the cells and the occupied list down one.
+                dropped_in_last_loop = true;
+                brick_ids_dropped.insert(brick.id);
+                brick.cells.iter_mut().for_each(|cell| {
+                    cell.z -= 1;
+                    occupied_by[cell.x][cell.y][cell.z] = brick.id;
+                    occupied_by[cell.x][cell.y][cell.z + 1] = 0;
+                });
             }
         }
     }
     brick_ids_dropped.len()
-}
-
-fn build_occupied_by(
-    bricks: &Vec<Brick>,
-    max_x: usize,
-    max_y: usize,
-    max_z: usize,
-) -> Vec<Vec<Vec<usize>>> {
-    let mut occupied_by: Vec<Vec<Vec<usize>>> =
-        vec![vec![vec![0; max_z + 1]; max_y + 1]; max_x + 1];
-    for brick in bricks {
-        match brick.brick_type {
-            BrickType::Unknown => {
-                panic!("    ERROR!");
-            }
-            BrickType::Vertical => {
-                for z in brick.from.z..=brick.to.z {
-                    occupied_by[brick.from.x][brick.from.y][z] = brick.id;
-                }
-            }
-            BrickType::HorizontalAlongX => {
-                for x in brick.from.x..=brick.to.x {
-                    occupied_by[x][brick.from.y][brick.from.z] = brick.id;
-                }
-            }
-            BrickType::HorizontalAlongY => {
-                for y in brick.from.y..=brick.to.y {
-                    occupied_by[brick.from.x][y][brick.from.z] = brick.id;
-                }
-            }
-        }
-    }
-    occupied_by
 }
