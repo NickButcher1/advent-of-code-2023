@@ -43,7 +43,7 @@ fn read_input_file(filename: &str) -> Vec<String> {
 }
 
 fn run_one_day(
-    solver_fn: &SolverFunction,
+    solver_fn: SolverFunction,
     year: &str,
     day: usize,
     is_sample_mode: bool,
@@ -100,7 +100,7 @@ fn main() {
 
     if args.day != 0 {
         run_one_day(
-            &solver_fns.get(&args.year).unwrap()[args.day - 1],
+            solver_fns.get(&args.year).unwrap()[args.day - 1],
             &args.year,
             args.day,
             args.sample,
@@ -110,7 +110,7 @@ fn main() {
         let mut total_ms: u128 = 0;
         for day in 1..=25 {
             total_ms += run_one_day(
-                &solver_fns.get(&args.year).unwrap()[day - 1],
+                solver_fns.get(&args.year).unwrap()[day - 1],
                 &args.year,
                 day,
                 args.sample,
