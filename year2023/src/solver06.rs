@@ -1,4 +1,4 @@
-use aoc::common::string_to_vec_u64_ignore_prefix;
+use aoc::input::string_to_vec_u64_ignore_prefix;
 
 fn solve(times: Vec<u64>, distances: &[u64]) -> i128 {
     let mut total = 1;

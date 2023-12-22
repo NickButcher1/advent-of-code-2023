@@ -1,4 +1,4 @@
-use aoc::common::string_to_vec_i64;
+use aoc::input::string_to_vec_i64;
 
 // Build up a list of integers. Start from the input, then sum adjacent pairs to make a new list,
 // one shorter in length than the previous list. Repeat until the new list is all zeroes.

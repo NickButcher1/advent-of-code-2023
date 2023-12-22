@@ -1,4 +1,4 @@
-use aoc::common::split_string_to_u64;
+use aoc::input::split_string_to_u64;
 use std::collections::HashMap;
 
 #[derive(Debug)]
