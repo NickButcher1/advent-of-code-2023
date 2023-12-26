@@ -10,11 +10,10 @@ use std::collections::{HashMap, HashSet};
 // - "fjn", "mzb"
 // - "mhb", "zqg
 // - "jlt", "sjr"
-fn find_most_common_wires(
-    num_nodes: usize,
-    mapping: &HashMap<usize, Vec<usize>>,
-) -> Vec<(usize, usize)> {
+fn find_most_common_wires(mapping: &HashMap<usize, Vec<usize>>) -> Vec<(usize, usize)> {
+    let num_nodes = mapping.len();
     let mut input_graph = InputGraph::new();
+
     for from_node in 0..num_nodes {
         for target in &mapping[&from_node] {
             input_graph.add_edge(from_node, *target, 1);
@@ -39,62 +38,55 @@ fn find_most_common_wires(
                 let nodes = &shortest_path.get_nodes();
                 let nodes_len = shortest_path.get_nodes().len();
                 for i in 0..nodes_len - 1 {
-                    if nodes[i] > nodes[i + 1] {
-                        let w = wires
-                            .get_mut(&(nodes[i] as usize, nodes[i + 1] as usize))
-                            .unwrap();
-                        *w += 1;
+                    let (idx1, idx2) = if nodes[i] > nodes[i + 1] {
+                        (0, 1)
                     } else {
-                        let w = wires
-                            .get_mut(&(nodes[i + 1] as usize, nodes[i] as usize))
-                            .unwrap();
-                        *w += 1;
-                    }
+                        (1, 0)
+                    };
+                    let w = wires
+                        .get_mut(&(nodes[i + idx1] as usize, nodes[i + idx2] as usize))
+                        .unwrap();
+                    *w += 1;
                 }
             }
         }
     }
 
-    let mut sorted_vec: Vec<_> = wires.iter().collect();
-    sorted_vec.sort_by(|a, b| b.1.cmp(a.1));
+    let mut sorted_wires: Vec<_> = wires.iter().collect();
+    sorted_wires.sort_by(|a, b| b.1.cmp(a.1));
 
-    vec![
-        (sorted_vec[0].0 .0, sorted_vec[0].0 .1),
-        (sorted_vec[1].0 .0, sorted_vec[1].0 .1),
-        (sorted_vec[2].0 .0, sorted_vec[2].0 .1),
-    ]
+    vec![*sorted_wires[0].0, *sorted_wires[1].0, *sorted_wires[2].0]
 }
 
 fn remove_wires(mapping: &mut HashMap<usize, Vec<usize>>, wires: Vec<(usize, usize)>) {
     for (comp1, comp2) in wires {
-        if mapping[&comp1].contains(&comp2) {
-            mapping.get_mut(&comp1).unwrap().retain(|&x| x != comp2);
-        }
-        if mapping[&comp2].contains(&comp1) {
-            mapping.get_mut(&comp2).unwrap().retain(|&x| x != comp1);
-        }
+        mapping.get_mut(&comp1).unwrap().retain(|&x| x != comp2);
+        mapping.get_mut(&comp2).unwrap().retain(|&x| x != comp1);
     }
 }
 
-fn solve_part_one(num_nodes: usize, mapping: &HashMap<usize, Vec<usize>>) -> u64 {
+// Split all the components into loops. We only expect two loops.
+fn solve_part_one(mapping: &HashMap<usize, Vec<usize>>) -> u64 {
+    let num_nodes = mapping.len();
     let mut loops: Vec<HashSet<usize>> = vec![];
-    let mut processed_name: HashSet<usize> = HashSet::new();
-    let mut search_names: Vec<usize> = vec![0];
-    while processed_name.len() < num_nodes {
+    let mut processed_nodes: HashSet<usize> = HashSet::new();
+    let mut search_nodes: Vec<usize> = vec![0];
+
+    while processed_nodes.len() < num_nodes {
         let mut from_node = usize::MAX;
 
-        if search_names.is_empty() {
+        if search_nodes.is_empty() {
             for node in 0..num_nodes {
-                if !processed_name.contains(&node) {
+                if !processed_nodes.contains(&node) {
                     from_node = node;
                     break;
                 }
             }
         } else {
-            from_node = search_names.remove(0);
+            from_node = search_nodes.remove(0);
         };
 
-        processed_name.insert(from_node);
+        processed_nodes.insert(from_node);
         let mut found = false;
         let mut found_loop_id = 0;
         for (loop_id, my_loop) in loops.iter().enumerate() {
@@ -109,9 +101,9 @@ fn solve_part_one(num_nodes: usize, mapping: &HashMap<usize, Vec<usize>>) -> u64
             // Already in a loop. Add all targets if not already.
             for target in &mapping[&from_node] {
                 loops[found_loop_id].insert(*target);
-                if !processed_name.contains(target) {
-                    processed_name.insert(*target);
-                    search_names.push(*target);
+                if !processed_nodes.contains(target) {
+                    processed_nodes.insert(*target);
+                    search_nodes.push(*target);
                 }
             }
         } else {
@@ -133,39 +125,36 @@ fn solve_part_one(num_nodes: usize, mapping: &HashMap<usize, Vec<usize>>) -> u64
                 // Already in a loop. Add all targets if not already.
                 for target in &mapping[&from_node] {
                     loops[found_loop_id].insert(*target);
-                    if !processed_name.contains(target) {
-                        processed_name.insert(*target);
-                        search_names.push(*target);
+                    if !processed_nodes.contains(target) {
+                        processed_nodes.insert(*target);
+                        search_nodes.push(*target);
                     }
                 }
                 loops[found_loop_id].insert(from_node);
-                if !processed_name.contains(&from_node) {
-                    processed_name.insert(from_node);
+                if !processed_nodes.contains(&from_node) {
+                    processed_nodes.insert(from_node);
                 }
             } else {
                 let mut new_loop: HashSet<usize> = HashSet::new();
                 new_loop.insert(from_node);
                 for target in &mapping[&from_node] {
                     new_loop.insert(*target);
-                    if !processed_name.contains(target) {
-                        processed_name.insert(*target);
-                        search_names.push(*target);
+                    if !processed_nodes.contains(target) {
+                        processed_nodes.insert(*target);
+                        search_nodes.push(*target);
                     }
                 }
                 loops.push(new_loop);
             }
         }
     }
-    if loops.len() == 2 {
-        println!("DONE: {}", loops[0].len() as u64 * loops[1].len() as u64);
-        loops[0].len() as u64 * loops[1].len() as u64
-    } else {
-        panic!("ERROR");
-    }
+    assert_eq!(loops.len(), 2);
+    loops[0].len() as u64 * loops[1].len() as u64
 }
 
-pub fn solve25(input: &[String]) -> (i128, i128) {
-    // Replace node names with integers.
+// Translate node names to integers in order to work with fast_path.
+// Return a map of node -> all nodes it connects to.
+fn read_nodes_from_input(input: &[String]) -> HashMap<usize, Vec<usize>> {
     let mut next_node_id = 0;
     let mut name_to_id: HashMap<&str, usize> = HashMap::new();
     let mut mapping: HashMap<usize, Vec<usize>> = HashMap::new();
@@ -197,8 +186,12 @@ pub fn solve25(input: &[String]) -> (i128, i128) {
                 .push(name_to_id[name_1]);
         }
     }
-    let most_common_wires = find_most_common_wires(next_node_id, &mapping);
+    mapping
+}
+pub fn solve25(input: &[String]) -> (i128, i128) {
+    let mut mapping = read_nodes_from_input(input);
+    let most_common_wires = find_most_common_wires(&mapping);
     remove_wires(&mut mapping, most_common_wires);
 
-    (solve_part_one(next_node_id, &mapping) as i128, -1)
+    (i128::from(solve_part_one(&mapping)), -1)
 }
