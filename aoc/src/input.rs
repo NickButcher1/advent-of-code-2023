@@ -23,7 +23,7 @@ pub fn string_to_vec_u64(input: &str, split_on: char) -> Vec<u64> {
 pub fn string_to_vec_i64(input: &str, split_on: char) -> Vec<i64> {
     input
         .split(split_on)
-        .map(|x| x.parse::<i64>().unwrap())
+        .map(|x| x.trim().parse::<i64>().unwrap())
         .collect()
 }
 
