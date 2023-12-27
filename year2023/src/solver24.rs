@@ -2,6 +2,7 @@ const MIN_XY: f64 = 200_000_000_000_000.0;
 const MAX_XY: f64 = 400_000_000_000_000.0;
 
 use aoc::input::string_to_vec_i64;
+use std::cmp::Ordering;
 
 #[derive(Clone, Debug)]
 struct Hailstone {
@@ -46,20 +47,16 @@ fn calculate_xy_intersects_in_future(hailstones: &mut Vec<Hailstone>) -> Vec<(f6
                 // let intersect_y2 = h_2.m * intersect_x + h_2.c;
                 // One of the real inputs just fails with: 337194890889741.9   337194890889742.5
                 // assert_eq!(intersect_y as i64, intersect_y2 as i64);
-                let intersect_h1_in_future = if h_1.v.0 > 0 {
-                    intersect_x as i64 > h_1.p.0
-                } else if h_1.v.0 < 0 {
-                    (intersect_x as i64) < h_1.p.0
-                } else {
-                    panic!("No inputs have zero v");
+                let intersect_h1_in_future = match h_1.v.0.cmp(&0) {
+                    Ordering::Greater => intersect_x as i64 > h_1.p.0,
+                    Ordering::Less => (intersect_x as i64) < h_1.p.0,
+                    Ordering::Equal => unreachable!(),
                 };
 
-                let intersect_h2_in_future = if h_2.v.0 > 0 {
-                    intersect_x as i64 > h_2.p.0
-                } else if h_2.v.0 < 0 {
-                    (intersect_x as i64) < h_2.p.0
-                } else {
-                    panic!("No inputs have zero v");
+                let intersect_h2_in_future = match h_2.v.0.cmp(&0) {
+                    Ordering::Greater => intersect_x as i64 > h_2.p.0,
+                    Ordering::Less => (intersect_x as i64) < h_2.p.0,
+                    Ordering::Equal => unreachable!(),
                 };
 
                 if intersect_h1_in_future && intersect_h2_in_future {
@@ -86,8 +83,7 @@ fn count_xy_intersects_inside(min_xy: f64, max_xy: f64, intersects: &Vec<(f64, f
     num_inside
 }
 
-const TRY_MAX: i64 = 300;
-fn solve_part_2(hailstones: &Vec<Hailstone>) -> i64 {
+fn solve_part_2(hailstones: &[Hailstone]) -> i64 {
     // TODO
     0
 }
