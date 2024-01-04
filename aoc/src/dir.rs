@@ -18,6 +18,16 @@ impl Dir {
         }
     }
 
+    pub fn from_arrow_char(input: char) -> Self {
+        match input {
+            '>' => Self::Right,
+            'v' => Self::Down,
+            '<' => Self::Left,
+            '^' => Self::Up,
+            _ => unreachable!(),
+        }
+    }
+
     pub fn from_int_str(input: &str) -> Self {
         match input {
             "0" => Self::Right,

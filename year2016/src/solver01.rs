@@ -1,12 +1,4 @@
-use aoc::dir::Dir;
-use aoc::infinite_grid::InfiniteGrid;
-
-const START_CELL: (i64, i64) = (0, 0);
-
-const START_GRID: InfiniteGrid = InfiniteGrid {
-    facing: Dir::Up,
-    pos: START_CELL,
-};
+use aoc::infinite_grid::{START_CELL, START_GRID};
 
 pub fn solve_part_one(input: &[String]) -> u64 {
     let mut grid = START_GRID.clone();

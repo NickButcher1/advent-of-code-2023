@@ -1,7 +1,9 @@
 use crate::dir::Dir;
 use std::collections::HashSet;
 
-type Cell = (i64, i64);
+pub type Cell = (i64, i64);
+
+pub const START_CELL: (i64, i64) = (0, 0);
 
 // Represents an infinite 2 dimensional grid, with a person at a specific location, and facing in a
 // specific direction.
@@ -11,6 +13,11 @@ pub struct InfiniteGrid {
     pub facing: Dir,
     pub pos: Cell,
 }
+
+pub const START_GRID: InfiniteGrid = InfiniteGrid {
+    facing: Dir::Up,
+    pos: START_CELL,
+};
 
 impl InfiniteGrid {
     // Make a series of moves. Each move is of the form "DirDistance", such as "R4" which means turn
@@ -46,11 +53,15 @@ impl InfiniteGrid {
 
     pub fn make_move(&mut self, distance: i64) {
         let offset = self.facing.offset();
-        if offset.0 != 0 {
-            self.pos = (self.pos.0 + distance * offset.0, self.pos.1);
-        } else {
-            self.pos = (self.pos.0, self.pos.1 + distance * offset.1);
-        };
+        self.pos = (
+            self.pos.0 + distance * offset.0,
+            self.pos.1 + distance * offset.1,
+        );
+    }
+
+    pub fn move_in_dir(&mut self, dir: Dir) {
+        let offset = dir.offset();
+        self.pos = (self.pos.0 + offset.0, self.pos.1 + offset.1);
     }
 
     pub fn taxicab_distance(&self, other_cell: &Cell) -> u64 {
