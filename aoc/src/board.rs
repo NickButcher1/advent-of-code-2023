@@ -107,8 +107,72 @@ impl Board {
         self.cells = new_cells;
     }
 
+    pub fn count(&mut self, count_char: char) -> u64 {
+        let mut num_matches = 0;
+
+        for r in 0..self.num_rows {
+            for c in 0..self.num_cols {
+                if self.cells[r][c] == count_char {
+                    num_matches += 1;
+                }
+            }
+        }
+        num_matches
+    }
+
+    // Assumes the board has a border of empty cells, which are never modified.
+    pub fn game_of_life_step(&mut self, off_char: char, on_char: char) {
+        let mut new_cells: Cells = vec![];
+
+        for r in 0..=self.num_rows - 1 {
+            let mut row_vec: Vec<char> = vec![];
+            for c in 0..=self.num_cols - 1 {
+                if r == 0 || r == self.num_rows - 1 || c == 0 || c == self.num_cols - 1 {
+                    row_vec.push(off_char);
+                } else {
+                    let neighbour_cells = [
+                        self.cells[r - 1][c - 1],
+                        self.cells[r - 1][c],
+                        self.cells[r - 1][c + 1],
+                        self.cells[r][c - 1],
+                        self.cells[r][c + 1],
+                        self.cells[r + 1][c - 1],
+                        self.cells[r + 1][c],
+                        self.cells[r + 1][c + 1],
+                    ];
+                    let num_neighbours_on =
+                        neighbour_cells.iter().filter(|&&c| c == on_char).count();
+                    let new_char = if self.cells[r][c] == on_char {
+                        if (2..=3).contains(&num_neighbours_on) {
+                            on_char
+                        } else {
+                            off_char
+                        }
+                    } else if num_neighbours_on == 3 {
+                        on_char
+                    } else {
+                        off_char
+                    };
+                    row_vec.push(new_char);
+                }
+            }
+            new_cells.push(row_vec);
+        }
+
+        self.cells = new_cells;
+    }
+
+    pub fn set_corners_to(&mut self, set_char: char, has_border: bool) {
+        let offset = if has_border { 1 } else { 0 };
+        self.cells[offset][offset] = set_char;
+        self.cells[self.num_rows - 1 - offset][offset] = set_char;
+        self.cells[offset][self.num_cols - 1 - offset] = set_char;
+        self.cells[self.num_rows - 1 - offset][self.num_cols - 1 - offset] = set_char;
+    }
+
     #[allow(dead_code)]
     pub fn print(&self) {
+        println!("BOARD {},{}", self.num_rows, self.num_cols);
         for row in &self.cells {
             println!("{}", row.iter().collect::<String>());
         }
