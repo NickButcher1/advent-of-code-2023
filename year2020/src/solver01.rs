@@ -1,5 +1,5 @@
-use std::cmp::Ordering;
 use aoc::input::to_vec_u64;
+use std::cmp::Ordering;
 
 fn solve_part_1(entries: &Vec<u64>) -> u64 {
     for i in 0..entries.len() {
@@ -10,7 +10,7 @@ fn solve_part_1(entries: &Vec<u64>) -> u64 {
                 Ordering::Equal => return entries[i] * entries[j],
                 // entries[i] + any remaining entries[j] will be less than 2020 so jump to the next bigger entries[i].
                 Ordering::Less => break,
-                Ordering::Greater => {},
+                Ordering::Greater => {}
             }
         }
     }
