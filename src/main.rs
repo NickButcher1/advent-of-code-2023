@@ -11,7 +11,7 @@ use year2023::SolverFunction;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, default_value_t = (&"2023").to_string())]
+    #[arg(short, long, default_value_t = (&"2024").to_string())]
     year: String,
 
     #[arg(short, long, default_value_t = 0)]
@@ -87,6 +87,7 @@ fn run_one_day(
 
 fn main() {
     let solver_fns: HashMap<String, &[SolverFunction; 25]> = HashMap::from([
+        ("2024".to_string(), &year2024::SOLVER_FUNCTIONS),
         ("2023".to_string(), &year2023::SOLVER_FUNCTIONS),
         ("2022".to_string(), &year2022::SOLVER_FUNCTIONS),
         ("2021".to_string(), &year2021::SOLVER_FUNCTIONS),
