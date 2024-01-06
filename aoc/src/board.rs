@@ -32,6 +32,14 @@ impl Board {
         slices.iter().map(|slice| Self::from_input(slice)).collect()
     }
 
+    pub fn create_empty(num_rows: usize, num_cols: usize, empty_char: char) -> Self {
+        Self {
+            cells: vec![vec![empty_char; num_cols]; num_rows],
+            num_rows,
+            num_cols,
+        }
+    }
+
     pub fn rotate_clockwise(&mut self) {
         assert_eq!(self.num_rows, self.num_cols);
 
