@@ -65,7 +65,11 @@ fn run_one_day(
 
     let elapsed_ms = time.elapsed().as_nanos() / 1_000_000;
 
-    println!("{day:02}    {result1:12}  {result2:16}  {elapsed_ms:12}ms",);
+    if result1 != 0 && result2 != 0 {
+        println!("{day:02}    {result1:12}  {result2:16}  {elapsed_ms:12}ms",);
+    } else {
+        println!("{day:02}            todo              todo");
+    }
 
     if !is_sample_mode {
         let expected_result1 = &expected_outputs[day * 2 - 2];
