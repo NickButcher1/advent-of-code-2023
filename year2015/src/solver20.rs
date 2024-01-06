@@ -6,7 +6,7 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
     )
 }
 
-pub fn solve(target: usize, elf_steps: usize, presents_multiplier: usize) -> usize {
+fn solve(target: usize, elf_steps: usize, presents_multiplier: usize) -> usize {
     let mut presents_per_house: Vec<usize> = vec![0; target / 10];
 
     for elf in 1..target / 10 {
