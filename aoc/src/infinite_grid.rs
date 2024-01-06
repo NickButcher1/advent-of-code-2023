@@ -23,18 +23,18 @@ impl InfiniteGrid {
     // Make a series of moves. Each move is of the form "DirDistance", such as "R4" which means turn
     // right 90 degrees then move four cells in the new direction.
     pub fn make_moves(&mut self, moves: Vec<&str>) {
-        moves.iter().for_each(|mv| {
+        for mv in moves.iter() {
             let turn_dir = Dir::from_letter_str(&mv[..1]);
             self.facing = self.facing.turn(&turn_dir);
             let distance = mv[1..].parse::<i64>().unwrap();
-            self.make_move(distance)
-        });
+            self.make_move(distance);
+        }
     }
 
     pub fn make_moves_stop_when_any_cell_visited_twice(&mut self, moves: Vec<&str>) -> Cell {
         let mut visited_cells: HashSet<Cell> = HashSet::from([self.pos]);
 
-        for mv in moves.iter() {
+        for mv in &moves {
             let turn_dir = Dir::from_letter_str(&mv[..1]);
             self.facing = self.facing.turn(&turn_dir);
             let distance = mv[1..].parse::<i64>().unwrap();
