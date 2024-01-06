@@ -55,6 +55,7 @@ pub fn solve(board: &Board) -> usize {
     )
 }
 
+#[allow(clippy::needless_range_loop)]
 fn build_valid_moves_between_cells(board: &Board) -> (Vec<Vec<Vec<Cell>>>, Vec<Cell>) {
     let mut valid_moves: Vec<Vec<Vec<Cell>>> = vec![vec![vec![]; board.num_cols]; board.num_rows];
     let mut junctions: Vec<Cell> = vec![];

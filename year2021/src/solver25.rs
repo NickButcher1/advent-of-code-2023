@@ -7,6 +7,7 @@ const CUC_RIGHT: u8 = 1;
 const CUC_DOWN: u8 = 2;
 
 #[allow(dead_code)]
+#[allow(clippy::needless_range_loop)]
 fn print_board(board: &Board, num_rows: usize, num_cols: usize) {
     let mut builder = Builder::default();
 
@@ -26,6 +27,7 @@ fn print_board(board: &Board, num_rows: usize, num_cols: usize) {
     println!("{}", builder.string().unwrap());
 }
 
+#[allow(clippy::needless_range_loop)]
 fn move_one_step(board: &mut Board, num_rows: usize, num_cols: usize) -> bool {
     let mut num_moved = 0;
 

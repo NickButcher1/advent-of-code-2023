@@ -76,6 +76,7 @@ fn build_start_cell_goes_to(board: &mut Board, row: usize, col: usize) -> (Cell,
     (start_cell_goes_to[0], start_cell_goes_to[1])
 }
 
+#[allow(clippy::needless_range_loop)]
 fn build_cell_goes_to(board: &mut Board, start_cell: &mut Cell) -> Vec<Vec<(Cell, Cell)>> {
     let mut goes_to: Vec<Vec<(Cell, Cell)>> = vec![vec![]; board.num_rows];
     for row in 0..board.num_rows {
@@ -151,6 +152,7 @@ fn is_cell_inside_loop(r: usize, c: usize, board: &Board) -> bool {
     count_to_left % 2 == 1
 }
 
+#[allow(clippy::needless_range_loop)]
 pub fn solve10(input: &[String]) -> (i128, i128) {
     let mut board: Board = Board::from_input(input);
 
