@@ -83,7 +83,7 @@ fn count_xy_intersects_inside(min_xy: f64, max_xy: f64, intersects: &Vec<(f64, f
     num_inside
 }
 
-fn solve_part_2(hailstones: &[Hailstone]) -> i64 {
+fn solve_part_2(_hailstones: &[Hailstone]) -> i64 {
     // TODO
     0
 }
