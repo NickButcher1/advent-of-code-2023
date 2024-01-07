@@ -6,6 +6,7 @@ pub mod solver05;
 pub mod solver06;
 pub mod solver10;
 pub mod solver13;
+pub mod solver14;
 pub mod solver18;
 pub mod solver20;
 
@@ -17,6 +18,7 @@ use crate::solver05::solve05;
 use crate::solver06::solve06;
 use crate::solver10::solve10;
 use crate::solver13::solve13;
+use crate::solver14::solve14;
 use crate::solver18::solve18;
 use crate::solver20::solve20;
 
@@ -40,7 +42,7 @@ pub const SOLVER_FUNCTIONS: [SolverFunction; 25] = [
     solve_blank,
     solve_blank,
     solve13,
-    solve_blank,
+    solve14,
     solve_blank,
     solve_blank,
     solve_blank,
