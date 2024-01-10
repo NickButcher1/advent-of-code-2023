@@ -1,6 +1,7 @@
 // Represents a mutable square or rectangular board of cells. Each cell is a character.
 
-type Cells = Vec<Vec<char>>;
+pub type Cells = Vec<Vec<char>>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Board {
     pub cells: Cells,

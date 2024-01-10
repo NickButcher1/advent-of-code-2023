@@ -1,6 +1,8 @@
 pub mod solver10;
+pub mod solver18;
 
 use crate::solver10::solve10;
+use crate::solver18::solve18;
 
 type SolverFunction = fn(&[String]) -> (i128, i128);
 
@@ -26,7 +28,7 @@ pub const SOLVER_FUNCTIONS: [SolverFunction; 25] = [
     solve_blank,
     solve_blank,
     solve_blank,
-    solve_blank,
+    solve18,
     solve_blank,
     solve_blank,
     solve_blank,
