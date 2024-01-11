@@ -2,6 +2,10 @@ pub fn to_vec_u64(input: &[String]) -> Vec<u64> {
     input.iter().map(|x| x.parse::<u64>().unwrap()).collect()
 }
 
+pub fn to_vec_i64(input: &[String]) -> Vec<i64> {
+    input.iter().map(|x| x.parse::<i64>().unwrap()).collect()
+}
+
 #[allow(dead_code)]
 pub fn string_to_vec_u64_ignore_prefix(prefix: &str, input: &str) -> Vec<u64> {
     let split_1: Vec<&str> = input.split(prefix).collect();
