@@ -5,18 +5,40 @@ const TREE: char = '|';
 const LUMBERYARD: char = '#';
 const BORDER: char = ' ';
 
+const TARGET_MINUTES_PART_2: usize = 1_000_000_000;
+
 pub fn solve18(input: &[String]) -> (i128, i128) {
+    (solve_for_minutes(input, 10), solve_part_2(input))
+}
+
+pub fn solve_for_minutes(input: &[String], minutes: usize) -> i128 {
     let mut board = Board::from_input(input);
     board.add_border(BORDER);
-    board.print();
-    for i in 0..10 {
-        println!("STEP {i}");
+    for _ in 0..minutes {
         step(&mut board);
-        board.print();
     }
-    let num_trees = board.count(TREE);
-    let num_lumberyards = board.count(LUMBERYARD);
-    (num_trees as i128 * num_lumberyards as i128, 0)
+    board.count(TREE) as i128 * board.count(LUMBERYARD) as i128
+}
+
+pub fn solve_part_2(input: &[String]) -> i128 {
+    let mut board = Board::from_input(input);
+    let mut hashes: Vec<Vec<u8>> = vec![vec![]];
+
+    board.add_border(BORDER);
+    for i in 1..1000 {
+        step(&mut board);
+        let hash = md5::compute(format!("{board:?}")).to_ascii_lowercase();
+        for j in 1..hashes.len() {
+            if hashes[j] == hash {
+                let cycle_start = j;
+                let cycle_len = i - j;
+                let x = cycle_start + ((TARGET_MINUTES_PART_2 - cycle_start) % cycle_len);
+                return solve_for_minutes(input, x);
+            }
+        }
+        hashes.push(hash);
+    }
+    unreachable!();
 }
 
 pub fn step(board: &mut Board) {
