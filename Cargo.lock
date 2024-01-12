@@ -84,6 +84,9 @@ dependencies = [
 [[package]]
 name = "aoc"
 version = "0.1.0"
+dependencies = [
+ "regex",
+]
 
 [[package]]
 name = "autocfg"
@@ -454,6 +457,7 @@ name = "year2021"
 version = "0.1.0"
 dependencies = [
  "aoc",
+ "regex",
  "string-builder",
 ]
 

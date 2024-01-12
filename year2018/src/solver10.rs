@@ -1,48 +1,18 @@
 use aoc::board::Board;
-use regex::Regex;
+use aoc::moving_point::{max_x_y, mix_x_y, read_points, tick, MovingPoint};
 
 const EMPTY: char = '.';
 const FULL: char = '#';
 
-#[derive(Clone, Debug)]
-struct Point {
-    px: isize,
-    py: isize,
-    vx: isize,
-    vy: isize,
-}
-
-fn read_points(input: &[String]) -> Vec<Point> {
-    let re = Regex::new(r"position=<( *)(-?\d+),( *)(-?\d+)> velocity=<( *)(-?\d+),( *)(-?\d+)>$")
-        .unwrap();
-
-    input
-        .iter()
-        .map(|line| {
-            let captures = re.captures(line).unwrap();
-            Point {
-                px: captures.get(2).unwrap().as_str().parse::<isize>().unwrap(),
-                py: captures.get(4).unwrap().as_str().parse::<isize>().unwrap(),
-                vx: captures.get(6).unwrap().as_str().parse::<isize>().unwrap(),
-                vy: captures.get(8).unwrap().as_str().parse::<isize>().unwrap(),
-            }
-        })
-        .collect()
-}
-
-fn area_from_points(points: &[Point]) -> (isize, isize) {
-    let min_x = points.iter().min_by_key(|point| point.px).unwrap().px;
-    let min_y = points.iter().min_by_key(|point| point.py).unwrap().py;
-    let max_x = points.iter().max_by_key(|point| point.px).unwrap().px;
-    let max_y = points.iter().max_by_key(|point| point.py).unwrap().py;
+fn area_from_points(points: &[MovingPoint]) -> (isize, isize) {
+    let (min_x, min_y) = mix_x_y(points);
+    let (max_x, max_y) = max_x_y(points);
     (max_x - min_x + 1, max_y - min_y + 1)
 }
 
-fn board_from_points(points: &[Point]) -> Board {
-    let min_x = points.iter().min_by_key(|point| point.px).unwrap().px;
-    let min_y = points.iter().min_by_key(|point| point.py).unwrap().py;
-    let max_x = points.iter().max_by_key(|point| point.px).unwrap().px;
-    let max_y = points.iter().max_by_key(|point| point.py).unwrap().py;
+fn board_from_points(points: &[MovingPoint]) -> Board {
+    let (min_x, min_y) = mix_x_y(points);
+    let (max_x, max_y) = max_x_y(points);
     let mut board = Board::create_empty(
         (max_x - min_x + 1) as usize,
         (max_y - min_y + 1) as usize,
@@ -55,13 +25,6 @@ fn board_from_points(points: &[Point]) -> Board {
 
     board.flip();
     board
-}
-
-fn tick(points: &mut [Point]) {
-    points.iter_mut().for_each(|point| {
-        point.px += point.vx;
-        point.py += point.vy;
-    });
 }
 
 pub fn solve10(input: &[String]) -> (i128, i128) {
