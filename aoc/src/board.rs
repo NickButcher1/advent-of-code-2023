@@ -129,6 +129,19 @@ impl Board {
         num_matches
     }
 
+    pub fn neighbour_cells(&self, r: usize, c: usize) -> [char; 8] {
+        [
+            self.cells[r - 1][c - 1],
+            self.cells[r - 1][c],
+            self.cells[r - 1][c + 1],
+            self.cells[r][c - 1],
+            self.cells[r][c + 1],
+            self.cells[r + 1][c - 1],
+            self.cells[r + 1][c],
+            self.cells[r + 1][c + 1],
+        ]
+    }
+
     // Assumes the board has a border of empty cells, which are never modified.
     pub fn game_of_life_step(&mut self, off_char: char, on_char: char) {
         let mut new_cells: Cells = vec![];
@@ -139,18 +152,11 @@ impl Board {
                 if r == 0 || r == self.num_rows - 1 || c == 0 || c == self.num_cols - 1 {
                     row_vec.push(off_char);
                 } else {
-                    let neighbour_cells = [
-                        self.cells[r - 1][c - 1],
-                        self.cells[r - 1][c],
-                        self.cells[r - 1][c + 1],
-                        self.cells[r][c - 1],
-                        self.cells[r][c + 1],
-                        self.cells[r + 1][c - 1],
-                        self.cells[r + 1][c],
-                        self.cells[r + 1][c + 1],
-                    ];
-                    let num_neighbours_on =
-                        neighbour_cells.iter().filter(|&&c| c == on_char).count();
+                    let num_neighbours_on = self
+                        .neighbour_cells(r, c)
+                        .iter()
+                        .filter(|&&c| c == on_char)
+                        .count();
                     let new_char = if self.cells[r][c] == on_char {
                         if (2..=3).contains(&num_neighbours_on) {
                             on_char
@@ -177,6 +183,10 @@ impl Board {
         self.cells[self.num_rows - 1 - offset][offset] = set_char;
         self.cells[offset][self.num_cols - 1 - offset] = set_char;
         self.cells[self.num_rows - 1 - offset][self.num_cols - 1 - offset] = set_char;
+    }
+
+    pub fn hash(&self) -> Vec<u8> {
+        md5::compute(format!("{self:?}")).to_ascii_lowercase()
     }
 
     #[allow(dead_code)]

@@ -27,7 +27,7 @@ pub fn solve_part_2(input: &[String]) -> i128 {
     board.add_border(BORDER);
     for i in 1..1000 {
         step(&mut board);
-        let hash = md5::compute(format!("{board:?}")).to_ascii_lowercase();
+        let hash = board.hash();
         for j in 1..hashes.len() {
             if hashes[j] == hash {
                 let cycle_start = j;
@@ -50,16 +50,7 @@ pub fn step(board: &mut Board) {
             if r == 0 || r == board.num_rows - 1 || c == 0 || c == board.num_cols - 1 {
                 row_vec.push(BORDER);
             } else {
-                let neighbour_cells = [
-                    board.cells[r - 1][c - 1],
-                    board.cells[r - 1][c],
-                    board.cells[r - 1][c + 1],
-                    board.cells[r][c - 1],
-                    board.cells[r][c + 1],
-                    board.cells[r + 1][c - 1],
-                    board.cells[r + 1][c],
-                    board.cells[r + 1][c + 1],
-                ];
+                let neighbour_cells = board.neighbour_cells(r, c);
                 let new_char = match board.cells[r][c] {
                     OPEN => {
                         let num_trees_around =
