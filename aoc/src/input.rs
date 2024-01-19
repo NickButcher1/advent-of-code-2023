@@ -6,6 +6,10 @@ pub fn to_vec_i64(input: &[String]) -> Vec<i64> {
     input.iter().map(|x| x.parse::<i64>().unwrap()).collect()
 }
 
+pub fn to_vec_isize(input: &[String]) -> Vec<isize> {
+    input.iter().map(|x| x.parse::<isize>().unwrap()).collect()
+}
+
 pub fn to_vec_char(input: &[String]) -> Vec<Vec<char>> {
     input
         .iter()
