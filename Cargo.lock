@@ -419,6 +419,7 @@ name = "year2016"
 version = "0.1.0"
 dependencies = [
  "aoc",
+ "regex",
 ]
 
 [[package]]
