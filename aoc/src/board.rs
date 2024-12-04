@@ -1,6 +1,5 @@
 // Represents a mutable square or rectangular board of cells. Each cell is a character.
 
-use crate::point::Point;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
