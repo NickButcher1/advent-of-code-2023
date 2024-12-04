@@ -1,5 +1,9 @@
 // Represents a mutable square or rectangular board of cells. Each cell is a character.
 
+use crate::point::Point;
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
+
 pub type Cells = Vec<Vec<char>>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -195,5 +199,55 @@ impl Board {
         for row in &self.cells {
             println!("{}", row.iter().collect::<String>());
         }
+    }
+
+    // Find the cheapest path from top left to bottom right. The cost for entering a cell is the
+    // value in that cell. There is no cost for the top left cell unless re-entered.
+    // Assumes cells contain a digit 1-9 as a char.
+    pub fn cheapest_path(&self) -> u32 {
+        // Initialize minimum cost for every cell - all to +infinity except for the top left cell
+        // which is defined to have zero cost. We'll subtract that at the end.
+        let mut min_cost = vec![vec![u32::MAX; self.num_cols]; self.num_rows];
+        min_cost[0][0] = self.cells[0][0].to_digit(10).unwrap();
+
+        // Keep a list of cells we have visited. Reverse is used to prioritise cheapest cells.
+        let mut heap = BinaryHeap::new();
+        heap.push(Reverse((self.cells[0][0].to_digit(10).unwrap(), 0, 0)));
+
+        let directions: [(isize, isize); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
+
+        // Loop, taking the cheapest item off the heap each time.
+        while let Some(Reverse((current_cost, x, y))) = heap.pop() {
+            // Ignore if we already found a cheaper path to this cell.
+            if current_cost > min_cost[x][y] {
+                continue;
+            }
+
+            // Try the adjacent cells in all four directions.
+            for (dx, dy) in directions.iter() {
+                let new_x_isize = x as isize + dx;
+                let new_y_isize = y as isize + dy;
+
+                if new_x_isize >= 0 && new_y_isize >= 0 {
+                    let new_x = new_x_isize as usize;
+                    let new_y = new_y_isize as usize;
+
+                    if new_x < self.num_cols && new_y < self.num_rows {
+                        let new_cost =
+                            current_cost + self.cells[new_x][new_y].to_digit(10).unwrap();
+
+                        if new_cost < min_cost[new_x][new_y] {
+                            min_cost[new_x][new_y] = new_cost;
+                            heap.push(Reverse((new_cost, new_x, new_y)));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Subtract the cost of the starting cell.
+        let cheapest_path_cost =
+            min_cost[self.num_cols - 1][self.num_rows - 1] - self.cells[0][0].to_digit(10).unwrap();
+        cheapest_path_cost
     }
 }
