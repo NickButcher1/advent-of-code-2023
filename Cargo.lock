@@ -9,6 +9,7 @@ dependencies = [
  "aoc",
  "clap",
  "fast_paths",
+ "itertools 0.13.0",
  "num-integer",
  "regex",
  "string-builder",
@@ -185,6 +186,15 @@ name = "itertools"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25db6b064527c5d482d0423354fcd07a89a2dfe07b67892e62411946db7f07b0"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
@@ -409,7 +419,7 @@ name = "year2015"
 version = "0.1.0"
 dependencies = [
  "aoc",
- "itertools",
+ "itertools 0.12.0",
  "md5",
  "regex",
 ]
@@ -459,6 +469,7 @@ name = "year2021"
 version = "0.1.0"
 dependencies = [
  "aoc",
+ "itertools 0.13.0",
  "regex",
  "string-builder",
 ]
