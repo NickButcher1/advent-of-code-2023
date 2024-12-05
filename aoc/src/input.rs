@@ -53,3 +53,11 @@ pub fn string_to_vec_usize(input: &str, split_on: char) -> Vec<usize> {
         .map(|s| s.parse::<usize>().unwrap())
         .collect()
 }
+
+#[allow(dead_code)]
+pub fn string_to_vec_u32(input: &str, split_on: char) -> Vec<u32> {
+    input
+        .split(split_on)
+        .map(|s| s.parse::<u32>().unwrap())
+        .collect()
+}
