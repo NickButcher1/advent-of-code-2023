@@ -61,3 +61,11 @@ pub fn string_to_vec_u32(input: &str, split_on: char) -> Vec<u32> {
         .map(|s| s.parse::<u32>().unwrap())
         .collect()
 }
+
+#[allow(dead_code)]
+pub fn string_to_vec_i32(input: &str, split_on: char) -> Vec<i32> {
+    input
+        .split(split_on)
+        .map(|s| s.parse::<i32>().unwrap())
+        .collect()
+}
