@@ -4,7 +4,6 @@ use regex::Regex;
 
 const SAND: char = '.';
 const CLAY: char = '#';
-const SOURCE: char = '+';
 const FALLING_WATER: char = '|';
 const STEADY_WATER: char = '~';
 
@@ -47,7 +46,7 @@ pub fn solve17(input: &[String]) -> (i128, i128) {
     let mut board = Board::create_empty(max_row + 1 - min_row, 1000, SAND);
 
     for (c_min, c_max, r_min, r_max) in instructions {
-        board.cells[0][500] = SOURCE;
+        board.cells[0][500] = FALLING_WATER;
         for (c, r) in iproduct!(c_min..=c_max, r_min..=r_max) {
             board.cells[r - min_row][c] = CLAY;
         }
@@ -56,8 +55,9 @@ pub fn solve17(input: &[String]) -> (i128, i128) {
     expand_source_down(&mut board, 0, 500);
 
     let solution_one = board.count(STEADY_WATER) + board.count(FALLING_WATER);
+    let solution_two = board.count(STEADY_WATER);
 
-    (solution_one as i128, 0 as i128)
+    (solution_one as i128, solution_two as i128)
 }
 
 fn expand_source_down(board: &mut Board, r: usize, c: usize) {
