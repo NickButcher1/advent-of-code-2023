@@ -96,6 +96,17 @@ impl Board {
         unreachable!();
     }
 
+    pub fn find(&mut self, find_char: char) -> (usize, usize) {
+        for r in 0..self.num_rows {
+            for c in 0..self.num_cols {
+                if self.cells[r][c] == find_char {
+                    return (r, c);
+                }
+            }
+        }
+        unreachable!();
+    }
+
     // Useful for avoiding edge checks when a board doesn't wrap.
     pub fn add_border(&mut self, border_char: char) {
         let new_cols = self.num_cols + 2;
