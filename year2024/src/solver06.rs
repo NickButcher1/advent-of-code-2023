@@ -12,7 +12,7 @@ const GUARD_MOVES: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 fn parse_input(input: &[String]) -> ((usize, usize), usize, Board) {
     let mut board = Board::from_input(input);
     board.add_border(BORDER);
-    let mut guard_pos = board.find(GUARD_START);
+    let guard_pos = board.find(GUARD_START);
     board.cells[guard_pos.0][guard_pos.1] = GUARD_PATH;
 
     (guard_pos, 0, board)
