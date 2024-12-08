@@ -1,8 +1,8 @@
 extern crate regex;
 use regex::Regex;
 
-pub fn solve07(input: &[String]) -> (i128, i128) {
-    let mut part_one = 0;
+pub fn solve(input: &[String], is_part_two: bool) -> i64 {
+    let mut solution = 0;
 
     let re = Regex::new(r"(\d+):\s*((?:\d+\s*)+)").unwrap();
     for input_line in input {
@@ -23,18 +23,31 @@ pub fn solve07(input: &[String]) -> (i128, i128) {
                     if m <= first_number {
                         new_vec.push(m);
                     }
+                    if is_part_two {
+                        let concat_number = [output_vec[j].to_string(), numbers[i].to_string()]
+                            .concat()
+                            .parse()
+                            .unwrap();
+                        if concat_number <= first_number {
+                            new_vec.push(concat_number);
+                        }
+                    }
                 }
                 output_vec = new_vec;
             }
 
             for k in 0..output_vec.len() {
                 if output_vec[k] == first_number {
-                    part_one += first_number;
+                    solution += first_number;
                     break;
                 }
             }
         }
     }
 
-    (part_one as i128, 0 as i128)
+    solution
+}
+
+pub fn solve07(input: &[String]) -> (i128, i128) {
+    (solve(input, false) as i128, solve(input, true) as i128)
 }
