@@ -1,6 +1,6 @@
 use aoc::board::Board;
 
-pub fn solve17(input: &[String]) -> (i128, i128) {
+pub fn solve17(_input: &[String]) -> (i128, i128) {
     // TODO
     // let re = Regex::new(r"^target area: x=(\d+)..(\d+), y=-(\d+)..(\d+)").unwrap();
     // let caps = re.captures(&input[0]).unwrap();
