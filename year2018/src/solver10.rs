@@ -1,17 +1,17 @@
 use aoc::board::Board;
-use aoc::moving_point::{max_x_y, mix_x_y, read_points, tick, MovingPoint};
+use aoc::moving_point::{max_x_y, min_x_y, read_points, tick, MovingPoint};
 
 const EMPTY: char = '.';
 const FULL: char = '#';
 
 fn area_from_points(points: &[MovingPoint]) -> (isize, isize) {
-    let (min_x, min_y) = mix_x_y(points);
+    let (min_x, min_y) = min_x_y(points);
     let (max_x, max_y) = max_x_y(points);
     (max_x - min_x + 1, max_y - min_y + 1)
 }
 
 fn board_from_points(points: &[MovingPoint]) -> Board {
-    let (min_x, min_y) = mix_x_y(points);
+    let (min_x, min_y) = min_x_y(points);
     let (max_x, max_y) = max_x_y(points);
     let mut board = Board::create_empty(
         (max_x - min_x + 1) as usize,

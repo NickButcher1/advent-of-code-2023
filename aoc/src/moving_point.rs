@@ -28,7 +28,7 @@ pub fn read_points(input: &[String]) -> Vec<MovingPoint> {
         .collect()
 }
 
-pub fn mix_x_y(points: &[MovingPoint]) -> (isize, isize) {
+pub fn min_x_y(points: &[MovingPoint]) -> (isize, isize) {
     points
         .iter()
         .fold((isize::MAX, isize::MAX), |(min_x, min_y), point| {
