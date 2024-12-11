@@ -1,25 +1,27 @@
 use aoc::input::string_to_vec_u64;
 use std::collections::HashMap;
 
-fn tick_stone(stone: u64) -> (u64, u64) {
+fn tick_stone(stone: u64, cache: &mut HashMap<u64, Vec<u64>>) -> Vec<u64> {
     if stone == 0 {
-        (1, u64::MAX)
+        cache.insert(0, vec![1]);
+        vec![1]
     } else {
         let stone_str = stone.to_string();
         if stone_str.len() % 2 == 0 {
             let half_len = stone_str.len() / 2;
-            (
-                (&stone_str[..half_len]).parse().unwrap(),
-                (&stone_str[half_len..]).parse().unwrap(),
-            )
+            let new_1 = (&stone_str[..half_len]).parse().unwrap();
+            let new_2 = (&stone_str[half_len..]).parse().unwrap();
+            cache.insert(stone, vec![new_1, new_2]);
+            vec![new_1, new_2]
         } else {
-            (stone * 2024, u64::MAX)
+            cache.insert(stone, vec![stone * 2024]);
+            vec![stone * 2024]
         }
     }
 }
 
-pub fn solve_one(input: &[String], depth: u64, cache_one: &mut HashMap<u64, Vec<u64>>) -> u64 {
-    let mut input_stones = string_to_vec_u64(&input[0], ' ');
+pub fn solve(input: &[String], depth: u64, cache: &mut HashMap<u64, Vec<u64>>) -> u64 {
+    let input_stones = string_to_vec_u64(&input[0], ' ');
 
     let mut stones: HashMap<u64, usize> =
         input_stones.iter().fold(HashMap::new(), |mut map, &num| {
@@ -27,32 +29,20 @@ pub fn solve_one(input: &[String], depth: u64, cache_one: &mut HashMap<u64, Vec<
             map
         });
 
-    for blink in 1..=depth {
+    for _ in 1..=depth {
         let mut new_stones: HashMap<u64, usize> = HashMap::new();
 
-        for (stone, count) in stones {
-            let mut add_stones: Vec<u64> = if cache_one.contains_key(&stone) {
-                cache_one[&stone].clone()
-            } else if stone == 0 {
-                cache_one.insert(0, vec![1]);
-                vec![1]
+        for (stone, count) in &stones {
+            let stones_to_add: Vec<u64> = if cache.contains_key(&stone) {
+                cache[&stone].clone()
             } else {
-                let stone_str = stone.to_string();
-                if stone_str.len() % 2 == 0 {
-                    let half_len = stone_str.len() / 2;
-                    let new_1 = (&stone_str[..half_len]).parse().unwrap();
-                    let new_2 = (&stone_str[half_len..]).parse().unwrap();
-                    cache_one.insert(stone, vec![new_1, new_2]);
-                    vec![new_1, new_2]
-                } else {
-                    cache_one.insert(stone, vec![stone * 2024]);
-                    vec![stone * 2024]
-                }
+                tick_stone(*stone, cache)
             };
-            for add_s in add_stones {
-                *new_stones.entry(add_s).or_insert(0) += count;
+            for stone_to_add in stones_to_add {
+                *new_stones.entry(stone_to_add).or_insert(0) += count;
             }
         }
+
         stones = new_stones;
     }
 
@@ -60,8 +50,8 @@ pub fn solve_one(input: &[String], depth: u64, cache_one: &mut HashMap<u64, Vec<
 }
 
 pub fn solve11(input: &[String]) -> (i128, i128) {
-    let mut cache_one: HashMap<u64, Vec<u64>> = HashMap::new();
-    let solution_one = solve_one(input, 25, &mut cache_one);
-    let solution_two = solve_one(input, 75, &mut cache_one);
+    let mut cache: HashMap<u64, Vec<u64>> = HashMap::new();
+    let solution_one = solve(input, 25, &mut cache);
+    let solution_two = solve(input, 75, &mut cache);
     (solution_one as i128, solution_two as i128)
 }
