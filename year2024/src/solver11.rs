@@ -1,7 +1,15 @@
 use aoc::input::string_to_vec_u64;
 use std::collections::HashMap;
 
-fn tick_stone(stone: u64, cache: &mut HashMap<u64, Vec<u64>>) -> Vec<u64> {
+pub fn parse_input(input: &[String]) -> HashMap<u64, usize> {
+    let input_stones = string_to_vec_u64(&input[0], ' ');
+
+    input_stones.iter().fold(HashMap::new(), |mut map, &stone| {
+        *map.entry(stone).or_insert(0) += 1;
+        map
+    })
+}
+fn evolve_stone(stone: u64, cache: &mut HashMap<u64, Vec<u64>>) -> Vec<u64> {
     if stone == 0 {
         cache.insert(0, vec![1]);
         vec![1]
@@ -21,29 +29,23 @@ fn tick_stone(stone: u64, cache: &mut HashMap<u64, Vec<u64>>) -> Vec<u64> {
 }
 
 pub fn solve(input: &[String], depth: u64, cache: &mut HashMap<u64, Vec<u64>>) -> u64 {
-    let input_stones = string_to_vec_u64(&input[0], ' ');
-
-    let mut stones: HashMap<u64, usize> =
-        input_stones.iter().fold(HashMap::new(), |mut map, &num| {
-            *map.entry(num).or_insert(0) += 1;
-            map
-        });
+    let mut stones: HashMap<u64, usize> = parse_input(input);
 
     for _ in 1..=depth {
-        let mut new_stones: HashMap<u64, usize> = HashMap::new();
+        let mut stones_at_next_depth: HashMap<u64, usize> = HashMap::new();
 
         for (stone, count) in &stones {
             let stones_to_add: Vec<u64> = if cache.contains_key(&stone) {
                 cache[&stone].clone()
             } else {
-                tick_stone(*stone, cache)
+                evolve_stone(*stone, cache)
             };
             for stone_to_add in stones_to_add {
-                *new_stones.entry(stone_to_add).or_insert(0) += count;
+                *stones_at_next_depth.entry(stone_to_add).or_insert(0) += count;
             }
         }
 
-        stones = new_stones;
+        stones = stones_at_next_depth;
     }
 
     stones.values().fold(0, |acc, &x| acc + x as u64)
@@ -51,7 +53,8 @@ pub fn solve(input: &[String], depth: u64, cache: &mut HashMap<u64, Vec<u64>>) -
 
 pub fn solve11(input: &[String]) -> (i128, i128) {
     let mut cache: HashMap<u64, Vec<u64>> = HashMap::new();
-    let solution_one = solve(input, 25, &mut cache);
-    let solution_two = solve(input, 75, &mut cache);
-    (solution_one as i128, solution_two as i128)
+    (
+        solve(input, 25, &mut cache) as i128,
+        solve(input, 75, &mut cache) as i128,
+    )
 }
