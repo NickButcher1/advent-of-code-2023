@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 aoc = { path = "../aoc", version = "0.1.0" }
 string-builder = "0.2.0"
-regex = "1.10.2"
+regex = "1.11.1"
 itertools = "0.13.0"
