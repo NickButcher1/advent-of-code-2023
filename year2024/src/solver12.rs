@@ -25,10 +25,10 @@ fn is_corner(
     points: &HashSet<(usize, usize)>,
     r: usize,
     c: usize,
-    rd: i32,
-    cd: i32,
+    dr: i32,
+    dc: i32,
 ) -> i32 {
-    if !points.contains(&(r, c)) || !is_border(board, r, c, rd, cd) {
+    if !points.contains(&(r, c)) || !is_border(board, r, c, dr, dc) {
         1
     } else {
         0
@@ -36,8 +36,6 @@ fn is_corner(
 }
 
 fn count_sides(board: &Board, points: &HashSet<(usize, usize)>) -> i32 {
-    let mut corners = 0;
-
     // For every cell X in the region, consider each of these four cases around it:
     //
     //   BOB    AXA    BA    AB
@@ -48,6 +46,8 @@ fn count_sides(board: &Board, points: &HashSet<(usize, usize)>) -> i32 {
     // a continuation of the border XO.  The number of sides equals the number of corners for any
     // region, but because we count each corner twice (once for each of the two sides that touches
     // it, we halve the number of corners to get the number of sides.
+    let mut corners = 0;
+
     for (r, c) in points.clone().into_iter() {
         if is_border(board, r, c, -1, 0) {
             corners += is_corner(board, points, r, c - 1, -1, 0);
@@ -89,13 +89,9 @@ pub fn solve12(input: &[String]) -> (i128, i128) {
         if board.cells[r][c] != COMPLETE {
             let key = board.cells[r][c];
 
-            let mut area = 0;
-            let mut perimeter = 0;
             let mut points_in_region: HashSet<(usize, usize)> = HashSet::new();
 
             board.cells[r][c] = COMPLETE;
-            area += 1;
-            perimeter += perimeter_count_for_cell(&input_board, r, c, key);
             points_in_region.insert((r, c));
             queue.push((r, c));
 
@@ -106,14 +102,17 @@ pub fn solve12(input: &[String]) -> (i128, i128) {
                     let new_c = (test_c as i32 + dc) as usize;
                     if board.cells[new_r][new_c] == key {
                         board.cells[new_r][new_c] = COMPLETE;
-                        area += 1;
-                        perimeter += perimeter_count_for_cell(&input_board, new_r, new_c, key);
                         points_in_region.insert((new_r, new_c));
                         queue.push((new_r, new_c));
                     }
                 });
             }
 
+            let area = points_in_region.len() as i32;
+            let perimeter = points_in_region
+                .iter()
+                .map(|&(r, c)| perimeter_count_for_cell(&input_board, r, c, key))
+                .sum::<i32>();
             total_cost_one += area * perimeter;
             total_cost_two += area * count_sides(&input_board, &points_in_region);
         }
