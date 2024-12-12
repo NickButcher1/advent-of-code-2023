@@ -260,4 +260,28 @@ impl Board {
             min_cost[self.num_cols - 1][self.num_rows - 1] - self.cells[0][0].to_digit(10).unwrap();
         cheapest_path_cost
     }
+
+    #[allow(dead_code)]
+    pub fn fold_up(&mut self, fold_row: usize, empty_char: char, full_char: char) {
+        for r in 0..fold_row {
+            for c in 0..self.num_cols {
+                if self.cells[2 * fold_row - r][c] == full_char {
+                    self.cells[r][c] = full_char;
+                    self.cells[2 * fold_row - r][c] = empty_char;
+                }
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn fold_left(&mut self, fold_col: usize, empty_char: char, full_char: char) {
+        for c in 0..fold_col {
+            for r in 0..self.num_rows {
+                if self.cells[r][2 * fold_col - c] == full_char {
+                    self.cells[r][c] = full_char;
+                    self.cells[r][2 * fold_col - c] = empty_char;
+                }
+            }
+        }
+    }
 }
