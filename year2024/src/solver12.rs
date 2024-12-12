@@ -38,20 +38,17 @@ fn is_corner(
 fn count_sides(board: &Board, points: &HashSet<(usize, usize)>) -> i32 {
     let mut corners = 0;
 
-    // For every cell in the region, and for each of its four edges, if that edge extends to the
-    // next cell then ignore it. Otherwise, it's a corner. As this counts two corners for each side,
-    // halve that to get the number of sides.
+    // For every cell X in the region, consider each of these four cases around it:
+    //
+    //   BOB    AXA    BA    AB
+    //   AXA    BOB    OX    XO
+    //                 BA    AB
+    //
+    // If XO is a border of X's region, then for each of the two AB, we have a corner unless AB is
+    // a continuation of the border XO.  The number of sides equals the number of corners for any
+    // region, but because we count each corner twice (once for each of the two sides that touches
+    // it, we halve the number of corners to get the number of sides.
     for (r, c) in points.clone().into_iter() {
-        if is_border(board, r, c, 0, -1) {
-            corners += is_corner(board, points, r - 1, c, 0, -1);
-            corners += is_corner(board, points, r + 1, c, 0, -1);
-        }
-
-        if is_border(board, r, c, 0, 1) {
-            corners += is_corner(board, points, r - 1, c, 0, 1);
-            corners += is_corner(board, points, r + 1, c, 0, 1);
-        }
-
         if is_border(board, r, c, -1, 0) {
             corners += is_corner(board, points, r, c - 1, -1, 0);
             corners += is_corner(board, points, r, c + 1, -1, 0);
@@ -60,6 +57,16 @@ fn count_sides(board: &Board, points: &HashSet<(usize, usize)>) -> i32 {
         if is_border(board, r, c, 1, 0) {
             corners += is_corner(board, points, r, c - 1, 1, 0);
             corners += is_corner(board, points, r, c + 1, 1, 0);
+        }
+
+        if is_border(board, r, c, 0, -1) {
+            corners += is_corner(board, points, r - 1, c, 0, -1);
+            corners += is_corner(board, points, r + 1, c, 0, -1);
+        }
+
+        if is_border(board, r, c, 0, 1) {
+            corners += is_corner(board, points, r - 1, c, 0, 1);
+            corners += is_corner(board, points, r + 1, c, 0, 1);
         }
     }
 
