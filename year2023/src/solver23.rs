@@ -122,17 +122,17 @@ fn build_valid_moves_between_junctions(
                 let next_moves = &valid_moves[this_move.0][this_move.1];
                 if next_moves.len() == 2 {
                     this_move = if next_moves[0] == *prev_cell {
-                        prev_cell = &this_move;
+                        prev_cell = this_move;
                         &next_moves[1]
                     } else if next_moves[1] == *prev_cell {
-                        prev_cell = &this_move;
+                        prev_cell = this_move;
                         &next_moves[0]
                     } else {
                         panic!();
                     };
                 } else {
                     assert_eq!(next_moves.len(), 1);
-                    prev_cell = &this_move;
+                    prev_cell = this_move;
                     this_move = &next_moves[0];
                 }
                 cost += 1;

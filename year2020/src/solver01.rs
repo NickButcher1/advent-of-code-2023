@@ -1,7 +1,7 @@
 use aoc::input::to_vec_u64;
 use std::cmp::Ordering;
 
-fn solve_part_1(entries: &Vec<u64>) -> u64 {
+fn solve_part_1(entries: &[u64]) -> u64 {
     for i in 0..entries.len() {
         for j in (0..entries.len()).rev() {
             let sum = entries[i] + entries[j];
@@ -17,7 +17,7 @@ fn solve_part_1(entries: &Vec<u64>) -> u64 {
     unreachable!();
 }
 
-fn solve_part_2(entries: &Vec<u64>) -> u64 {
+fn solve_part_2(entries: &[u64]) -> u64 {
     for i in 0..entries.len() {
         for j in (0..entries.len()).rev() {
             let sum = entries[i] + entries[j];

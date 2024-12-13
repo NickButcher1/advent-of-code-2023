@@ -55,7 +55,7 @@ fn solve_subset<'a>(
     counts: &'a [usize],
     cache: &mut HashMap<(&'a [usize], &'a [usize]), u64>,
 ) -> u64 {
-    return if line_ints.is_empty() {
+    if line_ints.is_empty() {
         0
     } else if line_ints[0] == OPERATIONAL {
         // Chop leading '.'
@@ -131,7 +131,7 @@ fn solve_subset<'a>(
 
         cache.insert(key, sum);
         sum
-    };
+    }
 }
 
 fn can_block_fit_in_pos_forward(line_ints: &[usize], pos: usize, block_len: usize) -> bool {

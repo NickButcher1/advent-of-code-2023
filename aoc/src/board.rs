@@ -32,7 +32,7 @@ impl Board {
 
     // Input is multiple boards separated by blank lines.
     pub fn from_input_multiple(input: &[String]) -> Vec<Self> {
-        let slices: Vec<_> = input.split(std::string::String::is_empty).collect();
+        let slices: Vec<_> = input.split(String::is_empty).collect();
         slices.iter().map(|slice| Self::from_input(slice)).collect()
     }
 

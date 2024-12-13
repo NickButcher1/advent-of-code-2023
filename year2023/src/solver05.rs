@@ -83,7 +83,7 @@ fn map_b_to_a(value: u64, map: &Map) -> u64 {
     value
 }
 
-fn is_valid_location(seeds: &Vec<u64>, location: u64, maps: &Maps) -> bool {
+fn is_valid_location(seeds: &[u64], location: u64, maps: &Maps) -> bool {
     let mut current_value = location;
     for range_map in maps {
         current_value = map_b_to_a(current_value, range_map);
@@ -92,7 +92,7 @@ fn is_valid_location(seeds: &Vec<u64>, location: u64, maps: &Maps) -> bool {
     is_valid_seed(seeds, current_value)
 }
 
-fn is_valid_seed(seeds: &Vec<u64>, seed_to_test: u64) -> bool {
+fn is_valid_seed(seeds: &[u64], seed_to_test: u64) -> bool {
     let mut valid_seed = false;
 
     for i in (0..seeds.len()).step_by(2) {

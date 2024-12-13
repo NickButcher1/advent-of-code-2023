@@ -33,7 +33,7 @@ fn read_input(input: &[String]) -> Vec<Hailstone> {
     hailstones
 }
 
-fn calculate_xy_intersects_in_future(hailstones: &mut Vec<Hailstone>) -> Vec<(f64, f64)> {
+fn calculate_xy_intersects_in_future(hailstones: &mut [Hailstone]) -> Vec<(f64, f64)> {
     let mut intersects: Vec<(f64, f64)> = vec![];
     for id_1 in 0..hailstones.len() {
         for id_2 in 0..hailstones.len() {

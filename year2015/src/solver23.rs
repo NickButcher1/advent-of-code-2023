@@ -21,7 +21,7 @@ pub fn solve(input: &[String], initial_a: i32) -> i128 {
     let re_jie = Regex::new(r"^jie ([a-b]), ([+-]\d+)$").unwrap();
     let re_jio = Regex::new(r"^jio ([a-b]), ([+-]\d+)$").unwrap();
 
-    let mut registers = vec![initial_a, 0];
+    let mut registers = [initial_a, 0];
     let mut instruction_pointer: i32 = 0;
 
     while instruction_pointer >= 0 && instruction_pointer < input.len() as i32 {
