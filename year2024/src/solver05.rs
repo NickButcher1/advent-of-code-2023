@@ -96,5 +96,5 @@ fn clean_update(input_vec: &Vec<u32>, rules: &Vec<(u32, u32)>) -> Vec<u32> {
         .into_iter()
         .flat_map(|v| v)
         .collect();
-    return flattened_output;
+    flattened_output
 }

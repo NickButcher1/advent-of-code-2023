@@ -76,7 +76,10 @@ fn run_one_day(
         "            todo".to_string()
     };
 
-    println!("{year}-{day:02}    {result1_str}  {result2_str}  {elapsed_ms:12}ms",);
+    println!(
+        "{year}-{day:02}    {result1_str}  {result2_str}  {elapsed_ms:12}ms  {}",
+        "#".repeat(elapsed_ms as usize / 1000)
+    );
 
     if !is_sample_mode {
         let expected_result1 = &expected_outputs[day * 2 - 2];

@@ -256,9 +256,7 @@ impl Board {
         }
 
         // Subtract the cost of the starting cell.
-        let cheapest_path_cost =
-            min_cost[self.num_cols - 1][self.num_rows - 1] - self.cells[0][0].to_digit(10).unwrap();
-        cheapest_path_cost
+        min_cost[self.num_cols - 1][self.num_rows - 1] - self.cells[0][0].to_digit(10).unwrap()
     }
 
     #[allow(dead_code)]

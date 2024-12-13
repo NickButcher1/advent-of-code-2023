@@ -35,7 +35,7 @@ pub fn solve13(input: &[String]) -> (i128, i128) {
     (part_1, part_2)
 }
 
-fn solve(names: &Vec<&str>, mapping: &HashMap<(&str, &str), isize>) -> isize {
+fn solve(names: &[&str], mapping: &HashMap<(&str, &str), isize>) -> isize {
     // Omit one name, we'll fix it in one position - this is more efficient than trying that name in every position.
     let mut part_1 = isize::MIN;
     let permutations = names[1..].iter().permutations(names.len() - 1);

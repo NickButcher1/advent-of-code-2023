@@ -43,8 +43,7 @@ pub fn solve09(input: &[String]) -> (i128, i128) {
             }
             let mut basin_size = 0;
             queue.push((r, c));
-            while !queue.is_empty() {
-                let (test_r, test_c) = queue.pop().unwrap();
+            while let Some((test_r, test_c)) = queue.pop() {
                 [(-1, 0), (0, 1), (1, 0), (0, -1)]
                     .iter()
                     .for_each(|(dr, dc)| {

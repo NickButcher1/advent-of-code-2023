@@ -54,8 +54,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
                 queue.push((r, c));
             }
         }
-        while queue.len() != 0 {
-            let (r, c) = queue.pop().unwrap();
+        while let Some((r, c)) = queue.pop() {
             expand(&mut flash_count, &mut queue, &mut new_board, r, c);
         }
 

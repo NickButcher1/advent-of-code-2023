@@ -44,7 +44,9 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
         }
         board.cells[(probe.1 + border) as usize][(probe.0 + border) as usize] = 'S';
 
-        // Due to drag, the probe's x velocity changes by 1 toward the value 0; that is, it decreases by 1 if it is greater than 0, increases by 1 if it is less than 0, or does not change if it is already 0.
+        // Due to drag, the probe's x velocity changes by 1 toward the value 0; that is, it
+        // decreases by 1 if it is greater than 0, increases by 1 if it is less than 0, or does not
+        // change if it is already 0.
         if velocity.0 > 0 {
             velocity = (velocity.0 - 1, velocity.1);
         } else if velocity.0 < 0 {

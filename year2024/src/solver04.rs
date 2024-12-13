@@ -25,7 +25,7 @@ fn count_xmas(board: &Board, x: usize, y: usize, dx: isize, dy: isize) -> usize 
                 }
             }
 
-            return true;
+            true
         })
         .count()
 }

@@ -13,7 +13,7 @@ fn get_register_index(register_str: &str) -> usize {
 }
 
 pub fn solve23(input: &[String]) -> (i128, i128) {
-    (solve(input, 0) as i128, solve(input, 1) as i128)
+    (solve(input, 0), solve(input, 1))
 }
 
 pub fn solve(input: &[String], initial_a: i32) -> i128 {

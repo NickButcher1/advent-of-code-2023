@@ -6,7 +6,7 @@ fn contains_three_plus_vowels(chars: &[char]) -> bool {
     chars.iter().filter(|c| VOWELS.contains(c)).count() >= 3
 }
 
-fn contains_double(chars: &Vec<char>) -> bool {
+fn contains_double(chars: &[char]) -> bool {
     for i in 0..=chars.len() - 2 {
         if chars[i] == chars[i + 1] {
             return true;
@@ -15,7 +15,7 @@ fn contains_double(chars: &Vec<char>) -> bool {
     false
 }
 
-fn contains_disallowed_pair(chars: &Vec<char>) -> bool {
+fn contains_disallowed_pair(chars: &[char]) -> bool {
     for i in 0..=chars.len() - 2 {
         if chars[i] == 'a' && chars[i + 1] == 'b'
             || chars[i] == 'c' && chars[i + 1] == 'd'

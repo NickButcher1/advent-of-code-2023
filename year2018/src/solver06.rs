@@ -71,11 +71,11 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
 
     // Eliminate counts for any ID on the edge - these go to infinity so aren't wanted.
     for (x, y) in iproduct!(0..board_one.num_cols, 0..board_one.num_rows) {
-        if x == 0 || y == 0 || x == (board_one.num_cols - 1) || y == (board_one.num_rows - 1) {
-            if board_one.cells[y][x] != EMPTY {
-                let index = char_to_index(board_one.cells[y][x]);
-                count_ids[index] = 0;
-            }
+        if (x == 0 || y == 0 || x == (board_one.num_cols - 1) || y == (board_one.num_rows - 1))
+            && board_one.cells[y][x] != EMPTY
+        {
+            let index = char_to_index(board_one.cells[y][x]);
+            count_ids[index] = 0;
         }
     }
 
