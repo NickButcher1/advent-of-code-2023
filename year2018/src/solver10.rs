@@ -39,8 +39,8 @@ pub fn solve10(input: &[String]) -> (i128, i128) {
         tick(&mut points);
         let (num_rows, _) = area_from_points(&points);
         if num_rows > prev_num_rows {
-            let board = board_from_points(&prev_points);
-            board.print();
+            let _board = board_from_points(&prev_points);
+            // board.print();
             return (-1, step);
         }
         step += 1;

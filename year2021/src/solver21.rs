@@ -79,7 +79,7 @@ pub fn solve_part_two(p1_start_pos: i32, p2_start_pos: i32) -> i128 {
     let mut p2_wins: u64 = 0;
 
     loop {
-        if states.len() == 0 {
+        if states.is_empty() {
             break;
         }
         let old_state_orig = states.keys().next().unwrap();

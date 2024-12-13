@@ -27,7 +27,7 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
     }
 
     // Board is upside down.
-    board.print();
+    // board.print();
 
     let mut velocity = (7, 2);
 
@@ -39,7 +39,7 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
         probe = (probe.0 + velocity.0, probe.1 + velocity.1);
         if board.cells[(probe.1 + border) as usize][(probe.0 + border) as usize] == 'T' {
             board.cells[(probe.1 + border) as usize][(probe.0 + border) as usize] = 'S';
-            board.print();
+            // board.print();
             break;
         }
         board.cells[(probe.1 + border) as usize][(probe.0 + border) as usize] = 'S';
@@ -53,8 +53,8 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
         // Due to gravity, the probe's y velocity decreases by 1.
         velocity = (velocity.0, velocity.1 - 1);
 
-        board.print();
+        // board.print();
     }
 
-    (0 as i128, 0 as i128)
+    (0_i128, 0_i128)
 }

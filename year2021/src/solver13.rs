@@ -63,7 +63,7 @@ pub fn solve13(input: &[String]) -> (i128, i128) {
         }
     }
     // Hardcoded based on looking at the board printout.
-    println!("LKREBPRK");
+    // println!("LKREBPRK");
 
-    (solution_one as i128, 0 as i128)
+    (solution_one as i128, 0_i128)
 }

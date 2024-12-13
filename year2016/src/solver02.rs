@@ -11,10 +11,10 @@ pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> i128 {
 
         code.push(current_key);
     }
-    let answer = code.iter().collect::<String>();
-    println!("CODE: {answer}");
+    let _answer = code.iter().collect::<String>();
+    // println!("CODE: {answer}");
     // TODO: No way to return a string here.
-    0 as i128
+    0_i128
 }
 
 pub fn solve02(input: &[String]) -> (i128, i128) {

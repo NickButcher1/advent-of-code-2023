@@ -1,5 +1,4 @@
 use clap::Parser;
-use std::collections::HashMap;
 extern crate aoc;
 extern crate year2023;
 
@@ -98,49 +97,58 @@ fn run_one_day(
 }
 
 fn main() {
-    let solver_fns: HashMap<String, &[SolverFunction; 25]> = HashMap::from([
-        ("2024".to_string(), &year2024::SOLVER_FUNCTIONS),
-        ("2023".to_string(), &year2023::SOLVER_FUNCTIONS),
-        ("2022".to_string(), &year2022::SOLVER_FUNCTIONS),
-        ("2021".to_string(), &year2021::SOLVER_FUNCTIONS),
-        ("2020".to_string(), &year2020::SOLVER_FUNCTIONS),
-        ("2019".to_string(), &year2019::SOLVER_FUNCTIONS),
-        ("2018".to_string(), &year2018::SOLVER_FUNCTIONS),
-        ("2017".to_string(), &year2017::SOLVER_FUNCTIONS),
-        ("2016".to_string(), &year2016::SOLVER_FUNCTIONS),
+    let solver_fns: [(String, &[SolverFunction; 25]); 10] = [
         ("2015".to_string(), &year2015::SOLVER_FUNCTIONS),
-    ]);
+        ("2016".to_string(), &year2016::SOLVER_FUNCTIONS),
+        ("2017".to_string(), &year2017::SOLVER_FUNCTIONS),
+        ("2018".to_string(), &year2018::SOLVER_FUNCTIONS),
+        ("2019".to_string(), &year2019::SOLVER_FUNCTIONS),
+        ("2020".to_string(), &year2020::SOLVER_FUNCTIONS),
+        ("2021".to_string(), &year2021::SOLVER_FUNCTIONS),
+        ("2022".to_string(), &year2022::SOLVER_FUNCTIONS),
+        ("2023".to_string(), &year2023::SOLVER_FUNCTIONS),
+        ("2024".to_string(), &year2024::SOLVER_FUNCTIONS),
+    ];
 
     let args = Args::parse();
 
-    let expected_outputs: Vec<String> =
-        BufReader::new(File::open(format!("output/{}/expected_outputs.txt", args.year)).unwrap())
-            .lines()
-            .collect::<Result<_, _>>()
-            .unwrap();
-
-    if args.day != 0 {
-        run_one_day(
-            solver_fns.get(&args.year).unwrap()[args.day - 1],
-            &args.year,
-            args.day,
-            args.sample,
-            &expected_outputs,
-        );
+    let years_to_run: Vec<&str> = if args.year == "all" {
+        solver_fns.iter().map(|tuple| tuple.0.as_str()).collect()
     } else {
-        let mut total_ms: u128 = 0;
-        for day in 1..=25 {
-            total_ms += run_one_day(
-                solver_fns.get(&args.year).unwrap()[day - 1],
-                &args.year,
-                day,
+        vec![&args.year]
+    };
+
+    years_to_run.into_iter().for_each(|year| {
+        let year_index: usize = year.parse::<usize>().unwrap() - 2015;
+        let expected_outputs: Vec<String> =
+            BufReader::new(File::open(format!("output/{}/expected_outputs.txt", year)).unwrap())
+                .lines()
+                .collect::<Result<_, _>>()
+                .unwrap();
+
+        if args.day != 0 {
+            run_one_day(
+                solver_fns[year_index].1[args.day - 1],
+                year,
+                args.day,
                 args.sample,
                 &expected_outputs,
             );
+        } else {
+            let mut total_ms: u128 = 0;
+            for day in 1..=25 {
+                total_ms += run_one_day(
+                    solver_fns[year_index].1[day - 1],
+                    year,
+                    day,
+                    args.sample,
+                    &expected_outputs,
+                );
+            }
+            println!(
+                "{}-TOTAL                                             {total_ms:.2}ms",
+                year
+            );
         }
-        println!(
-            "{}-TOTAL                                             {total_ms:.2}ms",
-            args.year
-        );
-    }
+    })
 }

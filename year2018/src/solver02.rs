@@ -37,13 +37,13 @@ fn solve_part_two(input: &[String]) {
                 });
 
             if diff_count == 1 {
-                let solution_part_two = input[i]
+                let _solution_part_two = input[i]
                     .chars()
                     .enumerate()
                     .filter(|(i, _)| *i != last_diff_index)
                     .map(|(_, c)| c)
                     .collect::<String>();
-                println!("{solution_part_two}");
+                // println!("{solution_part_two}");
                 return;
             }
         }
