@@ -17,8 +17,8 @@ fn evolve_stone(stone: u64, cache: &mut HashMap<u64, Vec<u64>>) -> Vec<u64> {
         let stone_str = stone.to_string();
         if stone_str.len() % 2 == 0 {
             let half_len = stone_str.len() / 2;
-            let new_1 = (&stone_str[..half_len]).parse().unwrap();
-            let new_2 = (&stone_str[half_len..]).parse().unwrap();
+            let new_1 = stone_str[..half_len].parse().unwrap();
+            let new_2 = stone_str[half_len..].parse().unwrap();
             cache.insert(stone, vec![new_1, new_2]);
             vec![new_1, new_2]
         } else {
@@ -35,8 +35,8 @@ pub fn solve(input: &[String], depth: u64, cache: &mut HashMap<u64, Vec<u64>>) -
         let mut stones_at_next_depth: HashMap<u64, usize> = HashMap::new();
 
         for (stone, count) in &stones {
-            let stones_to_add: Vec<u64> = if cache.contains_key(&stone) {
-                cache[&stone].clone()
+            let stones_to_add: Vec<u64> = if cache.contains_key(stone) {
+                cache[stone].clone()
             } else {
                 evolve_stone(*stone, cache)
             };

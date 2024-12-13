@@ -95,8 +95,7 @@ pub fn solve12(input: &[String]) -> (i128, i128) {
             points_in_region.insert((r, c));
             queue.push((r, c));
 
-            while !queue.is_empty() {
-                let (test_r, test_c) = queue.pop().unwrap();
+            while let Some((test_r, test_c)) = queue.pop() {
                 ALL_DIRECTIONS.iter().for_each(|(dr, dc)| {
                     let new_r = (test_r as i32 + dr) as usize;
                     let new_c = (test_c as i32 + dc) as usize;

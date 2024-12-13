@@ -39,7 +39,7 @@ fn parse_input(input: &[String]) -> (Vec<(usize, usize, usize)>, Vec<usize>) {
     )
 }
 
-fn calculate_checksum(disk_layout: &Vec<usize>) -> i64 {
+fn calculate_checksum(disk_layout: &[usize]) -> i64 {
     disk_layout
         .iter()
         .enumerate()
@@ -48,7 +48,7 @@ fn calculate_checksum(disk_layout: &Vec<usize>) -> i64 {
         .sum()
 }
 
-fn solve_part_one(disk_layout: &mut Vec<usize>) -> i64 {
+fn solve_part_one(disk_layout: &mut [usize]) -> i64 {
     let mut l_index = 0;
     let mut r_index = disk_layout.len() - 1;
     while r_index > l_index {
@@ -64,11 +64,11 @@ fn solve_part_one(disk_layout: &mut Vec<usize>) -> i64 {
         }
     }
 
-    calculate_checksum(&disk_layout)
+    calculate_checksum(disk_layout)
 }
 
-fn solve_part_two(disk_layout: &mut Vec<usize>, files: &Vec<(usize, usize, usize)>) -> i64 {
-    for (id, len, start_index) in files.into_iter().rev() {
+fn solve_part_two(disk_layout: &mut [usize], files: &[(usize, usize, usize)]) -> i64 {
+    for (id, len, start_index) in files.iter().rev() {
         let mut first_free_slot_index = 0;
         let mut is_gap = false;
 
@@ -91,13 +91,13 @@ fn solve_part_two(disk_layout: &mut Vec<usize>, files: &Vec<(usize, usize, usize
         // Move file.
         if is_gap {
             for i in 0..*len {
-                disk_layout[(first_free_slot_index + i) as usize] = *id;
-                disk_layout[(start_index + i) as usize] = EMPTY_BLOCK;
+                disk_layout[first_free_slot_index + i] = *id;
+                disk_layout[start_index + i] = EMPTY_BLOCK;
             }
         }
     }
 
-    calculate_checksum(&disk_layout)
+    calculate_checksum(disk_layout)
 }
 
 pub fn solve09(input: &[String]) -> (i128, i128) {

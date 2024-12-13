@@ -8,7 +8,7 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
     )
 }
 
-pub fn solve(codes: &mut Vec<usize>, noun: usize, verb: usize) -> usize {
+pub fn solve(codes: &mut [usize], noun: usize, verb: usize) -> usize {
     codes[1] = noun;
     codes[2] = verb;
 
