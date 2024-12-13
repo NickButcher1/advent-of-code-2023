@@ -2,7 +2,7 @@ use regex::Regex;
 
 const COST_A: i64 = 3;
 const COST_B: i64 = 1;
-const PRIZE_OFFSET_PART_TWO: i64 = 10000000000000;
+const PRIZE_OFFSET_PART_TWO: i64 = 10_000_000_000_000;
 
 #[derive(Debug)]
 struct Machine {
@@ -49,35 +49,27 @@ fn parse_input(input: &[String], offset: i64) -> Vec<Machine> {
     machines
 }
 
+// Rearrange and solve these two equations to find a and b.
+// PX = a * AX + b * BX
+// PY = a * AY + b * BY
+// Then plug the values of a and b in, and check if it fits.
 pub fn solve(input: &[String], offset: i64) -> i64 {
-    let machines = parse_input(input, offset);
+    parse_input(input, offset)
+        .iter()
+        .filter_map(|m| {
+            let a =
+                ((m.prize_x * m.b_y) - (m.prize_y * m.b_x)) / ((m.a_x * m.b_y) - (m.a_y * m.b_x));
+            let b =
+                ((m.prize_x * m.a_y) - (m.prize_y * m.a_x)) / ((m.b_x * m.a_y) - (m.b_y * m.a_x));
 
-    let mut solution = 0;
-
-    for machine in machines {
-        println!("{machine:?}");
-        let mut cheapest_cost = i64::MAX;
-
-        for a in 0..=100 {
-            for b in 0..=100 {
-                let x = machine.a_x * a + machine.b_x * b;
-                let y = machine.a_y * a + machine.b_y * b;
-                if x == machine.prize_x && y == machine.prize_y {
-                    let cost = a * COST_A + b * COST_B;
-                    println!("    a {a}    b {b}    cost {cost}");
-                    if cost < cheapest_cost {
-                        cheapest_cost = cost;
-                    }
-                }
+            if ((a * m.a_x) + (b * m.b_x)) == m.prize_x && ((a * m.a_y) + (b * m.b_y)) == m.prize_y
+            {
+                Some(a * COST_A + b * COST_B)
+            } else {
+                None
             }
-        }
-
-        if cheapest_cost != i64::MAX {
-            solution += cheapest_cost;
-        }
-    }
-
-    solution
+        })
+        .sum::<i64>()
 }
 
 pub fn solve13(input: &[String]) -> (i128, i128) {
