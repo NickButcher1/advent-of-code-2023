@@ -66,9 +66,9 @@ fn run_one_day(
     let elapsed_ms = time.elapsed().as_nanos() / 1_000_000;
 
     let result1_str = if result1 != 0 {
-        format!("{result1:12}")
+        format!("{result1:16}")
     } else {
-        "        todo".to_string()
+        "            todo".to_string()
     };
 
     let result2_str = if result2 != 0 {
@@ -138,6 +138,6 @@ fn main() {
                 &expected_outputs,
             );
         }
-        println!("TOTAL                                         {total_ms:.2}ms");
+        println!("TOTAL                                             {total_ms:.2}ms");
     }
 }
