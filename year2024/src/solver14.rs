@@ -9,11 +9,11 @@ const EMPTY: char = '.';
 fn print_tree(board: &IntBoard) {
     let mut tree_board = Board::create_empty(board.num_rows, board.num_cols, EMPTY);
     for (c, r) in iproduct!(0..board.num_cols, 0..board.num_rows) {
-        if board.cells[r][c] > 0 && board.cells[r][c] < 10 {
-            tree_board.cells[r][c] = (board.cells[r][c] as u8 + b'0') as char;
+        tree_board.cells[r][c] = if board.cells[r][c] > 0 && board.cells[r][c] < 10 {
+            (board.cells[r][c] as u8 + b'0') as char
         } else {
-            tree_board.cells[r][c] = ' ';
-        }
+            ' '
+        };
     }
     tree_board.print();
 }
