@@ -10,7 +10,7 @@ pub struct MovingPoint {
 }
 
 // Read input where each line is one point, formatted "position=< 1,  2> velocity=< 3,  4>".
-pub fn read_points(input: &[String]) -> Vec<MovingPoint> {
+pub fn read_points_2018_day_10(input: &[String]) -> Vec<MovingPoint> {
     let re = Regex::new(r"^position=<( *)(-?\d+),( *)(-?\d+)> velocity=<( *)(-?\d+),( *)(-?\d+)>$")
         .unwrap();
 
@@ -23,6 +23,23 @@ pub fn read_points(input: &[String]) -> Vec<MovingPoint> {
                 py: captures.get(4).unwrap().as_str().parse::<isize>().unwrap(),
                 vx: captures.get(6).unwrap().as_str().parse::<isize>().unwrap(),
                 vy: captures.get(8).unwrap().as_str().parse::<isize>().unwrap(),
+            }
+        })
+        .collect()
+}
+
+pub fn read_points_2024_day_14(input: &[String]) -> Vec<MovingPoint> {
+    let re = Regex::new(r"^p=(\d+),(\d+) v=(-?\d+),(-?\d+)$").unwrap();
+
+    input
+        .iter()
+        .map(|line| {
+            let captures = re.captures(line).unwrap();
+            MovingPoint {
+                px: captures.get(1).unwrap().as_str().parse::<isize>().unwrap(),
+                py: captures.get(2).unwrap().as_str().parse::<isize>().unwrap(),
+                vx: captures.get(3).unwrap().as_str().parse::<isize>().unwrap(),
+                vy: captures.get(4).unwrap().as_str().parse::<isize>().unwrap(),
             }
         })
         .collect()

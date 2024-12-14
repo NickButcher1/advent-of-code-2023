@@ -33,6 +33,14 @@ impl IntBoard {
         }
     }
 
+    pub fn create_empty(num_rows: usize, num_cols: usize) -> Self {
+        Self {
+            cells: vec![vec![0; num_cols]; num_rows],
+            num_rows,
+            num_cols,
+        }
+    }
+
     // Useful for avoiding edge checks when a board doesn't wrap.
     pub fn add_border(&mut self, border_value: i32) {
         let new_cols = self.num_cols + 2;

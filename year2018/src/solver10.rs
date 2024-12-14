@@ -1,5 +1,5 @@
 use aoc::board::Board;
-use aoc::moving_point::{max_x_y, min_x_y, read_points, tick, MovingPoint};
+use aoc::moving_point::{max_x_y, min_x_y, read_points_2018_day_10, tick, MovingPoint};
 
 const EMPTY: char = '.';
 const FULL: char = '#';
@@ -28,7 +28,7 @@ fn board_from_points(points: &[MovingPoint]) -> Board {
 }
 
 pub fn solve10(input: &[String]) -> (i128, i128) {
-    let mut points = read_points(input);
+    let mut points = read_points_2018_day_10(input);
     let mut prev_points = points.clone();
     let mut prev_num_rows = isize::MAX;
     let mut step = 0;
