@@ -17,7 +17,7 @@ fn solve(board: &Board, antennas: &HashMap<char, Vec<(usize, usize)>>, is_part_t
     let mut antinode_board = Board::create_empty(board.num_rows, board.num_cols, EMPTY);
 
     for ch in antennas.keys() {
-        let combinations = antennas.get(ch).unwrap().into_iter().combinations(2);
+        let combinations = antennas.get(ch).unwrap().iter().combinations(2);
         for combo in combinations {
             let dr = combo[0].0.abs_diff(combo[1].0);
             let dc = combo[0].1.abs_diff(combo[1].1);
