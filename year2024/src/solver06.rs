@@ -51,18 +51,20 @@ fn find_path(
 }
 
 pub fn solve06(input: &[String]) -> (i128, i128) {
-    let (guard_pos, guard_direction, mut board) = parse_input(input);
-    let solution_one = find_path(guard_pos, guard_direction, &mut board);
+    let (guard_pos, guard_direction, original_board) = parse_input(input);
+
+    let mut board_part_one = original_board.clone();
+    let solution_one = find_path(guard_pos, guard_direction, &mut board_part_one);
 
     let mut solution_two = 0;
-    let num_rows = board.num_rows;
-    let num_cols = board.num_cols;
+    let num_rows = original_board.num_rows;
+    let num_cols = original_board.num_cols;
 
     for (c, r) in iproduct!(1..num_cols - 1, 1..num_rows - 1) {
-        let (guard_pos, guard_direction, mut board) = parse_input(input);
-        if board.cells[r][c] == EMPTY {
-            board.cells[r][c] = OBSTRUCTION;
-            let steps = find_path(guard_pos, guard_direction, &mut board);
+        let mut board_part_two = original_board.clone();
+        if board_part_two.cells[r][c] == EMPTY {
+            board_part_two.cells[r][c] = OBSTRUCTION;
+            let steps = find_path(guard_pos, guard_direction, &mut board_part_two);
             if steps == 0 {
                 solution_two += 1;
             }
