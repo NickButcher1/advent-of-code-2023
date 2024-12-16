@@ -19,13 +19,11 @@ fn parse_input(input: &[String]) -> ((usize, usize), usize, Board) {
 }
 
 fn find_path(
+    board: &mut Board,
+    max_steps: usize,
     mut guard_pos: (usize, usize),
     mut guard_direction: usize,
-    board: &mut Board,
 ) -> usize {
-    // Could make a lower upper bound by counting empty cells, but it really doesn't matter.
-    let max_steps = (board.num_rows - 2) * (board.num_cols - 2);
-
     for _ in 1..=max_steps {
         let (x, y) = guard_pos;
         let (dx, dy) = GUARD_MOVES[guard_direction];
@@ -52,9 +50,10 @@ fn find_path(
 
 pub fn solve06(input: &[String]) -> (i128, i128) {
     let (guard_pos, guard_direction, original_board) = parse_input(input);
+    let max_steps = original_board.count(EMPTY) as usize;
 
     let mut board_part_one = original_board.clone();
-    let solution_one = find_path(guard_pos, guard_direction, &mut board_part_one);
+    let solution_one = find_path(&mut board_part_one, max_steps, guard_pos, guard_direction);
 
     let mut solution_two = 0;
     let num_rows = original_board.num_rows;
@@ -64,7 +63,7 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
         let mut board_part_two = original_board.clone();
         if board_part_two.cells[r][c] == EMPTY {
             board_part_two.cells[r][c] = OBSTRUCTION;
-            let steps = find_path(guard_pos, guard_direction, &mut board_part_two);
+            let steps = find_path(&mut board_part_two, max_steps, guard_pos, guard_direction);
             if steps == 0 {
                 solution_two += 1;
             }

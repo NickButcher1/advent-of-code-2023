@@ -20,6 +20,7 @@ pub fn solve_for_minutes(input: &[String], minutes: usize) -> i128 {
     board.count(TREE) as i128 * board.count(LUMBERYARD) as i128
 }
 
+#[allow(clippy::needless_range_loop)]
 pub fn solve_part_2(input: &[String]) -> i128 {
     let mut board = Board::from_input(input);
     let mut hashes: Vec<Vec<u8>> = vec![vec![]];

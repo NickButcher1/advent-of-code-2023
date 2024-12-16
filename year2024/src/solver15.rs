@@ -168,25 +168,23 @@ fn do_move(
 
 fn move_up_or_down(board: &mut Board, robot_r: &mut usize, robot_c: &mut usize, dr: i32) {
     let dc = 0;
-    let try_r = *robot_r as i32 + dr;
-    let try_c = *robot_c as i32 + dc;
-    let try_c_l = if board.cells[try_r as usize][try_c as usize] == LEFT_BOX {
+    let try_r = (*robot_r as i32 + dr) as usize;
+    let try_c = (*robot_c as i32 + dc) as usize;
+    let try_c_left = if board.cells[try_r][(*robot_c as i32 + dc) as usize] == LEFT_BOX {
         *robot_c
-    } else if board.cells[try_r as usize][try_c as usize] == RIGHT_BOX {
+    } else if board.cells[try_r][try_c] == RIGHT_BOX {
         *robot_c - 1
     } else {
         unreachable!()
     };
 
-    if can_move_into(board, try_r as usize, dr, try_c_l) {
-        if do_move_first(board, try_r as usize, dr, try_c_l) {
-            if board.cells[try_r as usize][*robot_c] == LEFT_BOX {
-                board.cells[(*robot_r as i32 + dr) as usize][*robot_c + 1] = EMPTY;
-            } else if board.cells[try_r as usize][*robot_c] == RIGHT_BOX {
-                board.cells[(*robot_r as i32 + dr) as usize][*robot_c - 1] = EMPTY;
-            }
-            move_robot(board, robot_r, robot_c, dr, 0);
+    if can_move_into(board, try_r, dr, try_c_left) && do_move_first(board, try_r, dr, try_c_left) {
+        match board.cells[try_r][*robot_c] {
+            LEFT_BOX => board.cells[(*robot_r as i32 + dr) as usize][*robot_c + 1] = EMPTY,
+            RIGHT_BOX => board.cells[(*robot_r as i32 + dr) as usize][*robot_c - 1] = EMPTY,
+            _ => {}
         }
+        move_robot(board, robot_r, robot_c, dr, 0);
     }
 }
 

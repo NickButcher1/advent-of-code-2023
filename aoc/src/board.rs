@@ -130,7 +130,7 @@ impl Board {
         self.cells = new_cells;
     }
 
-    pub fn count(&mut self, count_char: char) -> u64 {
+    pub fn count(&self, count_char: char) -> u64 {
         let mut num_matches = 0;
 
         for r in 0..self.num_rows {

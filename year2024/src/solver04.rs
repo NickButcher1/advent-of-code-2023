@@ -1,5 +1,6 @@
 use aoc::board::Board;
 
+#[allow(clippy::needless_range_loop)]
 fn count_xmas(board: &Board, x: usize, y: usize, dx: isize, dy: isize) -> usize {
     let xmas = ["XMAS", "SAMX"];
 

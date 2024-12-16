@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use std::cmp::Ordering;
 
 pub fn solve17(_input: &[String]) -> (i128, i128) {
     // TODO
@@ -47,13 +48,12 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
         // Due to drag, the probe's x velocity changes by 1 toward the value 0; that is, it
         // decreases by 1 if it is greater than 0, increases by 1 if it is less than 0, or does not
         // change if it is already 0.
-        if velocity.0 > 0 {
-            velocity = (velocity.0 - 1, velocity.1);
-        } else if velocity.0 < 0 {
-            velocity = (velocity.0 + 1, velocity.1);
-        }
         // Due to gravity, the probe's y velocity decreases by 1.
-        velocity = (velocity.0, velocity.1 - 1);
+        velocity = match velocity.0.cmp(&0) {
+            Ordering::Greater => (velocity.0 - 1, velocity.1 - 1),
+            Ordering::Less => (velocity.0 + 1, velocity.1 - 1),
+            Ordering::Equal => (velocity.0, velocity.1 - 1),
+        };
 
         // board.print();
     }

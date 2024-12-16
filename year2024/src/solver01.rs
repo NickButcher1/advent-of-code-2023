@@ -21,7 +21,7 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
     let total_distance: u64 = list1
         .iter()
         .zip(list2.iter())
-        .map(|(&item1, &item2)| (item1 as i64 - item2 as i64).abs() as u64)
+        .map(|(&item1, &item2)| (item1 as i64 - item2 as i64).unsigned_abs())
         .sum();
 
     let total_similarity: u64 = list1
