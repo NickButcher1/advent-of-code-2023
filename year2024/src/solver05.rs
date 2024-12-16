@@ -67,7 +67,7 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
 // Put the first input item in a middle group, then use the rules to put all other input items into
 // either a left group or right group.
 // If the left or right group has multiple elements, then recursively split those.
-fn clean_update(input_vec: &Vec<u32>, rules: &Vec<(u32, u32)>) -> Vec<u32> {
+fn clean_update(input_vec: &[u32], rules: &Vec<(u32, u32)>) -> Vec<u32> {
     assert!(input_vec.len() >= 2);
     let split_on_page = input_vec[0];
     let mid_group: Vec<u32> = vec![split_on_page];
@@ -76,7 +76,7 @@ fn clean_update(input_vec: &Vec<u32>, rules: &Vec<(u32, u32)>) -> Vec<u32> {
 
     for page in input_vec.iter().skip(1) {
         for (rule_p1, rule_p2) in rules {
-            if input_vec.contains(&rule_p1) && input_vec.contains(&rule_p2) {
+            if input_vec.contains(rule_p1) && input_vec.contains(rule_p2) {
                 if split_on_page == *rule_p1 && *page == *rule_p2 {
                     right_group.push(*page)
                 } else if split_on_page == *rule_p2 && *page == *rule_p1 {
@@ -94,7 +94,7 @@ fn clean_update(input_vec: &Vec<u32>, rules: &Vec<(u32, u32)>) -> Vec<u32> {
     }
     let flattened_output: Vec<u32> = vec![left_group, mid_group, right_group]
         .into_iter()
-        .flat_map(|v| v)
+        .flatten()
         .collect();
     flattened_output
 }

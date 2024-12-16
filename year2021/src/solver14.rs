@@ -41,7 +41,7 @@ fn transform_polymer(
 ) -> HashMap<String, usize> {
     let mut new_polymer: HashMap<String, usize> = HashMap::new();
 
-    for (key, _) in &polymer {
+    for key in polymer.keys() {
         for new_key in &transforms[key] {
             let old_count = polymer.get(key).unwrap_or(&0);
             *new_polymer.entry(new_key.to_string()).or_insert(0) += old_count;

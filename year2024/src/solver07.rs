@@ -15,16 +15,17 @@ pub fn solve(input: &[String], is_part_two: bool) -> i64 {
                 .collect();
 
             let mut output_vec = vec![numbers[0]];
-            for i in 1..numbers.len() {
+            // for i in 1..numbers.len() {
+            for number in numbers.iter().skip(1) {
                 let mut new_vec = vec![];
-                for j in 0..output_vec.len() {
-                    new_vec.push(output_vec[j] + numbers[i]);
-                    let m = output_vec[j] * numbers[i];
+                for item in output_vec {
+                    new_vec.push(item + number);
+                    let m = item * number;
                     if m <= first_number {
                         new_vec.push(m);
                     }
                     if is_part_two {
-                        let concat_number = [output_vec[j].to_string(), numbers[i].to_string()]
+                        let concat_number = [item.to_string(), number.to_string()]
                             .concat()
                             .parse()
                             .unwrap();
@@ -36,8 +37,8 @@ pub fn solve(input: &[String], is_part_two: bool) -> i64 {
                 output_vec = new_vec;
             }
 
-            for k in 0..output_vec.len() {
-                if output_vec[k] == first_number {
+            for item in output_vec {
+                if item == first_number {
                     solution += first_number;
                     break;
                 }

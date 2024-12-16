@@ -14,15 +14,6 @@ struct Position {
     dir: usize,
 }
 
-fn move_position(position: &Position) -> Position {
-    let (dr, dc) = [(-1, 0), (0, 1), (1, 0), (0, -1)][position.dir];
-    Position {
-        r: (position.r as i32 + dr) as usize,
-        c: (position.c as i32 + dc) as usize,
-        dir: position.dir,
-    }
-}
-
 pub fn solve16(input: &[String]) -> (i128, i128) {
     let mut board = Board::from_input(input);
     let start = board.find(START);
@@ -78,15 +69,13 @@ pub fn solve16(input: &[String]) -> (i128, i128) {
         // But don't rotate 180deg because we just came from there.
         for new_dir in 0..=3 {
             if ((new_dir + 2) % 4) != position.dir {
-                // First, try all four rotations in place.
-                let rotated_position = Position {
-                    r: position.r,
-                    c: position.c,
+                let (dr, dc) = [(-1, 0), (0, 1), (1, 0), (0, -1)][new_dir];
+                let new_position = Position {
+                    r: (position.r as i32 + dr) as usize,
+                    c: (position.c as i32 + dc) as usize,
                     dir: new_dir,
                 };
-                let new_position = move_position(&rotated_position);
 
-                // Now move, but don't move into a wall.
                 if board.cells[new_position.r][new_position.c] == EMPTY {
                     let new_score = *lowest_score.get(&position).unwrap_or(&0)
                         + if new_dir != position.dir { 1001 } else { 1 };
@@ -118,7 +107,7 @@ pub fn solve16(input: &[String]) -> (i128, i128) {
         }
     }
 
-    let (min_dir, min_score) = (0..=3)
+    let (min_dir, solution_one) = (0..=3)
         .map(|i| {
             (
                 i,
@@ -134,7 +123,6 @@ pub fn solve16(input: &[String]) -> (i128, i128) {
         .min_by_key(|&(_, score)| score)
         .unwrap();
 
-    let solution_one = min_score;
     let solution_two = lowest_cells
         .get(&Position {
             r: end.0,
