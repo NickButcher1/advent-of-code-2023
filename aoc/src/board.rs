@@ -96,7 +96,7 @@ impl Board {
         unreachable!();
     }
 
-    pub fn find(&mut self, find_char: char) -> (usize, usize) {
+    pub fn find(&self, find_char: char) -> (usize, usize) {
         for r in 0..self.num_rows {
             for c in 0..self.num_cols {
                 if self.cells[r][c] == find_char {
