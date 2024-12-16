@@ -15,7 +15,6 @@ pub fn solve(input: &[String], is_part_two: bool) -> i64 {
                 .collect();
 
             let mut output_vec = vec![numbers[0]];
-            // for i in 1..numbers.len() {
             for number in numbers.iter().skip(1) {
                 let mut new_vec = vec![];
                 for item in output_vec {
@@ -25,10 +24,12 @@ pub fn solve(input: &[String], is_part_two: bool) -> i64 {
                         new_vec.push(m);
                     }
                     if is_part_two {
-                        let concat_number = [item.to_string(), number.to_string()]
-                            .concat()
-                            .parse()
-                            .unwrap();
+                        let mut digits = 1;
+                        while digits <= *number {
+                            digits *= 10;
+                        }
+
+                        let concat_number = item * digits + number;
                         if concat_number <= first_number {
                             new_vec.push(concat_number);
                         }
