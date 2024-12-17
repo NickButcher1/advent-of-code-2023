@@ -77,7 +77,7 @@ fn run_one_day(
     };
 
     println!(
-        "{year}-{day:02}    {result1_str:20}  {result2_str:26}  {elapsed_ms:12}ms  {}",
+        "{year}-{day:02}    {result1_str:26}  {result2_str:26}  {elapsed_ms:12}ms  {}",
         "#".repeat(elapsed_ms as usize / 1000)
     );
 
@@ -149,7 +149,8 @@ fn main() {
                 );
             }
             println!(
-                "{year}-TOTAL                                                     {total_ms:.2}ms",
+                "{}-TOTAL                                                                 {:.2}ms",
+                year, total_ms
             );
         }
     })
