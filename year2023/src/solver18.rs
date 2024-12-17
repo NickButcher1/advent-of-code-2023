@@ -1,4 +1,5 @@
 use aoc::dir::Dir;
+use aoc::solution::{Solution, Solutions};
 
 #[derive(Debug)]
 struct Instruction {
@@ -6,10 +7,10 @@ struct Instruction {
     distance: i64,
 }
 
-pub fn solve18(input: &[String]) -> (i128, i128) {
+pub fn solve18(input: &[String]) -> Solutions {
     (
-        i128::from(solve(input, true)),
-        i128::from(solve(input, false)),
+        Solution::I64(solve(input, true)),
+        Solution::I64(solve(input, false)),
     )
 }
 pub fn solve(input: &[String], is_part_one: bool) -> i64 {

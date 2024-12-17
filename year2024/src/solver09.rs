@@ -1,3 +1,5 @@
+use aoc::solution::{Solution, Solutions};
+
 const EMPTY_BLOCK: usize = usize::MAX;
 
 fn add_file(output: &mut Vec<usize>, num_bytes: usize, id: usize) {
@@ -100,11 +102,11 @@ fn solve_part_two(disk_layout: &mut [usize], files: &[(usize, usize, usize)]) ->
     calculate_checksum(disk_layout)
 }
 
-pub fn solve09(input: &[String]) -> (i128, i128) {
+pub fn solve09(input: &[String]) -> Solutions {
     let (files, mut disk_layout) = parse_input(input);
 
     (
-        solve_part_one(&mut disk_layout.clone()) as i128,
-        solve_part_two(&mut disk_layout, &files) as i128,
+        Solution::I64(solve_part_one(&mut disk_layout.clone())),
+        Solution::I64(solve_part_two(&mut disk_layout, &files)),
     )
 }

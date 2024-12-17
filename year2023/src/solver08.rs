@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use num_integer::lcm;
 use regex::Regex;
 use std::collections::HashMap;
@@ -69,7 +70,7 @@ fn solve<'a>(
     }
 }
 
-pub fn solve08(input: &[String]) -> (i128, i128) {
+pub fn solve08(input: &[String]) -> Solutions {
     let directions: Vec<char> = input[0].chars().collect();
     let mut from_x_to_left: HashMap<&str, &str> = HashMap::new();
     let mut from_x_to_right: HashMap<&str, &str> = HashMap::new();
@@ -87,19 +88,19 @@ pub fn solve08(input: &[String]) -> (i128, i128) {
     }
 
     (
-        solve(
+        Solution::I128(solve(
             &directions.clone(),
             &from_x_to_left.clone(),
             &from_x_to_right.clone(),
             vec!["AAA"],
             is_a_terminating_location_1,
-        ),
-        solve(
+        )),
+        Solution::I128(solve(
             &directions,
             &from_x_to_left,
             &from_x_to_right,
             locations_part_2,
             is_a_terminating_location_2,
-        ),
+        )),
     )
 }

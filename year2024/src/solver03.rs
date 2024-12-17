@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 pub fn solve(input: &[String], is_part_one: bool) -> usize {
@@ -34,6 +35,9 @@ pub fn solve(input: &[String], is_part_one: bool) -> usize {
     total
 }
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
-    (solve(input, true) as i128, solve(input, false) as i128)
+pub fn solve03(input: &[String]) -> Solutions {
+    (
+        Solution::USIZE(solve(input, true)),
+        Solution::USIZE(solve(input, false)),
+    )
 }

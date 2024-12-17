@@ -1,6 +1,7 @@
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> Solutions {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
 
@@ -97,5 +98,5 @@ pub fn solve03(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (i128::from(total_part_1), i128::from(total_part_2))
+    (Solution::U32(total_part_1), Solution::U32(total_part_2))
 }

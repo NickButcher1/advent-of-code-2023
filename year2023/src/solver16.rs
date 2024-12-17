@@ -1,5 +1,6 @@
 use aoc::board::Board;
 use aoc::dir::Dir;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 #[derive(Clone, Eq, Debug, Hash, PartialEq)]
@@ -77,12 +78,12 @@ fn solve_part_2(board: &Board) -> usize {
     best_energy
 }
 
-pub fn solve16(input: &[String]) -> (i128, i128) {
+pub fn solve16(input: &[String]) -> Solutions {
     let board: Board = Board::from_input(input);
 
     (
-        solve_for_beam(beam_for_part_1(), &board) as i128,
-        solve_part_2(&board) as i128,
+        Solution::USIZE(solve_for_beam(beam_for_part_1(), &board)),
+        Solution::USIZE(solve_part_2(&board)),
     )
 }
 

@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 const COST_A: i64 = 3;
@@ -72,9 +73,9 @@ pub fn solve(input: &[String], offset: i64) -> i64 {
         .sum::<i64>()
 }
 
-pub fn solve13(input: &[String]) -> (i128, i128) {
+pub fn solve13(input: &[String]) -> Solutions {
     (
-        solve(input, 0) as i128,
-        solve(input, PRIZE_OFFSET_PART_TWO) as i128,
+        Solution::I64(solve(input, 0)),
+        Solution::I64(solve(input, PRIZE_OFFSET_PART_TWO)),
     )
 }

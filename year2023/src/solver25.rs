@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use fast_paths::InputGraph;
 use std::collections::{HashMap, HashSet};
 
@@ -188,10 +189,10 @@ fn read_nodes_from_input(input: &[String]) -> HashMap<usize, Vec<usize>> {
     }
     mapping
 }
-pub fn solve25(input: &[String]) -> (i128, i128) {
+pub fn solve25(input: &[String]) -> Solutions {
     let mut mapping = read_nodes_from_input(input);
     let most_common_wires = find_most_common_wires(&mapping);
     remove_wires(&mut mapping, most_common_wires);
 
-    (i128::from(solve_part_one(&mapping)), -1)
+    (Solution::U64(solve_part_one(&mapping)), Solution::I32(-1))
 }

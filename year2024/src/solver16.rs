@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use std::cmp::Ordering;
 use std::collections::VecDeque;
@@ -39,7 +40,7 @@ fn parse_input(input: &[String]) -> (Board, Position, Position) {
     )
 }
 
-pub fn solve16(input: &[String]) -> (i128, i128) {
+pub fn solve16(input: &[String]) -> Solutions {
     let (board, start_position, end_position) = parse_input(input);
     // Map from position to the lowest score found so far at that position.
     let mut lowest_score: HashMap<Position, usize> = HashMap::new();
@@ -138,5 +139,5 @@ pub fn solve16(input: &[String]) -> (i128, i128) {
         .unwrap()
         .len();
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::USIZE(solution_one), Solution::USIZE(solution_two))
 }

@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
 const EMPTY: char = '.';
@@ -48,7 +49,7 @@ fn find_path(
     0
 }
 
-pub fn solve06(input: &[String]) -> (i128, i128) {
+pub fn solve06(input: &[String]) -> Solutions {
     let (guard_pos, guard_direction, original_board) = parse_input(input);
     let max_steps = original_board.count(EMPTY) as usize;
 
@@ -70,5 +71,5 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::USIZE(solution_one), Solution::I32(solution_two))
 }

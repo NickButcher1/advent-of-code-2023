@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
 pub fn parse_input(input: &[String]) -> HashMap<u64, usize> {
@@ -51,10 +52,10 @@ pub fn solve(input: &[String], depth: u64, cache: &mut HashMap<u64, Vec<u64>>) -
     stones.values().fold(0, |acc, &x| acc + x as u64)
 }
 
-pub fn solve11(input: &[String]) -> (i128, i128) {
+pub fn solve11(input: &[String]) -> Solutions {
     let mut cache: HashMap<u64, Vec<u64>> = HashMap::new();
     (
-        solve(input, 25, &mut cache) as i128,
-        solve(input, 75, &mut cache) as i128,
+        Solution::U64(solve(input, 25, &mut cache)),
+        Solution::U64(solve(input, 75, &mut cache)),
     )
 }

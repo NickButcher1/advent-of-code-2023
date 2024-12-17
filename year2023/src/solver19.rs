@@ -1,4 +1,5 @@
 use aoc::input::split_string_to_u64;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -125,15 +126,15 @@ fn read_parts_from_input(input: &[String]) -> Vec<Part> {
     parts
 }
 
-pub fn solve19(input: &[String]) -> (i128, i128) {
+pub fn solve19(input: &[String]) -> Solutions {
     let blank_line_index = input.iter().position(String::is_empty).unwrap();
 
     let workflows = read_workflows_from_input(&input[0..blank_line_index]);
     let parts = read_parts_from_input(&input[blank_line_index + 1..]);
 
     (
-        i128::from(solve_part_1(&workflows, &parts)),
-        i128::from(solve_part_2(&workflows)),
+        Solution::U64(solve_part_1(&workflows, &parts)),
+        Solution::U64(solve_part_2(&workflows)),
     )
 }
 

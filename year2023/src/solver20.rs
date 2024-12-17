@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use num_integer::lcm;
 use std::collections::HashMap;
 
@@ -88,7 +89,7 @@ fn read_modules_from_input(input: &[String]) -> HashMap<&str, Module> {
 
     modules
 }
-pub fn solve20(input: &[String]) -> (i128, i128) {
+pub fn solve20(input: &[String]) -> Solutions {
     let mut modules = read_modules_from_input(input);
 
     // For part 1.
@@ -180,7 +181,7 @@ pub fn solve20(input: &[String]) -> (i128, i128) {
                             _ => {}
                         }
                         if first_dl_found && first_vk_found && first_ks_found && first_pm_found {
-                            return (i128::from(part_1), i128::from(part_2));
+                            return (Solution::U64(part_1), Solution::U64(part_2));
                         }
                     }
                     *last_incoming_state = pulse.state;

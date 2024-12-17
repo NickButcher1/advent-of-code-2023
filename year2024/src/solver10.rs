@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
 const EMPTY: char = '.';
@@ -44,7 +45,7 @@ fn expand_from(
     total_paths
 }
 
-pub fn solve10(input: &[String]) -> (i128, i128) {
+pub fn solve10(input: &[String]) -> Solutions {
     let board = Board::from_input(input);
 
     // Part one counts the number of pairs of 0 and 9 that have any path between them.
@@ -61,5 +62,5 @@ pub fn solve10(input: &[String]) -> (i128, i128) {
             (solution_one + one, solution_two + two)
         });
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::U64(solution_one), Solution::I32(solution_two))
 }

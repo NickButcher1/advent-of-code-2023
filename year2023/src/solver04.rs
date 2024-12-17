@@ -1,4 +1,6 @@
-pub fn solve04(input: &[String]) -> (i128, i128) {
+use aoc::solution::{Solution, Solutions};
+
+pub fn solve04(input: &[String]) -> Solutions {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
     let mut num_cards = vec![1; input.len()];
@@ -38,5 +40,5 @@ pub fn solve04(input: &[String]) -> (i128, i128) {
         total_part_2 += num_cards[card_id];
     }
 
-    (i128::from(total_part_1), i128::from(total_part_2))
+    (Solution::I32(total_part_1), Solution::I32(total_part_2))
 }

@@ -1,5 +1,6 @@
 use aoc::board::Board;
 use aoc::dir::Dir;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug)]
@@ -10,9 +11,12 @@ struct Key {
     steps_in_dir: usize,
 }
 
-pub fn solve17(input: &[String]) -> (i128, i128) {
+pub fn solve17(input: &[String]) -> Solutions {
     let board: Board = Board::from_input(input);
-    (solve(&board, 1, 3) as i128, solve(&board, 4, 10) as i128)
+    (
+        Solution::USIZE(solve(&board, 1, 3)),
+        Solution::USIZE(solve(&board, 4, 10)),
+    )
 }
 
 pub fn solve(board: &Board, min_blocks_in_a_row: usize, max_blocks_in_a_row: usize) -> usize {

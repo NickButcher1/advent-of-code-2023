@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 const PATH: char = '.';
@@ -27,7 +28,7 @@ struct Path {
 }
 
 // Parts 1 and 2 are identical, except that in part 2 the slopes are replaced with paths.
-pub fn solve23(input: &[String]) -> (i128, i128) {
+pub fn solve23(input: &[String]) -> Solutions {
     let mut part_1_board = Board::from_input(input);
     part_1_board.add_border(FOREST);
 
@@ -35,7 +36,10 @@ pub fn solve23(input: &[String]) -> (i128, i128) {
     part_2_board.replace(SLOPE_DOWN, PATH);
     part_2_board.replace(SLOPE_RIGHT, PATH);
 
-    (solve(&part_1_board) as i128, solve(&part_2_board) as i128)
+    (
+        Solution::USIZE(solve(&part_1_board)),
+        Solution::USIZE(solve(&part_2_board)),
+    )
 }
 
 pub fn solve(board: &Board) -> usize {

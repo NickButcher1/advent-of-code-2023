@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_usize;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 #[derive(Clone, Debug)]
@@ -95,7 +96,7 @@ fn read_bricks_from_input(input: &[String]) -> (Vec<Brick>, Vec<Vec<Vec<usize>>>
     (bricks, occupied_by)
 }
 
-pub fn solve22(input: &[String]) -> (i128, i128) {
+pub fn solve22(input: &[String]) -> Solutions {
     let (mut bricks, mut occupied_by) = read_bricks_from_input(input);
 
     // Drop all bricks as far as possible.
@@ -123,8 +124,8 @@ pub fn solve22(input: &[String]) -> (i128, i128) {
     }
 
     (
-        part_1_safe_to_disintegrate,
-        part_2_total_bricks_dropped as i128,
+        Solution::I32(part_1_safe_to_disintegrate),
+        Solution::USIZE(part_2_total_bricks_dropped),
     )
 }
 

@@ -1,6 +1,7 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     let mut list1: Vec<u64> = Vec::new();
     let mut list2: Vec<u64> = Vec::new();
 
@@ -29,5 +30,8 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
         .map(|&item| item * list2.iter().filter(|&&x| x == item).count() as u64)
         .sum();
 
-    (total_distance as i128, total_similarity as i128)
+    (
+        Solution::U64(total_distance),
+        Solution::U64(total_similarity),
+    )
 }

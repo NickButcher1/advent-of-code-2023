@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 const START: char = 'S';
@@ -111,7 +112,7 @@ fn solve_part_2(board: &Board, start_cell: Cell, valid_moves: &[Vec<Vec<(Cell, O
     (a * steps * steps) + (b * steps) + c
 }
 
-pub fn solve21(input: &[String]) -> (i128, i128) {
+pub fn solve21(input: &[String]) -> Solutions {
     let mut board: Board = Board::from_input(input);
     let start_cell = board.find_and_replace(START, EMPTY);
 
@@ -157,7 +158,11 @@ pub fn solve21(input: &[String]) -> (i128, i128) {
     }
 
     (
-        solve_part_1(TARGET_STEPS_PART_1, start_cell, &valid_moves_part_1),
-        solve_part_2(&board, start_cell, &valid_moves_part_2),
+        Solution::I128(solve_part_1(
+            TARGET_STEPS_PART_1,
+            start_cell,
+            &valid_moves_part_1,
+        )),
+        Solution::I128(solve_part_2(&board, start_cell, &valid_moves_part_2)),
     )
 }

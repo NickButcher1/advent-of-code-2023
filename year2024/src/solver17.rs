@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use itertools::Itertools;
 
 #[derive(Clone, Debug)]
@@ -94,12 +95,9 @@ fn solve_part_two() -> u64 {
     candidates[0].1
 }
 
-pub fn solve17(_input: &[String]) -> (i128, i128) {
-    let solution_one = solve_part_one();
-    let solution_two = solve_part_two();
-
-    // Part one solution is a string, which doesn't fit into my framework, so print it.
-    println!("Part one: {solution_one}");
-
-    (0_i128, solution_two as i128)
+pub fn solve17(_input: &[String]) -> Solutions {
+    (
+        Solution::STR(solve_part_one()),
+        Solution::U64(solve_part_two()),
+    )
 }

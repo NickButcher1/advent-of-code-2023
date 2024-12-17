@@ -1,3 +1,5 @@
+use aoc::solution::{Solution, Solutions};
+
 fn solve_part_1(input: Vec<&str>) -> usize {
     let mut output = 0;
     for s in input {
@@ -67,11 +69,11 @@ fn hash(input: &str) -> usize {
 //     }
 // }
 
-pub fn solve15(input: &[String]) -> (i128, i128) {
+pub fn solve15(input: &[String]) -> Solutions {
     let split_1: Vec<&str> = input[0].split(',').collect();
 
     (
-        solve_part_1(split_1.clone()) as i128,
-        solve_part_2(&split_1) as i128,
+        Solution::USIZE(solve_part_1(split_1.clone())),
+        Solution::USIZE(solve_part_2(&split_1)),
     )
 }

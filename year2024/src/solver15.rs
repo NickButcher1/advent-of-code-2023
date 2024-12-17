@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
 const ROBOT: char = '@';
@@ -249,14 +250,14 @@ fn solve(board: &mut Board, moves: &Board) -> usize {
     sum_box_distances(board)
 }
 
-pub fn solve15(input: &[String]) -> (i128, i128) {
+pub fn solve15(input: &[String]) -> Solutions {
     let mut boards = Board::from_input_multiple(input);
     let moves = boards.pop().unwrap();
     let mut board_one = boards.pop().unwrap();
     let mut board_two = stretch_board(&board_one);
 
     (
-        solve(&mut board_one, &moves) as i128,
-        solve(&mut board_two, &moves) as i128,
+        Solution::USIZE(solve(&mut board_one, &moves)),
+        Solution::USIZE(solve(&mut board_two, &moves)),
     )
 }

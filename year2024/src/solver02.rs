@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 
 fn is_safe(levels: Vec<u64>) -> bool {
     let is_increasing = levels[1] > levels[0];
@@ -12,7 +13,7 @@ fn is_safe(levels: Vec<u64>) -> bool {
     true
 }
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let safe_count_part_one = input
         .iter()
         .map(|line| string_to_vec_u64(line, ' '))
@@ -31,5 +32,8 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
         })
         .count();
 
-    (safe_count_part_one as i128, safe_count_part_two as i128)
+    (
+        Solution::USIZE(safe_count_part_one),
+        Solution::USIZE(safe_count_part_two),
+    )
 }

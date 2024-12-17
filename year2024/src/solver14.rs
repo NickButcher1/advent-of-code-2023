@@ -1,6 +1,7 @@
 use aoc::board::Board;
 use aoc::int_board::IntBoard;
 use aoc::moving_point::read_points_2024_day_14;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
 const EMPTY: char = '.';
@@ -22,7 +23,7 @@ fn calculate_position_at_time(px: isize, vx: isize, seconds: isize, board_size: 
     (((px + seconds * vx) % board_size) + board_size) % board_size
 }
 
-pub fn solve14(input: &[String]) -> (i128, i128) {
+pub fn solve14(input: &[String]) -> Solutions {
     let robots = read_points_2024_day_14(input);
 
     let (num_rows, num_cols) = if robots.len() == 12 {
@@ -78,5 +79,5 @@ pub fn solve14(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::I32(solution_one), Solution::ISIZE(solution_two))
 }

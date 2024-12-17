@@ -1,8 +1,10 @@
+use aoc::solution::{Solution, Solutions};
+
 const RED_MAX: u32 = 12;
 const GREEN_MAX: u32 = 13;
 const BLUE_MAX: u32 = 14;
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let mut total_part_1 = 0;
     let mut total_part_2 = 0;
 
@@ -54,5 +56,5 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
         total_part_2 += red_max * blue_max * green_max;
     }
 
-    (total_part_1 as i128, total_part_2 as i128)
+    (Solution::USIZE(total_part_1), Solution::U32(total_part_2))
 }

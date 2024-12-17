@@ -1,4 +1,5 @@
 extern crate regex;
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 pub fn solve(input: &[String], is_part_two: bool) -> i64 {
@@ -50,6 +51,9 @@ pub fn solve(input: &[String], is_part_two: bool) -> i64 {
     solution
 }
 
-pub fn solve07(input: &[String]) -> (i128, i128) {
-    (solve(input, false) as i128, solve(input, true) as i128)
+pub fn solve07(input: &[String]) -> Solutions {
+    (
+        Solution::I64(solve(input, false)),
+        Solution::I64(solve(input, true)),
+    )
 }

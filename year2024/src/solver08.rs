@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 
@@ -58,7 +59,7 @@ fn solve(board: &Board, antennas: &HashMap<char, Vec<(usize, usize)>>, is_part_t
     antinode_board.count(ANTINODE)
 }
 
-pub fn solve08(input: &[String]) -> (i128, i128) {
+pub fn solve08(input: &[String]) -> Solutions {
     let board = Board::from_input(input);
 
     // Make HashMap from char -> list of r,c tuple.
@@ -73,7 +74,7 @@ pub fn solve08(input: &[String]) -> (i128, i128) {
     }
 
     (
-        solve(&board, &antennas, false) as i128,
-        solve(&board, &antennas, true) as i128,
+        Solution::U64(solve(&board, &antennas, false)),
+        Solution::U64(solve(&board, &antennas, true)),
     )
 }

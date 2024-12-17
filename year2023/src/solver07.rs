@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
 fn tiebreak_score_for_card(card: char, is_part_1: bool) -> u64 {
@@ -84,7 +85,7 @@ fn count_winnings(scored_hands: &Vec<(u64, u64, u64)>) -> u64 {
     }
     winnings
 }
-pub fn solve07(input: &[String]) -> (i128, i128) {
+pub fn solve07(input: &[String]) -> Solutions {
     let mut scored_hands: Vec<(u64, u64, u64)> = Vec::new();
 
     for line in input {
@@ -108,5 +109,5 @@ pub fn solve07(input: &[String]) -> (i128, i128) {
     scored_hands.sort_by_key(|k| k.2);
     let winnings_2 = count_winnings(&scored_hands);
 
-    (i128::from(winnings_1), i128::from(winnings_2))
+    (Solution::U64(winnings_1), Solution::U64(winnings_2))
 }

@@ -5,3 +5,4 @@ pub mod input;
 pub mod int_board;
 pub mod moving_point;
 pub mod point;
+pub mod solution;

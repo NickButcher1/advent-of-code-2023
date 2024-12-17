@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
 const PIPE_HORIZONTAL: char = '-';
 const PIPE_VERTICAL: char = '|';
@@ -153,7 +154,7 @@ fn is_cell_inside_loop(r: usize, c: usize, board: &Board) -> bool {
 }
 
 #[allow(clippy::needless_range_loop)]
-pub fn solve10(input: &[String]) -> (i128, i128) {
+pub fn solve10(input: &[String]) -> Solutions {
     let mut board: Board = Board::from_input(input);
 
     // For each cell, build a pair of cells that its pipe joins to. Also (both done inside build_cell_goes_to):
@@ -206,7 +207,7 @@ pub fn solve10(input: &[String]) -> (i128, i128) {
     }
 
     (
-        part_1_solution as i128,
-        num_empty_cells_inside_the_loop as i128,
+        Solution::USIZE(part_1_solution),
+        Solution::I32(num_empty_cells_inside_the_loop),
     )
 }

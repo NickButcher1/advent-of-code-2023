@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_u64_ignore_prefix;
+use aoc::solution::{Solution, Solutions};
 use std::cmp;
 
 struct RangeMap {
@@ -10,7 +11,7 @@ struct RangeMap {
 type Map = Vec<RangeMap>;
 type Maps = Vec<Map>;
 
-pub fn solve05(input: &[String]) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> Solutions {
     let mut seeds: Vec<u64> = Vec::new();
     let mut maps: Maps = vec![vec![]];
     let mut current_map_id: i32 = -1;
@@ -49,7 +50,7 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
         found = is_valid_location(&seeds, part_2_location, &maps);
     }
 
-    (i128::from(min_location), i128::from(part_2_location))
+    (Solution::U64(min_location), Solution::U64(part_2_location))
 }
 
 fn map_a_to_b(value: u64, map: &Map) -> u64 {

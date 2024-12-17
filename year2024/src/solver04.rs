@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
 #[allow(clippy::needless_range_loop)]
 fn count_xmas(board: &Board, x: usize, y: usize, dx: isize, dy: isize) -> usize {
@@ -49,7 +50,7 @@ fn is_mas_cross(board: &Board, x: usize, y: usize) -> bool {
         })
 }
 
-pub fn solve04(input: &[String]) -> (i128, i128) {
+pub fn solve04(input: &[String]) -> Solutions {
     let board = Board::from_input(input);
 
     let mut xmas_count_1 = 0;
@@ -72,5 +73,5 @@ pub fn solve04(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (xmas_count_1 as i128, xmas_count_2 as i128)
+    (Solution::USIZE(xmas_count_1), Solution::I32(xmas_count_2))
 }

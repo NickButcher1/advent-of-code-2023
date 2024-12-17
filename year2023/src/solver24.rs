@@ -2,6 +2,7 @@ const MIN_XY: f64 = 200_000_000_000_000.0;
 const MAX_XY: f64 = 400_000_000_000_000.0;
 
 use aoc::input::string_to_vec_i64;
+use aoc::solution::{Solution, Solutions};
 use std::cmp::Ordering;
 
 #[derive(Clone, Debug)]
@@ -88,12 +89,15 @@ fn solve_part_2(_hailstones: &[Hailstone]) -> i64 {
     0
 }
 
-pub fn solve24(input: &[String]) -> (i128, i128) {
+pub fn solve24(input: &[String]) -> Solutions {
     let mut hailstones: Vec<Hailstone> = read_input(input);
     let intersects = calculate_xy_intersects_in_future(&mut hailstones);
     let part_1_solution = count_xy_intersects_inside(MIN_XY, MAX_XY, &intersects);
 
     let part_2_solution = solve_part_2(&hailstones);
 
-    (i128::from(part_1_solution), i128::from(part_2_solution))
+    (
+        Solution::U64(part_1_solution),
+        Solution::I64(part_2_solution),
+    )
 }

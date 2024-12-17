@@ -1,14 +1,15 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
 const EMPTY: char = '.';
 const MOVABLE: char = 'O';
 
-pub fn solve14(input: &[String]) -> (i128, i128) {
+pub fn solve14(input: &[String]) -> Solutions {
     let mut board: Board = Board::from_input(input);
 
     (
-        solve_part_1(&mut board) as i128,
-        solve_part_2(&mut board) as i128,
+        Solution::USIZE(solve_part_1(&mut board)),
+        Solution::USIZE(solve_part_2(&mut board)),
     )
 }
 

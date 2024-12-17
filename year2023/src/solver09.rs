@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_i64;
+use aoc::solution::{Solution, Solutions};
 
 // Build up a list of integers. Start from the input, then sum adjacent pairs to make a new list,
 // one shorter in length than the previous list. Repeat until the new list is all zeroes.
@@ -19,22 +20,26 @@ pub fn score_line(mut ints: Vec<i64>) -> i128 {
     score
 }
 
-pub fn solve09(input: &[String]) -> (i128, i128) {
+pub fn solve09(input: &[String]) -> Solutions {
     (
-        input
-            .iter()
-            .map(|line| score_line(string_to_vec_i64(line, ' ')))
-            .sum(),
-        input
-            .iter()
-            .map(|line| {
-                score_line(
-                    string_to_vec_i64(line, ' ')
-                        .into_iter()
-                        .rev()
-                        .collect::<Vec<i64>>(),
-                )
-            })
-            .sum(),
+        Solution::I128(
+            input
+                .iter()
+                .map(|line| score_line(string_to_vec_i64(line, ' ')))
+                .sum(),
+        ),
+        Solution::I128(
+            input
+                .iter()
+                .map(|line| {
+                    score_line(
+                        string_to_vec_i64(line, ' ')
+                            .into_iter()
+                            .rev()
+                            .collect::<Vec<i64>>(),
+                    )
+                })
+                .sum(),
+        ),
     )
 }

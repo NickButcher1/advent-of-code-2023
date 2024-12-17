@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use std::collections::HashSet;
 
@@ -73,7 +74,7 @@ fn count_sides(board: &Board, points: &HashSet<(usize, usize)>) -> i32 {
     corners / 2
 }
 
-pub fn solve12(input: &[String]) -> (i128, i128) {
+pub fn solve12(input: &[String]) -> Solutions {
     let mut input_board = Board::from_input(input);
     input_board.add_border(COMPLETE);
     let mut board = input_board.clone();
@@ -117,5 +118,5 @@ pub fn solve12(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (total_cost_one as i128, total_cost_two as i128)
+    (Solution::I32(total_cost_one), Solution::I32(total_cost_two))
 }

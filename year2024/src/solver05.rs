@@ -1,4 +1,5 @@
 use aoc::input::string_to_vec_u32;
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 fn read_input(input: &[String]) -> (Vec<(u32, u32)>, Vec<Vec<u32>>) {
@@ -25,42 +26,6 @@ fn read_input(input: &[String]) -> (Vec<(u32, u32)>, Vec<Vec<u32>>) {
     }
 
     (rules, updates)
-}
-pub fn solve05(input: &[String]) -> (i128, i128) {
-    let (rules, updates) = read_input(input);
-
-    let (valid_updates, invalid_updates): (Vec<_>, Vec<_>) =
-        updates.into_iter().partition(|update| {
-            rules.iter().all(|(rule_p1, rule_p2)| {
-                if !update.contains(rule_p1) || !update.contains(rule_p2) {
-                    return true;
-                }
-
-                let p1_pos = update
-                    .iter()
-                    .position(|&x| x == *rule_p1)
-                    .unwrap_or(usize::MAX);
-                let p2_pos = update
-                    .iter()
-                    .position(|&x| x == *rule_p2)
-                    .unwrap_or(usize::MAX);
-
-                p1_pos < p2_pos
-            })
-        });
-
-    let solution_one = valid_updates
-        .iter()
-        .map(|update| update[(update.len() - 1) / 2])
-        .sum::<u32>();
-
-    let solution_two = invalid_updates
-        .iter()
-        .map(|update| clean_update(update, &rules))
-        .map(|cleaned_update| cleaned_update[(cleaned_update.len() - 1) / 2])
-        .sum::<u32>();
-
-    (solution_one as i128, solution_two as i128)
 }
 
 // Recursive function to sort a vec according to the rules.
@@ -97,4 +62,41 @@ fn clean_update(input_vec: &[u32], rules: &Vec<(u32, u32)>) -> Vec<u32> {
         .flatten()
         .collect();
     flattened_output
+}
+
+pub fn solve05(input: &[String]) -> Solutions {
+    let (rules, updates) = read_input(input);
+
+    let (valid_updates, invalid_updates): (Vec<_>, Vec<_>) =
+        updates.into_iter().partition(|update| {
+            rules.iter().all(|(rule_p1, rule_p2)| {
+                if !update.contains(rule_p1) || !update.contains(rule_p2) {
+                    return true;
+                }
+
+                let p1_pos = update
+                    .iter()
+                    .position(|&x| x == *rule_p1)
+                    .unwrap_or(usize::MAX);
+                let p2_pos = update
+                    .iter()
+                    .position(|&x| x == *rule_p2)
+                    .unwrap_or(usize::MAX);
+
+                p1_pos < p2_pos
+            })
+        });
+
+    let solution_one = valid_updates
+        .iter()
+        .map(|update| update[(update.len() - 1) / 2])
+        .sum::<u32>();
+
+    let solution_two = invalid_updates
+        .iter()
+        .map(|update| clean_update(update, &rules))
+        .map(|cleaned_update| cleaned_update[(cleaned_update.len() - 1) / 2])
+        .sum::<u32>();
+
+    (Solution::U32(solution_one), Solution::U32(solution_two))
 }

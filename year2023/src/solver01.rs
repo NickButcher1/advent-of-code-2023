@@ -1,3 +1,5 @@
+use aoc::solution::{Solution, Solutions};
+
 fn solve_part_1(input: &[String]) -> i128 {
     let mut numbers = Vec::new();
     let mut first_digit = 0;
@@ -93,6 +95,9 @@ fn solve_part_2(input: &[String]) -> i128 {
     i128::from(total)
 }
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
-    (solve_part_1(input), solve_part_2(input))
+pub fn solve01(input: &[String]) -> Solutions {
+    (
+        Solution::I128(solve_part_1(input)),
+        Solution::I128(solve_part_2(input)),
+    )
 }
