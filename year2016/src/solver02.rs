@@ -1,7 +1,7 @@
 use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
-pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> i128 {
+pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> String {
     let mut current_key = '5';
     let mut code = vec![];
 
@@ -12,10 +12,7 @@ pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> i128 {
 
         code.push(current_key);
     }
-    let _answer = code.iter().collect::<String>();
-    // println!("CODE: {answer}");
-    // TODO: No way to return a string here.
-    0_i128
+    code.iter().collect::<String>()
 }
 
 pub fn solve02(input: &[String]) -> Solutions {
@@ -118,7 +115,7 @@ pub fn solve02(input: &[String]) -> Solutions {
     .collect();
 
     (
-        Solution::I128(solve(input, moves_part_one)),
-        Solution::I128(solve(input, moves_part_two)),
+        Solution::STR(solve(input, moves_part_one)),
+        Solution::STR(solve(input, moves_part_two)),
     )
 }
