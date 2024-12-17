@@ -59,27 +59,6 @@ fn solve_part_one() -> String {
         .join(",")
 }
 
-fn find_all_a_that_lead_to_prev_a(
-    computer: &mut Computer,
-    min_a: u64,
-    prev_a: u64,
-    target_index: usize,
-) -> Vec<(u64, u64)> {
-    let mut candidates = vec![];
-    // I think this upper bound is right, it certainly works.
-    for a in min_a..=(min_a + 8) {
-        computer.a = a;
-        computer.output.clear();
-        let _not_halted = computer.execute_program_once();
-        if computer.output[0] == computer.program[target_index - 1] && prev_a == computer.a {
-            // Lower bound for next value of a must be 8 times this one, because a is divided by 8
-            // on each program execution.
-            candidates.push((a * 8, a));
-        }
-    }
-    candidates
-}
-
 // Recurse backwards, to find the a value(s) that can lead to the required output.
 //
 // Given that every program execution divides a by 8, and the program stops when a reaches zero,
@@ -92,12 +71,18 @@ fn solve_part_two() -> u64 {
     while target_index != 0 {
         let mut new_candidates = vec![];
         for (min_a, prev_a) in &candidates {
-            new_candidates.append(&mut find_all_a_that_lead_to_prev_a(
-                &mut computer,
-                *min_a,
-                *prev_a,
-                target_index,
-            ));
+            // I think this upper bound is right, it certainly works.
+            for a in *min_a..=(*min_a + 8) {
+                computer.a = a;
+                computer.output.clear();
+                let _not_halted = computer.execute_program_once();
+                if computer.output[0] == computer.program[target_index - 1] && *prev_a == computer.a
+                {
+                    // Lower bound for next value of a must be 8 times this one, because a is divided by 8
+                    // on each program execution.
+                    new_candidates.push((a * 8, a));
+                }
+            }
         }
 
         target_index -= 1;
