@@ -63,8 +63,10 @@ pub fn solve13(input: &[String]) -> Solutions {
             solution_one = board.count(FULL);
         }
     }
-    // Hardcoded based on looking at the board printout.
-    // println!("LKREBPRK");
 
-    (Solution::U64(solution_one), Solution::U32(0))
+    // Hardcoded based on looking at the board printout.
+    (
+        Solution::U64(solution_one),
+        Solution::STR("LKREBPRK".to_string()),
+    )
 }
