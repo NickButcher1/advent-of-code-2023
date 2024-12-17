@@ -23,7 +23,7 @@ fn solve_part_one(input: &[String]) -> i32 {
     two_count * three_count
 }
 
-fn solve_part_two(input: &[String]) {
+fn solve_part_two(input: &[String]) -> String {
     for i in 0..(input.len() - 1) {
         for j in i..input.len() {
             let (diff_count, last_diff_index) = input[i]
@@ -38,20 +38,22 @@ fn solve_part_two(input: &[String]) {
                 });
 
             if diff_count == 1 {
-                let _solution_part_two = input[i]
+                return input[i]
                     .chars()
                     .enumerate()
                     .filter(|(i, _)| *i != last_diff_index)
                     .map(|(_, c)| c)
                     .collect::<String>();
-                // println!("{solution_part_two}");
-                return;
             }
         }
     }
+
+    unreachable!()
 }
 
 pub fn solve02(input: &[String]) -> Solutions {
-    solve_part_two(input);
-    (Solution::I32(solve_part_one(input)), Solution::I32(0))
+    (
+        Solution::I32(solve_part_one(input)),
+        Solution::STR(solve_part_two(input)),
+    )
 }

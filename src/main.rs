@@ -77,7 +77,7 @@ fn run_one_day(
     };
 
     println!(
-        "{year}-{day:02}    {result1_str:20}  {result2_str:20}  {elapsed_ms:12}ms  {}",
+        "{year}-{day:02}    {result1_str:20}  {result2_str:26}  {elapsed_ms:12}ms  {}",
         "#".repeat(elapsed_ms as usize / 1000)
     );
 
