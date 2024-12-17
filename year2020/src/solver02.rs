@@ -1,6 +1,7 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let mut num_valid_passwords_part_1 = 0;
     let mut num_valid_passwords_part_2 = 0;
     let re = Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").unwrap();
@@ -25,5 +26,8 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
             num_valid_passwords_part_2 += 1;
         }
     }
-    (num_valid_passwords_part_1, num_valid_passwords_part_2)
+    (
+        Solution::I32(num_valid_passwords_part_1),
+        Solution::I32(num_valid_passwords_part_2),
+    )
 }

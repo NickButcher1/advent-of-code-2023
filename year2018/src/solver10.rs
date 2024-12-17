@@ -1,5 +1,6 @@
 use aoc::board::Board;
 use aoc::moving_point::{max_x_y, min_x_y, read_points_2018_day_10, tick, MovingPoint};
+use aoc::solution::{Solution, Solutions};
 
 const EMPTY: char = '.';
 const FULL: char = '#';
@@ -27,7 +28,7 @@ fn board_from_points(points: &[MovingPoint]) -> Board {
     board
 }
 
-pub fn solve10(input: &[String]) -> (i128, i128) {
+pub fn solve10(input: &[String]) -> Solutions {
     let mut points = read_points_2018_day_10(input);
     let mut prev_points = points.clone();
     let mut prev_num_rows = isize::MAX;
@@ -41,7 +42,7 @@ pub fn solve10(input: &[String]) -> (i128, i128) {
         if num_rows > prev_num_rows {
             let _board = board_from_points(&prev_points);
             // board.print();
-            return (-1, step);
+            return (Solution::I32(-1), Solution::I32(step));
         }
         step += 1;
         prev_points = points.clone();

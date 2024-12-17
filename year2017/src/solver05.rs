@@ -1,6 +1,7 @@
 use aoc::input::to_vec_isize;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve05(input: &[String]) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> Solutions {
     let mut jumps = to_vec_isize(input);
     let mut idx: isize = 0;
     let mut part_1_steps = 0;
@@ -26,5 +27,5 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (part_1_steps, part_2_steps)
+    (Solution::I32(part_1_steps), Solution::I32(part_2_steps))
 }

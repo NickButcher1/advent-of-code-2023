@@ -1,6 +1,7 @@
 use aoc::input::string_to_vec_usize;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve06(input: &[String]) -> (i128, i128) {
+pub fn solve06(input: &[String]) -> Solutions {
     let inputs = string_to_vec_usize(&input[0], ',');
     let mut lanternfish = inputs.iter().fold([0; 9], |mut counts, &input| {
         counts[input] += 1;
@@ -21,5 +22,5 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
 
     let solution_two = lanternfish.iter().sum::<usize>();
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::USIZE(solution_one), Solution::USIZE(solution_two))
 }

@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use regex::Regex;
 
@@ -7,7 +8,7 @@ const CLAY: char = '#';
 const FALLING_WATER: char = '|';
 const STEADY_WATER: char = '~';
 
-pub fn solve17(input: &[String]) -> (i128, i128) {
+pub fn solve17(input: &[String]) -> Solutions {
     let re_x_first = Regex::new(r"^x=(\d+), y=(\d+)..(\d+)$").unwrap();
     let re_y_first = Regex::new(r"^y=(\d+), x=(\d+)..(\d+)$").unwrap();
 
@@ -57,7 +58,7 @@ pub fn solve17(input: &[String]) -> (i128, i128) {
     let solution_one = board.count(STEADY_WATER) + board.count(FALLING_WATER);
     let solution_two = board.count(STEADY_WATER);
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::U64(solution_one), Solution::U64(solution_two))
 }
 
 fn expand_source_down(board: &mut Board, r: usize, c: usize) {

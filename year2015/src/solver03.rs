@@ -1,6 +1,7 @@
 use aoc::dir::Dir;
 use aoc::infinite_grid::InfiniteGrid;
 use aoc::infinite_grid::{Cell, START_CELL, START_GRID};
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 pub fn solve(input: &[String], num_santas: usize) -> usize {
@@ -18,6 +19,9 @@ pub fn solve(input: &[String], num_santas: usize) -> usize {
     visited_cells.len()
 }
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
-    (solve(input, 1) as i128, solve(input, 2) as i128)
+pub fn solve03(input: &[String]) -> Solutions {
+    (
+        Solution::USIZE(solve(input, 1)),
+        Solution::USIZE(solve(input, 2)),
+    )
 }

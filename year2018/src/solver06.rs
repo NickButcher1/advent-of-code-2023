@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use regex::Regex;
 
@@ -33,7 +34,7 @@ fn char_to_index(character: char) -> usize {
     }
 }
 
-pub fn solve06(input: &[String]) -> (i128, i128) {
+pub fn solve06(input: &[String]) -> Solutions {
     let re = Regex::new(r"^(\d+), (\d+)$").unwrap();
 
     let mut board_one = Board::create_empty(400, 400, EMPTY);
@@ -82,5 +83,5 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
     let solution_one = count_ids.iter().max().unwrap_or(&0);
     let solution_two = board_two.count('#');
 
-    (*solution_one as i128, solution_two as i128)
+    (Solution::I32(*solution_one), Solution::U64(solution_two))
 }

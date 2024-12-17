@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use itertools::Itertools;
 use std::collections::HashMap;
 
@@ -50,7 +51,7 @@ fn solve_part_two(input: &[String]) {
     }
 }
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     solve_part_two(input);
-    (solve_part_one(input) as i128, 0)
+    (Solution::I32(solve_part_one(input)), Solution::I32(0))
 }

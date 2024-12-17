@@ -9,12 +9,7 @@ use crate::solver02::solve02;
 use crate::solver04::solve04;
 use crate::solver05::solve05;
 use crate::solver20::solve20;
-
-type SolverFunction = fn(&[String]) -> (i128, i128);
-
-pub const fn solve_blank(_input: &[String]) -> (i128, i128) {
-    (0, 0)
-}
+use aoc::solution::{solve_blank, SolverFunction};
 
 pub const SOLVER_FUNCTIONS: [SolverFunction; 25] = [
     solve01,

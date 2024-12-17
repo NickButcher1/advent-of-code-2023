@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 fn get_offset(offset_str: &str) -> i32 {
@@ -12,8 +13,11 @@ fn get_register_index(register_str: &str) -> usize {
     }
 }
 
-pub fn solve23(input: &[String]) -> (i128, i128) {
-    (solve(input, 0), solve(input, 1))
+pub fn solve23(input: &[String]) -> Solutions {
+    (
+        Solution::I128(solve(input, 0)),
+        Solution::I128(solve(input, 1)),
+    )
 }
 
 pub fn solve(input: &[String], initial_a: i32) -> i128 {

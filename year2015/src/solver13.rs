@@ -1,10 +1,11 @@
+use aoc::solution::{Solution, Solutions};
 use itertools::Itertools;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
 const ME: &str = "ME";
 
-pub fn solve13(input: &[String]) -> (i128, i128) {
+pub fn solve13(input: &[String]) -> Solutions {
     let mut mapping: HashMap<(&str, &str), isize> = HashMap::new();
     let mut names_set: HashSet<&str> = HashSet::new();
     let re =
@@ -32,7 +33,7 @@ pub fn solve13(input: &[String]) -> (i128, i128) {
 
     let part_2 = solve(&names, &mapping) as i128;
 
-    (part_1, part_2)
+    (Solution::I128(part_1), Solution::I128(part_2))
 }
 
 fn solve(names: &[&str], mapping: &HashMap<(&str, &str), isize>) -> isize {

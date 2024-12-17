@@ -1,12 +1,13 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
 const OFF: char = '.';
 const ON: char = '#';
 
-pub fn solve18(input: &[String]) -> (i128, i128) {
+pub fn solve18(input: &[String]) -> Solutions {
     (
-        i128::from(solve(input, false)),
-        i128::from(solve(input, true)),
+        Solution::U64(solve(input, false)),
+        Solution::U64(solve(input, true)),
     )
 }
 

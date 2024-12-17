@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 use std::cmp::max;
 
@@ -10,7 +11,7 @@ struct Ingredient<'a> {
     calories: isize,
 }
 
-pub fn solve15(input: &[String]) -> (i128, i128) {
+pub fn solve15(input: &[String]) -> Solutions {
     let mut ingredients: Vec<Ingredient> = vec![];
 
     let re = Regex::new(
@@ -94,5 +95,8 @@ pub fn solve15(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (best_score as i128, best_score_with_500_calories as i128)
+    (
+        Solution::ISIZE(best_score),
+        Solution::ISIZE(best_score_with_500_calories),
+    )
 }

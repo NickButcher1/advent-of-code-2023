@@ -1,4 +1,5 @@
 use aoc::input::to_vec_i64;
+use aoc::solution::{Solution, Solutions};
 
 fn fuel_for_mass(mass: i64) -> i64 {
     (mass / 3) - 2
@@ -12,7 +13,7 @@ fn fuel_for_masses(masses: &[i64]) -> Vec<i64> {
         .collect()
 }
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     let mut fuels: Vec<i64> = fuel_for_masses(&to_vec_i64(input));
     let part_1: i64 = fuels.iter().sum();
 
@@ -22,5 +23,5 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
         part_2 += fuels.iter().sum::<i64>();
     }
 
-    (part_1 as i128, part_2 as i128)
+    (Solution::I64(part_1), Solution::I64(part_2))
 }

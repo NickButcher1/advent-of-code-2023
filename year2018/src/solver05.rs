@@ -1,3 +1,5 @@
+use aoc::solution::{Solution, Solutions};
+
 // a-z is 97-122
 // A-Z is 65-90
 fn is_match(c1: u8, c2: u8) -> bool {
@@ -36,7 +38,7 @@ fn reduce_input(mut chars: Vec<u8>) -> usize {
     chars.len()
 }
 
-pub fn solve05(input: &[String]) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> Solutions {
     let chars = input[0].chars().map(|c| c as u8).collect::<Vec<u8>>();
 
     let solution_one = reduce_input(chars.clone());
@@ -50,5 +52,5 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
         .min()
         .unwrap_or(usize::MAX);
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::USIZE(solution_one), Solution::USIZE(solution_two))
 }

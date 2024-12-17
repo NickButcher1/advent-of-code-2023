@@ -1,4 +1,5 @@
 use aoc::infinite_grid::{START_CELL, START_GRID};
+use aoc::solution::{Solution, Solutions};
 
 pub fn solve_part_one(input: &[String]) -> u64 {
     let mut grid = START_GRID.clone();
@@ -14,9 +15,9 @@ pub fn solve_part_two(input: &[String]) -> u64 {
     START_GRID.taxicab_distance(&first_visited_twice_cell)
 }
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     (
-        i128::from(solve_part_one(input)),
-        i128::from(solve_part_two(input)),
+        Solution::U64(solve_part_one(input)),
+        Solution::U64(solve_part_two(input)),
     )
 }

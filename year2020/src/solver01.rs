@@ -1,4 +1,5 @@
 use aoc::input::to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 use std::cmp::Ordering;
 
 fn solve_part_1(entries: &[u64]) -> u64 {
@@ -33,11 +34,11 @@ fn solve_part_2(entries: &[u64]) -> u64 {
     unreachable!();
 }
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     let mut entries = to_vec_u64(input);
     entries.sort();
     (
-        i128::from(solve_part_1(&entries)),
-        i128::from(solve_part_2(&entries)),
+        Solution::U64(solve_part_1(&entries)),
+        Solution::U64(solve_part_2(&entries)),
     )
 }

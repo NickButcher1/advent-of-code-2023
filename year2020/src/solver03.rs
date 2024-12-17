@@ -1,17 +1,20 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
 const TREE: char = '#';
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> Solutions {
     let board = Board::from_input(input);
 
     (
-        trees_for_slope(&board, 3, 1),
-        trees_for_slope(&board, 1, 1)
-            * trees_for_slope(&board, 3, 1)
-            * trees_for_slope(&board, 5, 1)
-            * trees_for_slope(&board, 7, 1)
-            * trees_for_slope(&board, 1, 2),
+        Solution::I128(trees_for_slope(&board, 3, 1)),
+        Solution::I128(
+            trees_for_slope(&board, 1, 1)
+                * trees_for_slope(&board, 3, 1)
+                * trees_for_slope(&board, 5, 1)
+                * trees_for_slope(&board, 7, 1)
+                * trees_for_slope(&board, 1, 2),
+        ),
     )
 }
 

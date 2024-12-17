@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
@@ -85,6 +86,9 @@ pub fn solve(input: &[String], depth: usize) -> usize {
     values.last().unwrap() - first_value
 }
 
-pub fn solve14(input: &[String]) -> (i128, i128) {
-    (solve(input, 10) as i128, solve(input, 40) as i128)
+pub fn solve14(input: &[String]) -> Solutions {
+    (
+        Solution::USIZE(solve(input, 10)),
+        Solution::USIZE(solve(input, 40)),
+    )
 }

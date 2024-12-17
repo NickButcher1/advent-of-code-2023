@@ -1,4 +1,6 @@
-pub fn solve01(input: &[String]) -> (i128, i128) {
+use aoc::solution::{Solution, Solutions};
+
+pub fn solve01(input: &[String]) -> Solutions {
     let (up, down): (Vec<char>, Vec<char>) = input[0].chars().partition(|c| *c == '(');
     let part_1_floor = up.len() - down.len();
 
@@ -19,5 +21,5 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
         })
         .0;
 
-    (part_1_floor as i128, part_2_steps as i128)
+    (Solution::USIZE(part_1_floor), Solution::I32(part_2_steps))
 }

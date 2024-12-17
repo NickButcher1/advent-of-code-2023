@@ -1,11 +1,12 @@
 use aoc::input::string_to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 
 #[derive(Debug, PartialEq)]
 struct Board {
     rows: Vec<Vec<u64>>,
 }
 
-pub fn solve04(input: &[String]) -> (i128, i128) {
+pub fn solve04(input: &[String]) -> Solutions {
     let numbers = string_to_vec_u64(&input[0], ',');
 
     let mut boards: Vec<Board> = vec![];
@@ -57,7 +58,7 @@ pub fn solve04(input: &[String]) -> (i128, i128) {
                 }
                 if boards.len() == 1 {
                     let part_2 = sum_board * winning_number;
-                    return (part_1 as i128, part_2 as i128);
+                    return (Solution::U64(part_1), Solution::U64(part_2));
                 }
                 board_ids_to_remove.push(i);
             }

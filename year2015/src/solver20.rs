@@ -1,8 +1,10 @@
-pub fn solve20(input: &[String]) -> (i128, i128) {
+use aoc::solution::{Solution, Solutions};
+
+pub fn solve20(input: &[String]) -> Solutions {
     let target = input[0].parse::<usize>().unwrap();
     (
-        solve(target, usize::MAX, 10) as i128,
-        solve(target, 50, 11) as i128,
+        Solution::USIZE(solve(target, usize::MAX, 10)),
+        Solution::USIZE(solve(target, 50, 11)),
     )
 }
 

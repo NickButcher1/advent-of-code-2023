@@ -1,6 +1,7 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve15(input: &[String]) -> (i128, i128) {
+pub fn solve15(input: &[String]) -> Solutions {
     let board_one = Board::from_input(input);
 
     let mut board_two = Board::create_empty(board_one.num_rows * 5, board_one.num_cols * 5, '.');
@@ -22,7 +23,7 @@ pub fn solve15(input: &[String]) -> (i128, i128) {
     }
 
     (
-        board_one.cheapest_path() as i128,
-        board_two.cheapest_path() as i128,
+        Solution::U32(board_one.cheapest_path()),
+        Solution::U32(board_two.cheapest_path()),
     )
 }

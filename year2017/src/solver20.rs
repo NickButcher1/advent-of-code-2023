@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -14,12 +15,12 @@ struct Particle {
     az: isize,
 }
 
-pub fn solve20(input: &[String]) -> (i128, i128) {
+pub fn solve20(input: &[String]) -> Solutions {
     let mut particles = read_particles(input);
 
     (
-        solve_part_1(&mut particles.clone()) as i128,
-        solve_part_2(&mut particles) as i128,
+        Solution::USIZE(solve_part_1(&mut particles.clone())),
+        Solution::USIZE(solve_part_2(&mut particles)),
     )
 }
 

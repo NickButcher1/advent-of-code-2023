@@ -1,6 +1,7 @@
 use aoc::input::string_to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let answer = input
         .iter()
         .fold((0, 0), |(part_1_area, part_2_len), line| {
@@ -13,5 +14,5 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
                 part_2_len + xyz[0] * xyz[1] * xyz[2] + 2 * xyz[0] + 2 * xyz[1],
             )
         });
-    (i128::from(answer.0), i128::from(answer.1))
+    (Solution::U64(answer.0), Solution::U64(answer.1))
 }

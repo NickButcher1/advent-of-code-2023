@@ -1,8 +1,10 @@
-pub fn solve01(input: &[String]) -> (i128, i128) {
+use aoc::solution::{Solution, Solutions};
+
+pub fn solve01(input: &[String]) -> Solutions {
     let chars: Vec<char> = input[0].chars().collect();
     (
-        i128::from(solve(&chars, 1)),
-        i128::from(solve(&chars, chars.len() / 2)),
+        Solution::U32(solve(&chars, 1)),
+        Solution::U32(solve(&chars, chars.len() / 2)),
     )
 }
 

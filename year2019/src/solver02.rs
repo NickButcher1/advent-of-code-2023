@@ -1,10 +1,11 @@
 use aoc::input::string_to_vec_usize;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let codes = string_to_vec_usize(&input[0], ',');
     (
-        solve(&mut codes.clone(), 12, 2) as i128,
-        solve_part_2(&codes) as i128,
+        Solution::USIZE(solve(&mut codes.clone(), 12, 2)),
+        Solution::USIZE(solve_part_2(&codes)),
     )
 }
 

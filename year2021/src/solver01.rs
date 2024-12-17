@@ -1,3 +1,5 @@
+use aoc::solution::{Solution, Solutions};
+
 fn solve_for(depths: &[u64]) -> i128 {
     depths
         .iter()
@@ -6,7 +8,7 @@ fn solve_for(depths: &[u64]) -> i128 {
         .count() as i128
 }
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     let depths: Vec<u64> = input
         .iter()
         .map(|line| line.parse::<u64>().unwrap())
@@ -19,5 +21,8 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
         .map(|((first, second), third)| first + second + third)
         .collect();
 
-    (solve_for(&depths), solve_for(&sliding_depths))
+    (
+        Solution::I128(solve_for(&depths)),
+        Solution::I128(solve_for(&sliding_depths)),
+    )
 }

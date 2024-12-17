@@ -1,5 +1,10 @@
-pub fn solve10(input: &[String]) -> (i128, i128) {
-    (solve(&input[0], 40), solve(&input[0], 50))
+use aoc::solution::{Solution, Solutions};
+
+pub fn solve10(input: &[String]) -> Solutions {
+    (
+        Solution::I128(solve(&input[0], 40)),
+        Solution::I128(solve(&input[0], 50)),
+    )
 }
 
 fn solve(input: &str, num_iterations: usize) -> i128 {

@@ -1,6 +1,7 @@
+use aoc::solution::{Solution, Solutions};
 use md5;
 
-pub fn solve04(input: &[String]) -> (i128, i128) {
+pub fn solve04(input: &[String]) -> Solutions {
     let key = &input[0];
     let mut test_val = 0;
     let mut part_1 = 0;
@@ -17,5 +18,5 @@ pub fn solve04(input: &[String]) -> (i128, i128) {
             }
         }
     }
-    (part_1, test_val)
+    (Solution::I32(part_1), Solution::I32(test_val))
 }

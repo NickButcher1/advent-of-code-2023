@@ -1,6 +1,7 @@
 use aoc::input::to_vec_char;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve10(input: &[String]) -> (i128, i128) {
+pub fn solve10(input: &[String]) -> Solutions {
     let mut part_one_score = 0;
     let lines = to_vec_char(input);
     let mut incomplete_lines: Vec<Vec<char>> = vec![];
@@ -73,5 +74,5 @@ pub fn solve10(input: &[String]) -> (i128, i128) {
     scores.sort();
     let part_two_score = scores[(scores.len() - 1) / 2];
 
-    (part_one_score as i128, part_two_score as i128)
+    (Solution::I32(part_one_score), Solution::U64(part_two_score))
 }

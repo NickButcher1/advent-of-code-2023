@@ -1,7 +1,8 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
-pub fn solve09(input: &[String]) -> (i128, i128) {
+pub fn solve09(input: &[String]) -> Solutions {
     let mut board = Board::from_input(input);
     board.add_border('A');
 
@@ -65,5 +66,5 @@ pub fn solve09(input: &[String]) -> (i128, i128) {
         * basin_sizes[basin_sizes.len() - 2]
         * basin_sizes[basin_sizes.len() - 3];
 
-    (sum_risk_levels as i128, solution_two)
+    (Solution::U32(sum_risk_levels), Solution::I32(solution_two))
 }

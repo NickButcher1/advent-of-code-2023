@@ -1,6 +1,7 @@
 use aoc::input::string_to_vec_i32;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve07(input: &[String]) -> (i128, i128) {
+pub fn solve07(input: &[String]) -> Solutions {
     let positions = string_to_vec_i32(&input[0], ',');
     let max_position = *positions.iter().max().unwrap();
 
@@ -30,7 +31,7 @@ pub fn solve07(input: &[String]) -> (i128, i128) {
         .unwrap();
 
     (
-        cheapest_fuel_cost_one as i128,
-        cheapest_fuel_cost_two as i128,
+        Solution::I32(cheapest_fuel_cost_one),
+        Solution::I32(cheapest_fuel_cost_two),
     )
 }

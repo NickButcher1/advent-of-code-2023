@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashMap;
 
 pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> i128 {
@@ -17,7 +18,7 @@ pub fn solve(input: &[String], moves: HashMap<(char, char), char>) -> i128 {
     0_i128
 }
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let moves_part_one: HashMap<(char, char), char> = vec![
         (('1', 'U'), '1'),
         (('1', 'D'), '4'),
@@ -116,5 +117,8 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
     .into_iter()
     .collect();
 
-    (solve(input, moves_part_one), solve(input, moves_part_two))
+    (
+        Solution::I128(solve(input, moves_part_one)),
+        Solution::I128(solve(input, moves_part_two)),
+    )
 }

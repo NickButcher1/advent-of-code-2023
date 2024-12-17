@@ -1,10 +1,11 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 const EMPTY: char = '.';
 const FULL: char = '#';
 
-pub fn solve13(input: &[String]) -> (i128, i128) {
+pub fn solve13(input: &[String]) -> Solutions {
     let re_xy = Regex::new(r"^(\d+),(\d+)$").unwrap();
     let re_fold = Regex::new(r"^fold along (x|y)=(\d+)$").unwrap();
 
@@ -65,5 +66,5 @@ pub fn solve13(input: &[String]) -> (i128, i128) {
     // Hardcoded based on looking at the board printout.
     // println!("LKREBPRK");
 
-    (solution_one as i128, 0_i128)
+    (Solution::U64(solution_one), Solution::U32(0))
 }

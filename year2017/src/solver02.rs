@@ -1,6 +1,7 @@
 use aoc::input::string_to_vec_u64;
+use aoc::solution::{Solution, Solutions};
 
-pub fn solve02(input: &[String]) -> (i128, i128) {
+pub fn solve02(input: &[String]) -> Solutions {
     let (part_1, part_2) = input.iter().fold((0, 0), |(part_1, mut part_2), line| {
         let numbers = string_to_vec_u64(line, '\t');
         let max_min_diff = numbers.iter().max().unwrap() - numbers.iter().min().unwrap();
@@ -16,5 +17,5 @@ pub fn solve02(input: &[String]) -> (i128, i128) {
         (part_1 + max_min_diff, part_2)
     });
 
-    (part_1 as i128, part_2 as i128)
+    (Solution::U64(part_1), Solution::U64(part_2))
 }

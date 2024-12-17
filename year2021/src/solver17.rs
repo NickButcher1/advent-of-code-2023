@@ -1,7 +1,8 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use std::cmp::Ordering;
 
-pub fn solve17(_input: &[String]) -> (i128, i128) {
+pub fn solve17(_input: &[String]) -> Solutions {
     // TODO
     // let re = Regex::new(r"^target area: x=(\d+)..(\d+), y=-(\d+)..(\d+)").unwrap();
     // let caps = re.captures(&input[0]).unwrap();
@@ -58,5 +59,5 @@ pub fn solve17(_input: &[String]) -> (i128, i128) {
         // board.print();
     }
 
-    (0_i128, 0_i128)
+    (Solution::U32(0), Solution::U32(0))
 }

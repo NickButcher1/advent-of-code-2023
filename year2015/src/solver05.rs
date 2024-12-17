@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
 const VOWELS: [char; 5] = ['a', 'e', 'i', 'o', 'u'];
@@ -69,9 +70,9 @@ fn is_nice_part_2(input: &str) -> bool {
     pass_a && pass_b
 }
 
-pub fn solve05(input: &[String]) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> Solutions {
     (
-        input.iter().filter(|&s| is_nice_part_1(s)).count() as i128,
-        input.iter().filter(|&s| is_nice_part_2(s)).count() as i128,
+        Solution::USIZE(input.iter().filter(|&s| is_nice_part_1(s)).count()),
+        Solution::USIZE(input.iter().filter(|&s| is_nice_part_2(s)).count()),
     )
 }

@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use string_builder::Builder;
 
 type Board = Vec<Vec<u8>>;
@@ -99,7 +100,7 @@ fn move_one_step(board: &mut Board, num_rows: usize, num_cols: usize) -> bool {
     num_moved == 0
 }
 
-pub fn solve25(input: &[String]) -> (i128, i128) {
+pub fn solve25(input: &[String]) -> Solutions {
     let num_rows = input.len();
     let num_cols = input[0].len();
 
@@ -126,5 +127,5 @@ pub fn solve25(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (steps, 0)
+    (Solution::I32(steps), Solution::U32(0))
 }

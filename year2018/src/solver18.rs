@@ -1,4 +1,5 @@
 use aoc::board::{Board, Cells};
+use aoc::solution::{Solution, Solutions};
 
 const OPEN: char = '.';
 const TREE: char = '|';
@@ -7,8 +8,11 @@ const BORDER: char = ' ';
 
 const TARGET_MINUTES_PART_2: usize = 1_000_000_000;
 
-pub fn solve18(input: &[String]) -> (i128, i128) {
-    (solve_for_minutes(input, 10), solve_part_2(input))
+pub fn solve18(input: &[String]) -> Solutions {
+    (
+        Solution::I128(solve_for_minutes(input, 10)),
+        Solution::I128(solve_part_2(input)),
+    )
 }
 
 pub fn solve_for_minutes(input: &[String], minutes: usize) -> i128 {

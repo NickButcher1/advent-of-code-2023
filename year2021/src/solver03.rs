@@ -1,4 +1,5 @@
 use aoc::input::to_vec_char;
+use aoc::solution::{Solution, Solutions};
 
 fn count_at_index(input: &[Vec<char>], index: usize) -> (i32, i32) {
     input.iter().fold((0, 0), |(zeroes, ones), line| {
@@ -59,9 +60,9 @@ fn solve_part_2(input: &Vec<Vec<char>>) -> u64 {
     solve_oxygen_or_co2(input, true) * solve_oxygen_or_co2(input, false)
 }
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> Solutions {
     (
-        solve_part_1(&to_vec_char(input)) as i128,
-        solve_part_2(&to_vec_char(input)) as i128,
+        Solution::U64(solve_part_1(&to_vec_char(input))),
+        Solution::U64(solve_part_2(&to_vec_char(input))),
     )
 }

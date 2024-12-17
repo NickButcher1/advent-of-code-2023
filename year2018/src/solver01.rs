@@ -1,7 +1,8 @@
 use aoc::input::to_vec_i32;
+use aoc::solution::{Solution, Solutions};
 use std::collections::HashSet;
 
-pub fn solve01(input: &[String]) -> (i128, i128) {
+pub fn solve01(input: &[String]) -> Solutions {
     let inputs = to_vec_i32(input);
     let solution_one = inputs.iter().sum::<i32>();
 
@@ -16,5 +17,5 @@ pub fn solve01(input: &[String]) -> (i128, i128) {
         found.insert(running_total);
     }
 
-    (solution_one as i128, running_total as i128)
+    (Solution::I32(solution_one), Solution::I32(running_total))
 }

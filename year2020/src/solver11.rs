@@ -1,10 +1,11 @@
 use aoc::board::{Board, Cells};
+use aoc::solution::{Solution, Solutions};
 
 const FLOOR: char = '.';
 const EMPTY: char = 'L';
 const OCCUPIED: char = '#';
 
-pub fn solve11(input: &[String]) -> (i128, i128) {
+pub fn solve11(input: &[String]) -> Solutions {
     let mut board = Board::from_input(input);
     board.add_border(FLOOR);
 
@@ -17,7 +18,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
         }
         last_hash = hash;
     }
-    (board.count(OCCUPIED) as i128, 0)
+    (Solution::U64(board.count(OCCUPIED)), Solution::U64(0))
 }
 
 pub fn step(board: &mut Board) {

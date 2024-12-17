@@ -1,7 +1,8 @@
 use aoc::point::{max_x_y_for_pairs, read_point_pairs};
+use aoc::solution::{Solution, Solutions};
 use std::cmp::{max, min};
 
-pub fn solve05(input: &[String]) -> (i128, i128) {
+pub fn solve05(input: &[String]) -> Solutions {
     let points = read_point_pairs(input);
     let (max_x, max_y) = max_x_y_for_pairs(&points);
 
@@ -58,5 +59,5 @@ pub fn solve05(input: &[String]) -> (i128, i128) {
         }
     }
 
-    (part_1 as i128, part_2 as i128)
+    (Solution::I32(part_1), Solution::I32(part_2))
 }

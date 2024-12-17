@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use regex::Regex;
 use std::cmp::max;
@@ -130,7 +131,7 @@ pub fn solve_part_two(p1_start_pos: i32, p2_start_pos: i32) -> i128 {
     max(p1_wins, p2_wins) as i128
 }
 
-pub fn solve21(input: &[String]) -> (i128, i128) {
+pub fn solve21(input: &[String]) -> Solutions {
     let re = Regex::new(r"^Player (\d+) starting position: (\d+)").unwrap();
     let captures = re.captures(&input[0]).unwrap();
     let p1_pos = captures.get(2).unwrap().as_str().parse::<i32>().unwrap();
@@ -138,7 +139,7 @@ pub fn solve21(input: &[String]) -> (i128, i128) {
     let p2_pos = captures.get(2).unwrap().as_str().parse::<i32>().unwrap();
 
     (
-        solve_part_one(p1_pos, p2_pos),
-        solve_part_two(p1_pos, p2_pos),
+        Solution::I128(solve_part_one(p1_pos, p2_pos)),
+        Solution::I128(solve_part_two(p1_pos, p2_pos)),
     )
 }

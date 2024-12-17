@@ -1,10 +1,11 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 use std::cmp::min;
 
 const PART_1_TIME: usize = 2503;
 
 #[allow(clippy::needless_range_loop)]
-pub fn solve14(input: &[String]) -> (i128, i128) {
+pub fn solve14(input: &[String]) -> Solutions {
     // Distance travelled by each reindeer after each second.
     let mut reindeer_distance: Vec<Vec<usize>> = vec![];
 
@@ -67,7 +68,7 @@ pub fn solve14(input: &[String]) -> (i128, i128) {
     }
 
     (
-        furthest_distance as i128,
-        *reindeer_points.iter().max().unwrap() as i128,
+        Solution::USIZE(furthest_distance),
+        Solution::USIZE(*reindeer_points.iter().max().unwrap()),
     )
 }

@@ -1,11 +1,12 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 const OFF: char = '.';
 const ON: char = '#';
 
 #[allow(clippy::needless_range_loop)]
-pub fn solve06(input: &[String]) -> (i128, i128) {
+pub fn solve06(input: &[String]) -> Solutions {
     let mut part_1_board = Board::create_empty(1000, 1000, OFF);
     let mut part_2_board: Vec<Vec<usize>> = vec![vec![0; 1000]; 1000];
 
@@ -55,5 +56,8 @@ pub fn solve06(input: &[String]) -> (i128, i128) {
         part_2_sum += row.iter().sum::<usize>();
     }
 
-    (part_1_board.count(ON) as i128, part_2_sum as i128)
+    (
+        Solution::U64(part_1_board.count(ON)),
+        Solution::USIZE(part_2_sum),
+    )
 }

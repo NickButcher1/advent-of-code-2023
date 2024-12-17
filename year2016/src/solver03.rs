@@ -1,3 +1,4 @@
+use aoc::solution::{Solution, Solutions};
 use regex::Regex;
 
 fn capture_line(re: &Regex, line: &str) -> (usize, usize, usize) {
@@ -36,11 +37,14 @@ fn solve_part_two(input_values: &[(usize, usize, usize)]) -> i128 {
         .sum()
 }
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> Solutions {
     let re = Regex::new(r"^(\s+)(\d+)(\s+)(\d+)(\s+)(\d+)$").unwrap();
 
     let input_values: Vec<(usize, usize, usize)> =
         input.iter().map(|line| capture_line(&re, line)).collect();
 
-    (solve_part_one(&input_values), solve_part_two(&input_values))
+    (
+        Solution::I128(solve_part_one(&input_values)),
+        Solution::I128(solve_part_two(&input_values)),
+    )
 }

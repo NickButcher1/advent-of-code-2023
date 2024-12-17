@@ -1,4 +1,5 @@
 use aoc::int_board::IntBoard;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 
 fn expand(
@@ -37,7 +38,7 @@ fn expand(
     }
 }
 
-pub fn solve11(input: &[String]) -> (i128, i128) {
+pub fn solve11(input: &[String]) -> Solutions {
     let mut board = IntBoard::from_input(input);
     let mut flash_count: i32 = 0;
     let mut solution_one = 0;
@@ -69,7 +70,7 @@ pub fn solve11(input: &[String]) -> (i128, i128) {
         }
 
         if new_board.count(0) as usize == board.num_rows * board.num_cols {
-            return (solution_one as i128, step as i128);
+            return (Solution::I32(solution_one), Solution::I32(step));
         }
 
         board = new_board;

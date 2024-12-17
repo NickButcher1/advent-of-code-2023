@@ -1,4 +1,5 @@
 use aoc::board::Board;
+use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use regex::Regex;
 
@@ -17,7 +18,7 @@ fn parse_line(line: &str, re: &Regex) -> (u32, usize, usize, usize, usize) {
     )
 }
 
-pub fn solve03(input: &[String]) -> (i128, i128) {
+pub fn solve03(input: &[String]) -> Solutions {
     let re = Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$").unwrap();
 
     let mut board = Board::create_empty(1000, 1000, EMPTY);
@@ -45,5 +46,5 @@ pub fn solve03(input: &[String]) -> (i128, i128) {
         })
         .unwrap();
 
-    (solution_one as i128, solution_two as i128)
+    (Solution::U64(solution_one), Solution::U32(solution_two))
 }
