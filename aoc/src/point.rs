@@ -14,7 +14,6 @@ pub fn read_points(input: &[String]) -> Vec<Point> {
     input
         .iter()
         .map(|line| {
-            println!("{line}");
             let captures = re.captures(line).unwrap();
             Point {
                 x: captures.get(1).unwrap().as_str().parse::<isize>().unwrap(),
