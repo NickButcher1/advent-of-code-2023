@@ -1,6 +1,6 @@
 use aoc::board::Board;
 use aoc::int_board::IntBoard;
-use aoc::point::read_points;
+use aoc::point::{read_points, Point};
 use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
 use std::collections::VecDeque;
@@ -8,25 +8,23 @@ use std::collections::VecDeque;
 const SAFE: char = '.';
 const CORRUPT: char = '#';
 
-#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 struct Position {
     r: usize,
     c: usize,
     steps: usize,
 }
 
-fn find_lowest_steps_for_board(board: &Board, board_size: usize) -> i32 {
-    let start_position = Position {
+fn find_lowest_steps_for_board(board: &Board) -> i32 {
+    let (target_r, target_c) = (board.num_rows - 2, board.num_cols - 2);
+    // Tips of paths that need to be explored.
+    let mut live_points = VecDeque::from([Position {
         r: 1,
         c: 1,
         steps: 0,
-    };
-    let (target_r, target_c) = (board_size, board_size);
-    // Tips of paths that need to be explored.
-    let mut live_points: VecDeque<Position> = VecDeque::new();
-    live_points.push_back(start_position.clone());
+    }]);
 
-    let mut lowest_steps_to_end = IntBoard::create_empty(board_size + 2, board_size + 2);
+    // Track the lowest score to reach each cell, found so far.
+    let mut lowest_steps_to_end = IntBoard::create_empty(board.num_rows + 2, board.num_cols + 2);
     for (c, r) in iproduct!(
         0..lowest_steps_to_end.num_cols,
         0..lowest_steps_to_end.num_rows
@@ -44,16 +42,15 @@ fn find_lowest_steps_for_board(board: &Board, board_size: usize) -> i32 {
                 steps: position.steps + 1,
             };
 
-            if board.cells[new_position.r][new_position.c] == SAFE {
-                if new_position.steps
+            if board.cells[new_position.r][new_position.c] == SAFE
+                && new_position.steps
                     < lowest_steps_to_end.cells[new_position.r][new_position.c] as usize
-                {
-                    lowest_steps_to_end.cells[new_position.r][new_position.c] =
-                        new_position.steps as i32;
+            {
+                lowest_steps_to_end.cells[new_position.r][new_position.c] =
+                    new_position.steps as i32;
 
-                    if new_position.r != target_r || new_position.c != target_c {
-                        live_points.push_back(new_position);
-                    }
+                if new_position.r != target_r || new_position.c != target_c {
+                    live_points.push_back(new_position);
                 }
             }
         }
@@ -62,7 +59,7 @@ fn find_lowest_steps_for_board(board: &Board, board_size: usize) -> i32 {
     lowest_steps_to_end.cells[target_r][target_c]
 }
 
-pub fn solve18(input: &[String]) -> Solutions {
+fn parse_input(input: &[String]) -> (Board, Vec<Point>) {
     let points = read_points(input);
     let (board_size, max_points_part_one) = if points.len() == 25 {
         (7, 12)
@@ -72,30 +69,35 @@ pub fn solve18(input: &[String]) -> Solutions {
     let mut board = Board::create_empty(board_size, board_size, SAFE);
     board.add_border(CORRUPT);
 
-    // Part one.
-    for i in 0..max_points_part_one {
-        board.cells[points[i].y as usize + 1][points[i].x as usize + 1] = CORRUPT;
+    for point in points.iter().take(max_points_part_one) {
+        board.cells[point.y as usize + 1][point.x as usize + 1] = CORRUPT;
     }
 
-    let solution_one = find_lowest_steps_for_board(&board, board_size);
+    (board, points)
+}
 
-    // Part two.
+pub fn solve18(input: &[String]) -> Solutions {
+    let (mut board, points) = parse_input(input);
+
+    let solution_one = find_lowest_steps_for_board(&board);
+
     // Now add the remaining corrupt points.
-    for i in 0..points.len() {
-        board.cells[points[i].y as usize + 1][points[i].x as usize + 1] = CORRUPT;
+    for point in &points {
+        board.cells[point.y as usize + 1][point.x as usize + 1] = CORRUPT;
     }
 
-    // Brute force - remove the remaining points one at a time, and check for a path. As long as
-    // there is a path, we have solved it.
-    let mut solution_two = "".to_string();
-    for i in (0..points.len()).rev() {
-        board.cells[points[i].y as usize + 1][points[i].x as usize + 1] = SAFE;
-        let lowest_steps = find_lowest_steps_for_board(&board, board_size);
-        if lowest_steps != i32::MAX {
-            solution_two = format!("{},{}", points[i].x, points[i].y).to_string();
-            break;
-        }
-    }
+    // Brute force - remove the remaining points one at a time, and check for a path. As soon as
+    // there is a path, we know the point that needs to be removed to solve part two.
+    let solution_two = points
+        .iter()
+        .rev()
+        .find_map(|point| {
+            board.cells[point.y as usize + 1][point.x as usize + 1] = SAFE;
+            let lowest_steps = find_lowest_steps_for_board(&board);
+
+            (lowest_steps != i32::MAX).then(|| format!("{},{}", point.x, point.y))
+        })
+        .unwrap_or_default();
 
     (Solution::I32(solution_one), Solution::STR(solution_two))
 }

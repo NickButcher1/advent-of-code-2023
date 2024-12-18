@@ -47,8 +47,7 @@ pub fn solve16(input: &[String]) -> Solutions {
     // Map from position to all tiles on all lowest-score paths to that position.
     let mut lowest_cells: HashMap<Position, HashSet<(usize, usize)>> = HashMap::new();
     // Tips of paths that need to be explored.
-    let mut live_points: VecDeque<Position> = VecDeque::new();
-    live_points.push_back(start_position.clone());
+    let mut live_points = VecDeque::from([start_position.clone()]);
 
     for (c, r, dir) in iproduct!(0..board.num_cols, 0..board.num_rows, 0..=3) {
         lowest_cells.insert(Position { r, c, dir }, HashSet::new());
