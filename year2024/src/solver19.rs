@@ -14,23 +14,20 @@ fn count_ways<'a>(
         return *new_num_ways;
     }
 
-    let mut this_num_ways = 0;
-    let min_match_len = 1;
-    let max_match_len = min(fragment.len(), max_towel_len); // inclusive
+    let max_match_len = min(fragment.len(), max_towel_len);
+    let this_num_ways = (1..=max_match_len)
+        .filter_map(|j| {
+            let (try_fragment, new_untested_fragment) = fragment.split_at(j);
 
-    for j in min_match_len..=max_match_len {
-        let try_fragment = &fragment[0..j];
-        let new_untested_fragment = &fragment[j..];
-
-        if towels.contains(&try_fragment) {
-            if new_untested_fragment.is_empty() {
-                this_num_ways += 1;
-            } else {
-                let new_ways = count_ways(cache, towels, max_towel_len, new_untested_fragment);
-                this_num_ways += new_ways;
-            }
-        }
-    }
+            towels.contains(try_fragment).then(|| {
+                if new_untested_fragment.is_empty() {
+                    1
+                } else {
+                    count_ways(cache, towels, max_towel_len, new_untested_fragment)
+                }
+            })
+        })
+        .sum();
 
     cache.insert(fragment, this_num_ways);
 
@@ -38,25 +35,24 @@ fn count_ways<'a>(
 }
 
 pub fn solve19(input: &[String]) -> Solutions {
-    // TODO Put this in input.rs.
     let towels: HashSet<&str> = input[0].split(", ").filter(|s| !s.is_empty()).collect();
     let max_towel_len = towels.iter().map(|s| s.len()).max().unwrap_or(0);
     let designs: Vec<&String> = input.iter().skip(2).collect();
 
-    let mut total_num_possible = 0;
-    let mut total_num_ways = 0;
     let mut cache: HashMap<&str, i64> = HashMap::new();
 
-    for design in designs {
-        let this_design_ways = count_ways(&mut cache, &towels, max_towel_len, design);
-        total_num_ways += this_design_ways;
-        if this_design_ways != 0 {
-            total_num_possible += 1;
-        }
-    }
+    let (total_num_possible, total_num_ways) = designs
+        .iter()
+        .map(|design| count_ways(&mut cache, &towels, max_towel_len, design))
+        .fold((0, 0), |(possible, ways), this_design_ways| {
+            (
+                possible + (this_design_ways > 0) as i32,
+                ways + this_design_ways,
+            )
+        });
 
     (
-        Solution::I64(total_num_possible),
+        Solution::I32(total_num_possible),
         Solution::I64(total_num_ways),
     )
 }
