@@ -61,49 +61,12 @@ fn find_lowest_steps_for_board(board: &Board, start: (usize, usize), end: (usize
     lowest_steps_to_end.cells[end.0][end.1]
 }
 
-pub fn solve20(input: &[String]) -> Solutions {
-    let mut board = Board::from_input(input);
-    // The board already has a border, but because we want to look 2 steps ahead in any direction,
-    // we need a double border.
-    board.add_border(WALL);
-    let start = board.find(START);
-    let end = board.find(END);
-    board.cells[start.0][start.1] = EMPTY;
-    board.cells[end.0][end.1] = EMPTY;
-
-    // First the unmodified board.
-    let unmodified_cheapest_path = find_lowest_steps_for_board(&board, start, end);
-
-    // Then try every possible cheat.
-    let mut solution_one = 0;
-    for (r, c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
-        // Only remove a wall if it has an empty cell either side of it.
-        if board.cells[r][c] == WALL
-            && ((board.cells[r - 1][c] == EMPTY && board.cells[r + 1][c] == EMPTY)
-                || (board.cells[r][c - 1] == EMPTY && board.cells[r][c + 1] == EMPTY))
-        {
-            let mut cheat_board = board.clone();
-            cheat_board.cells[r][c] = EMPTY;
-            let cheapest_path = find_lowest_steps_for_board(&cheat_board, start, end);
-            let saving = unmodified_cheapest_path - cheapest_path;
-            if saving >= 100 {
-                solution_one += 1;
-            }
-        }
-    }
-
-    // PART TWO
-    // Find the cheapest cost from the start to every empty cell.
-    // Find the cheapest cost from the end to every empty cell.
-    let mut cost_from_start = IntBoard::create_empty(board.num_rows, board.num_cols);
-    let mut cost_from_end = IntBoard::create_empty(board.num_rows, board.num_cols);
-    for (r, c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
-        if board.cells[r][c] == EMPTY {
-            cost_from_start.cells[r][c] = find_lowest_steps_for_board(&board, start, (r, c));
-            cost_from_end.cells[r][c] = find_lowest_steps_for_board(&board, end, (r, c));
-        }
-    }
-
+fn solve(
+    board: &Board,
+    cost_from_start: &IntBoard,
+    cost_from_end: &IntBoard,
+    is_part_two: bool,
+) -> u32 {
     // Visual inspection of the input shows that there is only a single path from start to end and
     // that it visits every cell exactly once.
     //
@@ -116,16 +79,20 @@ pub fn solve20(input: &[String]) -> Solutions {
     // - taxtcab distance of cheat start -> cheat end
     // - cheat end -> end.
 
-    let cheat_deltas: Vec<(i32, i32, i32)> = iproduct!(-20..=20, -20..=20)
-        .filter_map(|(r_delta, c_delta)| {
-            let taxicab_distance = (r_delta as i32).abs() + (c_delta as i32).abs();
-            (2..=20)
-                .contains(&taxicab_distance)
-                .then_some((r_delta, c_delta, taxicab_distance))
-        })
-        .collect();
+    let cheat_deltas: Vec<(i32, i32, i32)> = if is_part_two {
+        iproduct!(-20..=20, -20..=20)
+            .filter_map(|(r_delta, c_delta)| {
+                let taxicab_distance = (r_delta as i32).abs() + (c_delta as i32).abs();
+                (2..=20)
+                    .contains(&taxicab_distance)
+                    .then_some((r_delta, c_delta, taxicab_distance))
+            })
+            .collect()
+    } else {
+        vec![(-2, 0, 2), (2, 0, 2), (0, -2, 2), (0, 2, 2)]
+    };
 
-    let mut solution_two = 0;
+    let mut solution = 0;
     for (cheat_start_r, cheat_start_c) in
         iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1))
     {
@@ -149,12 +116,40 @@ pub fn solve20(input: &[String]) -> Solutions {
                     let saving = unmodified_cheapest_cost - modified_cheapest_cost;
                     // Change to 50 for sample input.
                     if saving >= 100 {
-                        solution_two += 1;
+                        solution += 1;
                     }
                 }
             }
         }
     }
 
-    (Solution::I32(solution_one), Solution::U32(solution_two))
+    solution
+}
+
+pub fn solve20(input: &[String]) -> Solutions {
+    let mut board = Board::from_input(input);
+    // The board already has a border, but because we want to look 2 steps ahead in any direction,
+    // we need a double border.
+    board.add_border(WALL);
+    let start = board.find(START);
+    let end = board.find(END);
+    board.cells[start.0][start.1] = EMPTY;
+    board.cells[end.0][end.1] = EMPTY;
+
+    // Find the cheapest cost from the start to every empty cell.
+    // Find the cheapest cost from the end to every empty cell.
+    let mut cost_from_start = IntBoard::create_empty(board.num_rows, board.num_cols);
+    let mut cost_from_end = IntBoard::create_empty(board.num_rows, board.num_cols);
+    for (r, c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
+        if board.cells[r][c] == EMPTY {
+            cost_from_start.cells[r][c] = find_lowest_steps_for_board(&board, start, (r, c));
+            cost_from_end.cells[r][c] = find_lowest_steps_for_board(&board, end, (r, c));
+        }
+    }
+
+    // PART TWO
+    let solution_one = solve(&board, &cost_from_start, &cost_from_end, false);
+    let solution_two = solve(&board, &cost_from_start, &cost_from_end, true);
+
+    (Solution::U32(solution_one), Solution::U32(solution_two))
 }
