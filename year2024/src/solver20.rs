@@ -15,10 +15,6 @@ struct Position {
     r: usize,
     c: usize,
     steps: usize,
-    // cheat_start_r: usize,
-    // cheat_start_c: usize,
-    // cheat_end_r: usize,
-    // cheat_end_c: usize,
 }
 
 fn find_lowest_steps_for_board(board: &Board, start: (usize, usize), end: (usize, usize)) -> i32 {
@@ -75,8 +71,8 @@ pub fn solve20(input: &[String]) -> Solutions {
     board.cells[start.0][start.1] = EMPTY;
     board.cells[end.0][end.1] = EMPTY;
 
-    println!("START: {start:?}");
-    println!("END:   {end:?}");
+    // println!("START: {start:?}");
+    // println!("END:   {end:?}");
 
     // First the unmodified board.
     let unmodified_cheapest_path = find_lowest_steps_for_board(&board, start, end);
@@ -93,19 +89,76 @@ pub fn solve20(input: &[String]) -> Solutions {
             let cheapest_path = find_lowest_steps_for_board(&cheat_board, start, end);
             let saving = unmodified_cheapest_path - cheapest_path;
             savings[saving as usize] += 1;
-            // println!("Remove wall at {r},{c}    cheapest path {cheapest_path}    saving {saving}");
             if saving >= 100 {
                 solution_one += 1;
             }
         }
     }
 
-    println!("\nSAVINGS");
+    // println!("\nSAVINGS");
+    // for i in 0..savings.len() {
+    //     if savings[i] != 0 {
+    //         println!("    {i:>4}    {}", savings[i]);
+    //     }
+    // }
+
+    // PART TWO
+    // Find cheapest path from start to every empty cell.
+    // Find cheapest path from end to every empty cell.
+    let mut cost_from_start = IntBoard::create_empty(board.num_rows, board.num_cols);
+    let mut cost_from_end = IntBoard::create_empty(board.num_rows, board.num_cols);
+    for (r, c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
+        if board.cells[r][c] == EMPTY {
+            cost_from_start.cells[r][c] = find_lowest_steps_for_board(&board, start, (r, c));
+            cost_from_end.cells[r][c] = find_lowest_steps_for_board(&board, end, (r, c));
+        }
+    }
+
+    // cost_from_start.print();
+    // cost_from_end.print();
+
+    // Brute force every possible cheat.
+    board.print();
+    let mut savings = vec![0; 10_000];
+    let mut solution_two = 0;
+    for (cheat_start_r, cheat_start_c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
+        let unmodified_cheapest_cost = cost_from_start.cells[cheat_start_r][cheat_start_c] + cost_from_end.cells[cheat_start_r][cheat_start_c];
+        if unmodified_cheapest_cost != 0 {
+            for cheat_end_r_delta in -20..=20 {
+                for cheat_end_c_delta in -20..=20 {
+                    let taxicab_distance = (cheat_end_r_delta as i32).abs() + (cheat_end_c_delta as i32).abs();
+                    if taxicab_distance >= 2 && taxicab_distance <= 20 {
+                        let mut best_saving = 0;
+                        let cheat_end_r: i32 = cheat_start_r as i32 + cheat_end_r_delta;
+                        let cheat_end_c: i32 = cheat_start_c as i32 + cheat_end_c_delta;
+                        if cheat_end_r > 0 && cheat_end_c > 0 && cheat_end_r < board.num_rows as i32 && cheat_end_c < board.num_rows as i32 {
+                            if board.cells[cheat_end_r as usize][cheat_end_c as usize] == EMPTY {
+                                let modified_cheapest_cost = cost_from_start.cells[cheat_start_r][cheat_start_c] + cost_from_end.cells[cheat_end_r as usize][cheat_end_c as usize] + taxicab_distance;
+                                let saving = unmodified_cheapest_cost - modified_cheapest_cost;
+                                if saving > best_saving {
+                                    best_saving = saving;
+                                }
+                            }
+                        }
+                        if best_saving > 0 {
+                            savings[best_saving as usize] += 1;
+                        }
+                        if best_saving >= 100 {
+                            println!("    {cheat_start_r},{cheat_start_c} -> {cheat_end_r},{cheat_end_c}  saving {best_saving}");
+                            solution_two += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    println!("\nPART TWO SAVINGS");
     for i in 0..savings.len() {
         if savings[i] != 0 {
             println!("    {i:>4}    {}", savings[i]);
         }
     }
 
-    (Solution::I32(solution_one), Solution::U32(0))
+    (Solution::I32(solution_one), Solution::U32(solution_two))
 }
