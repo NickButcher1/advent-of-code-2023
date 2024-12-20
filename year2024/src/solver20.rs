@@ -2,63 +2,43 @@ use aoc::board::Board;
 use aoc::int_board::IntBoard;
 use aoc::solution::{Solution, Solutions};
 use itertools::iproduct;
-use std::collections::VecDeque;
 
 const EMPTY: char = '.';
 const WALL: char = '#';
 const START: char = 'S';
 const END: char = 'E';
 
-// TODO Remove some of these.
-#[derive(Clone, Debug, Hash, Eq, PartialEq)]
-struct Position {
-    r: usize,
-    c: usize,
-    steps: usize,
-}
+fn find_lowest_steps_for_board(
+    board: &Board,
+    start: (usize, usize),
+    end: (usize, usize),
+) -> IntBoard {
+    let mut cost_from_start = IntBoard::create_empty(board.num_rows, board.num_cols);
 
-fn find_lowest_steps_for_board(board: &Board, start: (usize, usize), end: (usize, usize)) -> i32 {
-    // Tips of paths that need to be explored.
-    let mut live_points = VecDeque::from([Position {
-        r: start.0,
-        c: start.1,
-        steps: 0,
-    }]);
+    let mut r = start.0;
+    let mut c = start.1;
+    let mut prev_r = usize::MAX;
+    let mut prev_c = usize::MAX;
+    let mut steps = 0;
 
-    // Track the lowest score to reach each cell, found so far.
-    let mut lowest_steps_to_end = IntBoard::create_empty(board.num_rows, board.num_cols);
-    for (c, r) in iproduct!(
-        0..lowest_steps_to_end.num_cols,
-        0..lowest_steps_to_end.num_rows
-    ) {
-        lowest_steps_to_end.cells[r][c] = i32::MAX;
-    }
-    lowest_steps_to_end.cells[start.0][start.1] = 0;
+    while !(r == end.0 && c == end.1) {
+        steps += 1;
+        for (dr, dc) in [(-1, 0), (0, 1), (1, 0), (0, -1)] {
+            let new_r = (r as i32 + dr) as usize;
+            let new_c = (c as i32 + dc) as usize;
 
-    while let Some(position) = live_points.pop_front() {
-        for new_dir in 0..=3 {
-            let (dr, dc) = [(-1, 0), (0, 1), (1, 0), (0, -1)][new_dir];
-            let new_position = Position {
-                r: (position.r as i32 + dr) as usize,
-                c: (position.c as i32 + dc) as usize,
-                steps: position.steps + 1,
-            };
-
-            if board.cells[new_position.r][new_position.c] == EMPTY
-                && new_position.steps
-                    < lowest_steps_to_end.cells[new_position.r][new_position.c] as usize
-            {
-                lowest_steps_to_end.cells[new_position.r][new_position.c] =
-                    new_position.steps as i32;
-
-                if new_position.r != end.0 || new_position.c != end.1 {
-                    live_points.push_back(new_position);
-                }
+            if !(new_r == prev_r && new_c == prev_c) && board.cells[new_r][new_c] == EMPTY {
+                prev_r = r;
+                prev_c = c;
+                r = new_r;
+                c = new_c;
+                cost_from_start.cells[new_r][new_c] = steps;
+                break;
             }
         }
     }
 
-    lowest_steps_to_end.cells[end.0][end.1]
+    cost_from_start
 }
 
 fn solve(board: &Board, cost_from_start: &IntBoard, is_part_two: bool) -> u32 {
@@ -139,13 +119,7 @@ pub fn solve20(input: &[String]) -> Solutions {
     board.cells[end.0][end.1] = EMPTY;
 
     // Find the cheapest cost from the start to every empty cell.
-    // Find the cheapest cost from the end to every empty cell.
-    let mut cost_from_start = IntBoard::create_empty(board.num_rows, board.num_cols);
-    for (r, c) in iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1)) {
-        if board.cells[r][c] == EMPTY {
-            cost_from_start.cells[r][c] = find_lowest_steps_for_board(&board, start, (r, c));
-        }
-    }
+    let cost_from_start = find_lowest_steps_for_board(&board, start, (end.0, end.1));
 
     let solution_one = solve(&board, &cost_from_start, false);
     let solution_two = solve(&board, &cost_from_start, true);
