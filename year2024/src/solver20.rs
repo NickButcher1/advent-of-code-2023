@@ -105,16 +105,26 @@ pub fn solve20(input: &[String]) -> Solutions {
     }
 
     // Visual inspection of the input shows that there is only a single path from start to end and
-    // it visits every cell exactly once.
+    // that it visits every cell exactly once.
     //
     // Iterate over all possible pairs of cheat start points (must be on an empty cell) and cheat
-    // end points (must also be on an empty cell, and withing a taxicab distance of 20 from the
+    // end points (must also be on an empty cell, and within a taxicab distance of 20 from the
     // cheat start point).
     //
     // The cheapest cost for this cheat is the sum of:
     // - start -> cheat start
     // - taxtcab distance of cheat start -> cheat end
     // - cheat end -> end.
+
+    let cheat_deltas: Vec<(i32, i32, i32)> = iproduct!(-20..=20, -20..=20)
+        .filter_map(|(r_delta, c_delta)| {
+            let taxicab_distance = (r_delta as i32).abs() + (c_delta as i32).abs();
+            (2..=20)
+                .contains(&taxicab_distance)
+                .then_some((r_delta, c_delta, taxicab_distance))
+        })
+        .collect();
+
     let mut solution_two = 0;
     for (cheat_start_r, cheat_start_c) in
         iproduct!(1..(board.num_rows - 1), 1..(board.num_cols - 1))
@@ -122,31 +132,23 @@ pub fn solve20(input: &[String]) -> Solutions {
         let unmodified_cheapest_cost = cost_from_start.cells[cheat_start_r][cheat_start_c]
             + cost_from_end.cells[cheat_start_r][cheat_start_c];
         if unmodified_cheapest_cost != 0 {
-            for (cheat_end_r_delta, cheat_end_c_delta) in iproduct!(-20..=20, -20..=20) {
-                let taxicab_distance =
-                    (cheat_end_r_delta as i32).abs() + (cheat_end_c_delta as i32).abs();
-                if (2..=20).contains(&taxicab_distance) {
-                    let mut best_saving = 0;
-                    let cheat_end_r: i32 = cheat_start_r as i32 + cheat_end_r_delta;
-                    let cheat_end_c: i32 = cheat_start_c as i32 + cheat_end_c_delta;
+            for (cheat_end_r_delta, cheat_end_c_delta, taxicab_distance) in &cheat_deltas {
+                let cheat_end_r: i32 = cheat_start_r as i32 + cheat_end_r_delta;
+                let cheat_end_c: i32 = cheat_start_c as i32 + cheat_end_c_delta;
 
-                    if cheat_end_r > 0
-                        && cheat_end_c > 0
-                        && cheat_end_r < board.num_rows as i32
-                        && cheat_end_c < board.num_rows as i32
-                        && board.cells[cheat_end_r as usize][cheat_end_c as usize] == EMPTY
-                    {
-                        let modified_cheapest_cost = cost_from_start.cells[cheat_start_r]
-                            [cheat_start_c]
-                            + cost_from_end.cells[cheat_end_r as usize][cheat_end_c as usize]
-                            + taxicab_distance;
-                        let saving = unmodified_cheapest_cost - modified_cheapest_cost;
-                        if saving > best_saving {
-                            best_saving = saving;
-                        }
-                    }
-
-                    if best_saving >= 100 {
+                if cheat_end_r > 0
+                    && cheat_end_c > 0
+                    && cheat_end_r < board.num_rows as i32
+                    && cheat_end_c < board.num_rows as i32
+                    && board.cells[cheat_end_r as usize][cheat_end_c as usize] == EMPTY
+                {
+                    let modified_cheapest_cost = cost_from_start.cells[cheat_start_r]
+                        [cheat_start_c]
+                        + cost_from_end.cells[cheat_end_r as usize][cheat_end_c as usize]
+                        + taxicab_distance;
+                    let saving = unmodified_cheapest_cost - modified_cheapest_cost;
+                    // Change to 50 for sample input.
+                    if saving >= 100 {
                         solution_two += 1;
                     }
                 }
