@@ -30,26 +30,38 @@ pub fn solve21(input: &[String]) -> Solutions {
     println!("CODES: {codes:?}");
 
     // Index is from-to on numeric. Order U R D L A.
-    // For key move on numeric do steps on right on radition.
+    // For key move on numeric do steps on right on radiation.
     let mut radiation_to_numeric: HashMap<(i32, i32), Vec<char>> = HashMap::new();
     radiation_to_numeric.insert((0, 2),vec!['^', 'A']);
     radiation_to_numeric.insert((0, 10),vec!['>', 'A']);
+    radiation_to_numeric.insert((1, 6),vec!['>', '>', '^', 'A']);
     radiation_to_numeric.insert((1, 7),vec!['^', '^', 'A']);
     radiation_to_numeric.insert((2, 9),vec!['^', '^', '>', 'A']);
     radiation_to_numeric.insert((3, 7),vec!['^', '^', '<', '<', 'A']);
+    radiation_to_numeric.insert((3, 8),vec!['^', '<', '<', 'A']);
+    radiation_to_numeric.insert((3, 9),vec!['^', '^', 'A']);
     radiation_to_numeric.insert((4, 5),vec!['>', 'A']);
     radiation_to_numeric.insert((5, 6),vec!['>', 'A']);
+    radiation_to_numeric.insert((5, 7),vec!['>', '<', 'A']);
+    radiation_to_numeric.insert((6, 3),vec!['v', 'A']);
+    radiation_to_numeric.insert((6, 7),vec!['^', '<', '<', 'A']);
+    radiation_to_numeric.insert((6, 9),vec!['^', 'A']);
     radiation_to_numeric.insert((6, 10),vec!['v', 'v', 'A']);
+    radiation_to_numeric.insert((7, 0),vec!['>', 'v', 'v', 'v', 'A']);
     radiation_to_numeric.insert((7, 9),vec!['>', '>', 'A']);
     radiation_to_numeric.insert((8, 0),vec!['v', 'v', 'v', 'A']);
+    radiation_to_numeric.insert((8, 3),vec!['v', 'v', '>', 'A']);
+    radiation_to_numeric.insert((8, 10),vec!['v', 'v', 'v', '>', 'A']);
     radiation_to_numeric.insert((9, 8),vec!['<', 'A']);
     radiation_to_numeric.insert((9, 10),vec!['v', 'v', 'v', 'A']);
     radiation_to_numeric.insert((10, 0),vec!['<', 'A']);
     radiation_to_numeric.insert((10, 1),vec!['^', '<', '<', 'A']);
     radiation_to_numeric.insert((10, 3),vec!['^', 'A']);
     radiation_to_numeric.insert((10, 4),vec!['^', '^', '<', '<', 'A']);
+    radiation_to_numeric.insert((10, 5),vec!['^', '^', '<', 'A']);
+    radiation_to_numeric.insert((10, 6),vec!['^', '^', 'A']);
+    radiation_to_numeric.insert((10, 8),vec!['^', '^', '^', '<', 'A']);
     radiation_to_numeric.insert((10, 9),vec!['^', '^', '^', 'A']);
-    // TODO add the rest
 
     // For key move on radiation do steps on right on cold.
     let mut cold_to_radiation: HashMap<(char, char), Vec<char>> = HashMap::new();
@@ -118,6 +130,7 @@ pub fn solve21(input: &[String]) -> Solutions {
         }
         println!("MOVEIT3: len {}  {moveit3:?}", moveit3.len());
 
+        // TOO HIGH: 217222
         total_complexity_solution_one += code.number * moveit3.len() as i32;
     }
 
