@@ -30,6 +30,36 @@ fn parse_input(input: &[String]) -> Vec<Code> {
     codes
 }
 
+fn add_direction_keypad(
+    direction_keypad_to_direction_keypad: &HashMap<(char, char), Vec<Vec<char>>>,
+    input_direction_keypad_steps: &Vec<char>,
+    mut output_direction_keypad_steps: Vec<char>
+) -> Vec<char> {
+    for i in 0..(input_direction_keypad_steps.len() - 1) {
+        let from = input_direction_keypad_steps[i];
+        let to = input_direction_keypad_steps[i+1];
+        let new_seq = direction_keypad_to_direction_keypad.get(&(from, to)).unwrap();
+        output_direction_keypad_steps.extend(&new_seq[0]);
+    }
+
+    output_direction_keypad_steps
+}
+
+
+fn add_intermediate_direction_keypad(
+    direction_keypad_to_direction_keypad: &HashMap<(char, char), Vec<Vec<char>>>,
+    input_direction_keypad_steps: &Vec<char>
+) -> Vec<char> {
+    add_direction_keypad(direction_keypad_to_direction_keypad, input_direction_keypad_steps, vec!['A'])
+}
+
+fn add_final_direction_keypad(
+    direction_keypad_to_direction_keypad: &HashMap<(char, char), Vec<Vec<char>>>,
+    input_direction_keypad_steps: &Vec<char>
+) -> Vec<char> {
+    add_direction_keypad(direction_keypad_to_direction_keypad, input_direction_keypad_steps, vec![])
+}
+
 pub fn solve21(input: &[String]) -> Solutions {
     let codes = parse_input(input);
 
@@ -116,34 +146,16 @@ pub fn solve21(input: &[String]) -> Solutions {
             direction_keypad_steps_1.extend(move_3);
             direction_keypad_steps_1.extend(move_4);
 
-            // println!("direction_keypad_steps_1: len {}  {direction_keypad_steps_1:?}", direction_keypad_steps_1.len() - 1);
-            let mut direction_keypad_steps_2 = vec!['A'];
-            for i in 0..(direction_keypad_steps_1.len() - 1) {
-                let from = direction_keypad_steps_1[i];
-                let to = direction_keypad_steps_1[i+1];
-                let new_seq = direction_keypad_to_direction_keypad.get(&(from, to)).unwrap();
-                // println!("    {from} -> {to}   new seq {new_seq:?}");
-                direction_keypad_steps_2.extend(&new_seq[0]);
-            }
+            let direction_keypad_steps_2 = add_intermediate_direction_keypad(&direction_keypad_to_direction_keypad, &direction_keypad_steps_1);
+            let direction_keypad_steps_3 = add_final_direction_keypad(&direction_keypad_to_direction_keypad, &direction_keypad_steps_2);
 
-            // println!("direction_keypad_steps_2: len {}  {direction_keypad_steps_2:?}", direction_keypad_steps_2.len() - 1);
-
-            let mut direction_keypad_steps_3: Vec<char> = vec![];
-            for i in 0..(direction_keypad_steps_2.len() - 1) {
-                let from = direction_keypad_steps_2[i];
-                let to = direction_keypad_steps_2[i+1];
-                // println!("    {from} -> {to}   new seq {new_seq:?}");
-                let new_seq = direction_keypad_to_direction_keypad.get(&(from, to)).unwrap();
-                direction_keypad_steps_3.extend(&new_seq[0]);
-            }
-            // println!("MOVEIT3: len {}  {moveit3:?}", moveit3.len());
             if direction_keypad_steps_3.len() < lowest_final_keypad_steps_for_this_code {
                 lowest_final_keypad_steps_for_this_code = direction_keypad_steps_3.len();
                 best_direction_keypad_steps_3 = direction_keypad_steps_3;
             }
         }
 
-        println!("BEST direction_keypad_steps_3: len {}  {lowest_final_keypad_steps_for_this_code:?}", best_direction_keypad_steps_3.len());
+        println!("BEST direction_keypad_steps_3: len {lowest_final_keypad_steps_for_this_code}  {best_direction_keypad_steps_3:?}");
 
         total_complexity_solution_one += code.number * lowest_final_keypad_steps_for_this_code as i32;
     }
