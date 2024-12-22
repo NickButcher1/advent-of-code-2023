@@ -7,23 +7,23 @@ struct Buyer {
     price_diffs: [i32; 2001],
 }
 
+// The module clears the top bytes, leaving the bottom three bytes alone.
+const MODULO: u64 = 16777216;
+
 fn evolve_once(input: u64) -> u64 {
-    let a = input ^ (input * 64);
-    let b = a % 16777216;
-    let c = b ^ (b / 32);
-    let d = c % 16777216;
-    let e = d ^ (d * 2048);
-    e % 16777216
+    let x = (input ^ (input << 6)) % MODULO;
+    let y = (x ^ (x >> 5)) % MODULO;
+    (y ^ (y << 11)) % MODULO
 }
 
 pub fn solve22(input: &[String]) -> Solutions {
-    let initial_starting_secret = to_vec_u64(input);
+    let initial_starting_secrets = to_vec_u64(input);
 
     let mut solution_one = 0;
 
     let mut buyers: Vec<Buyer> = vec![];
 
-    for initial_starting_secret in initial_starting_secret {
+    for initial_starting_secret in initial_starting_secrets {
         let mut secret_numbers = vec![initial_starting_secret];
         let mut prices: Vec<i32> = vec![(initial_starting_secret % 10) as i32];
         let mut price_diffs: Vec<i32> = vec![0];
