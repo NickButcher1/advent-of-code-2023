@@ -11,7 +11,6 @@ struct Computer<'a> {
 
 fn parse_input(input: &[String]) -> HashMap<&str, Computer> {
     let re = Regex::new(r"^([a-z][a-z])-([a-z][a-z])$").unwrap();
-    // let mut connections: Vec<(String, String)> = vec![];
     let mut computers: HashMap<&str, Computer> = HashMap::new();
 
     for line in input {
@@ -44,16 +43,22 @@ fn parse_input(input: &[String]) -> HashMap<&str, Computer> {
 pub fn solve23(input: &[String]) -> Solutions {
     let computers = parse_input(input);
 
+    // Build a list of all the sets of three computers that are all connected to each other.
+    // For part one, the solution is the number of those sets that contain at least one name
+    // beginning with 't'.
+    //
+    // To ensure unique sets, only select computer names in alphabetical order.
     let mut solution_one = 0;
     let mut all_connected: Vec<HashSet<&str>> = vec![];
-    for (key, c1) in &computers {
+
+    for c1 in computers.values() {
         for c2_name in &c1.to {
             let c2 = computers.get(c2_name).unwrap();
-            if c2.name != c1.name && c2.name > key {
+            if c2.name > c1.name {
                 for c3_name in &c2.to {
                     if *c3_name > c2.name {
                         let c3 = computers.get(c3_name).unwrap();
-                        if c3.to.contains(key) {
+                        if c3.to.contains(&c1.name) {
                             if c1.is_t || c2.is_t || c3.is_t {
                                 solution_one += 1;
                             }
@@ -69,13 +74,15 @@ pub fn solve23(input: &[String]) -> Solutions {
         }
     }
 
-    let mut depth = 3;
-    while depth < 10000 {
-        depth += 1;
+    // For part two, attempt to extend each set with further computers until all sets are complete.
+    // Each loop attempts to extend each existing set with one further computer. If a loop makes no
+    // additions we know that all sets are complete (and there should be only one set at this
+    // point).
+    loop {
         let mut new_all_connected: Vec<HashSet<&str>> = vec![];
         for all_connected_set in &mut all_connected {
-            // Try adding every computer that isn't already in the set...
-            // for (key, computer) in &computers {
+            // Try adding every computer that isn't already in the set. Stop as soon as we find one
+            // we can add.
             for key in computers.keys() {
                 if !all_connected_set.contains(key) {
                     let mut all_matched = true;
@@ -103,13 +110,11 @@ pub fn solve23(input: &[String]) -> Solutions {
         all_connected = new_all_connected;
     }
 
-    // TODO
-    // let mut names = ["cd", "ab", "xy"];
     let solution_two = all_connected[0]
         .iter()
         .collect::<Vec<_>>()
         .into_iter()
-        .sorted() // Requires `use itertools::Itertools;`
+        .sorted()
         .join(",");
 
     (Solution::U32(solution_one), Solution::STR(solution_two))
