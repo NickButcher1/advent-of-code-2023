@@ -4,6 +4,7 @@ use aoc::solution::{Solution, Solutions};
 const FILLED: char = '#';
 const EMPTY: char = '.';
 
+#[allow(clippy::needless_range_loop)]
 pub fn solve25(input: &[String]) -> Solutions {
     let boards = Board::from_input_multiple(input);
     let mut locks: Vec<[i32; 5]> = vec![];

@@ -53,7 +53,7 @@ fn solve(board: &Board, cost_from_start: &IntBoard, is_part_two: bool) -> u32 {
     // - start -> cheat start
     // - taxtcab distance of cheat start -> cheat end
     // - cheat end -> end.
-
+    #[allow(clippy::unnecessary_cast)]
     let cheat_deltas: Vec<(i32, i32, i32)> = if is_part_two {
         iproduct!(-20..=20, -20..=20)
             .filter_map(|(r_delta, c_delta)| {
