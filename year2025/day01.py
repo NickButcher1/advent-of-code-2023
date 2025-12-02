@@ -21,8 +21,9 @@ def solve(input_file: str) -> tuple[int, int]:
         position = (position + offset) % 100
         if position == 0:
             part_one_answer += 1
-    
+
     return part_one_answer, part_two_answer
 
-print(f"Sample: {solve("../input/2025/input01-sample")}")
-print(f"Answer: {solve("../input/2025/input01")}")
+
+print(f"Sample: {solve('../input/2025/input01-sample')}")
+print(f"Answer: {solve('../input/2025/input01')}")

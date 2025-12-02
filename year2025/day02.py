@@ -1,52 +1,45 @@
-##############################################################################################################
-# Simple brute force solution. I know I could have done something smarter, for example if checking range
-# 123000 to 999999, for part one:
-# - start at 123000, jump straight to 123123, check if that's in range
-# - increment first half to 124000, jump straight to 124124, check if that's in range.
-##############################################################################################################
+def count_invalid_numbers_in_range(
+    begin: str, end: str, num_sequences: int, invalid_numbers: set[int]
+) -> None:
+    begin_int = int(begin)
+    end_int = int(end)
 
-def is_number_invalid_part_one(number: int) -> bool:
-    number_to_test = str(number)
-    if len(number_to_test) % 2 == 0:
-        half_len = int(len(number_to_test) / 2)
-        if number_to_test[half_len:] == number_to_test[:half_len]:
-            return True
-    return False
+    if len(begin) % num_sequences != 0:
+        begin = "1" + "0" * len(begin)
 
-def is_number_invalid_part_two(number: int) -> bool:
-    number_to_test = str(number)
-    half_len = int(len(number_to_test) / 2)
+    test_len = int(len(begin) / num_sequences)
+    test_int = int(str(begin)[:test_len])
 
-    for len_to_test in range(1, half_len + 1):
-        if len(number_to_test) % len_to_test == 0:
-            parts = [
-                number_to_test[i : i + len_to_test]
-                for i in range(0, len(number_to_test), len_to_test)
-            ]
-            if all(x == parts[0] for x in parts):
-                return True
-    return False
+    while True:
+        full_test_int = int(str(test_int) * num_sequences)
+        if full_test_int < begin_int:
+            test_int += 1
+            continue
+        if full_test_int <= end_int:
+            invalid_numbers.add(full_test_int)
+            test_int += 1
+        else:
+            break
+
 
 def solve(input_file: str) -> tuple[int, int]:
-    sum_numbers_invalid_part_one = 0
-    sum_numbers_invalid_part_two = 0
+    invalid_numbers_part_one = set()
+    invalid_numbers_part_two = set()
 
     f = open(input_file)
     line = f.readline()
     ranges = line.split(",")
-    
+
     for this_range in ranges:
         begin, end = this_range.split("-")
-        begin_int = int(begin)
-        end_int = int(end)
 
-        for i in range(begin_int, end_int + 1):
-            if is_number_invalid_part_one(i):
-                sum_numbers_invalid_part_one += i
-            if is_number_invalid_part_two(i):
-                sum_numbers_invalid_part_two += i
+        count_invalid_numbers_in_range(begin, end, 2, invalid_numbers_part_one)
 
-    return sum_numbers_invalid_part_one, sum_numbers_invalid_part_two
+        for num_sequences in range(2, int(len(end) + 1)):
+            count_invalid_numbers_in_range(begin, end, num_sequences, invalid_numbers_part_two)
 
-print(f"Sample: {solve("../input/2025/input02-sample")}")
-print(f"Answer: {solve("../input/2025/input02")}")
+    return sum(invalid_numbers_part_one), sum(invalid_numbers_part_two)
+
+
+print(f"Sample: {solve('../input/2025/input02-sample')}")
+print(f"Answer: {solve('../input/2025/input02')}")
