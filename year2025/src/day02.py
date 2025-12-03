@@ -23,8 +23,8 @@ def count_invalid_numbers_in_range(
 
 
 def solve(input_file: str) -> tuple[int, int]:
-    invalid_numbers_part_one = set()
-    invalid_numbers_part_two = set()
+    invalid_numbers_part_one: set[int] = set()
+    invalid_numbers_part_two: set[int] = set()
 
     f = open(input_file)
     line = f.readline()
