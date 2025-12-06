@@ -2,19 +2,14 @@ import math
 
 
 def solve_part_one(input_file: str) -> int:
-    rows = []
     with open(input_file) as f:
-        for line in f:
-            rows.append(line.strip().split())
+        rows = [line.split() for line in f]
     operators = rows.pop()
 
     total_answer = 0
     for col in range(len(rows[0])):
         vals = [int(rows[row][col]) for row in range(len(rows))]
-        if operators[col] == "+":
-            col_answer = sum(vals)
-        else:
-            col_answer = math.prod(vals)
+        col_answer = sum(vals) if operators[col] == "+" else math.prod(vals)
         total_answer += col_answer
 
     return total_answer
@@ -23,24 +18,20 @@ def solve_part_one(input_file: str) -> int:
 def solve_part_two(input_file: str) -> int:
     rows = []
     with open(input_file) as f:
-        for line in f:
-            # Reverse each line. Terminate with a space to make parsing easier later (the numbers for each
-            # operator will terminate with a column of all spaces.
-            rows.append(line.strip("\n")[::-1] + " ")
+        # Reverse each line. Terminate with a space to make parsing easier later (we detect a column of all
+        # spaces to determine the end of an operator).
+        rows = [(line.strip("\n")[::-1] + " ") for line in f]
     operators = rows.pop().strip().split()[::-1]  # Unreverse operators.
 
     total_answer = 0
     i = 0
-    vals = []
+    vals: list[int] = []
 
     while i < len(rows[0]):
         if all(s[i] == " " for s in rows):
             # End of input for this operator.
             operator = operators.pop()
-            if operator == "+":
-                col_answer = sum(vals)
-            else:
-                col_answer = math.prod(vals)
+            col_answer = sum(vals) if operator == "+" else math.prod(vals)
             total_answer += col_answer
             vals = []
         else:
