@@ -9,9 +9,7 @@ def in_same_set(id1: int, id2: int, circuits: list[set[int]]) -> bool:
     return False
 
 def solve(input_file: str, is_sample) -> tuple[int, int]:
-    # TODO ONLY NEED TO STORE THE CLOSEST 1,000 PAIRS.
-    # distance_between_points = lambda p1, p2: ((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2) ** 0.5
-    # Points are zero index. Map from distance between them to a pair of point indices.
+    # Points are zero indexed. Map from distance between them to a pair of point indices.
     distance_between_points: dict[float, (int, int)] = {}
 
     with open(input_file) as f:
@@ -25,20 +23,20 @@ def solve(input_file: str, is_sample) -> tuple[int, int]:
                 distance = ((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2) ** 0.5
                 distance_between_points[distance] = (i, j)
 
-    # pprint(distance_between_points)
+    num_required_for_part_one = 10 if is_sample else 1000
+    # shortest_distances = heapq.nsmallest(num_required_for_part_one, distance_between_points.items(), key=lambda x: x[0])
+    shortest_distances = sorted(distance_between_points.items())
 
-    num_required = 10 if is_sample else 1000
-    shortest_distances = heapq.nsmallest(num_required, distance_between_points.items(), key=lambda x: x[0])
-    # shortest_distances = sorted(distance_between_points.items())
-    pprint(shortest_distances)
-
-    circuits: list[set[int]] = [] # Each circuit is a list of junction box indices.
+    circuits: list[set[int]] = []  # Each circuit is a list of junction box indices.
     jb_used = [False] * len(rows)
 
-    num_joined = 0
+    part_one_answer = -1
+    part_two_answer = -1
+    num_processed = 0
+
     for _, (id1, id2) in shortest_distances:
-        print(f"\nPROCESSING PAIR: {id1} {id2}")
-        num_joined += 1 # Rename to num_processed
+        print(f"PROCESSING PAIR: {id1} {id2}:   {rows[id1]} and {rows[id2]}")
+        num_processed += 1 # Rename to num_processed
         if in_same_set(id1, id2, circuits):
             # Skip if both already in the same set.
             continue
@@ -71,15 +69,20 @@ def solve(input_file: str, is_sample) -> tuple[int, int]:
         jb_used[id1] = True
         jb_used[id2] = True
         print(circuits)
-        if num_joined == num_required:
+
+        if num_processed == num_required_for_part_one:
+            sorted_circuits = sorted(circuits, key=len, reverse=True)
+            print(sorted_circuits)
+            part_one_answer = math.prod(len(circuit) for circuit in sorted_circuits[:3])
+
+        if len(circuits) == 1 and jb_used.count(False) == 0:
+            print("All junction boxes connected.")
+            print(rows)
+            part_two_answer = int(rows[id1][0]) * int(rows[id2][0])
             break
-    print("DONE")
-    sorted_circuits = sorted(circuits, key=len, reverse=True)
-    print(sorted_circuits)
-    part_one_answer = math.prod(len(circuit) for circuit in sorted_circuits[:3])
 
-    return part_one_answer, 0
+    return part_one_answer, part_two_answer
 
-
+# 17152350 too low
 print(f"Sample: {solve('../input/2025/input08-sample', True)}")
 print(f"Answer: {solve('../input/2025/input08', False)}")
