@@ -1,16 +1,9 @@
-import heapq
 import math
-from pprint import pprint
 
-def in_same_set(id1: int, id2: int, circuits: list[set[int]]) -> bool:
-    for circuit in circuits:
-        if id1 in circuit and id2 in circuit:
-            return True
-    return False
 
-def solve(input_file: str, is_sample) -> tuple[int, int]:
+def solve(input_file: str, is_sample: bool) -> tuple[int, int]:
     # Points are zero indexed. Map from distance between them to a pair of point indices.
-    distance_between_points: dict[float, (int, int)] = {}
+    distance_between_points: dict[float, tuple[int, int]] = {}
 
     with open(input_file) as f:
         rows = [line.rstrip().split(",") for line in f]
@@ -24,7 +17,6 @@ def solve(input_file: str, is_sample) -> tuple[int, int]:
                 distance_between_points[distance] = (i, j)
 
     num_required_for_part_one = 10 if is_sample else 1000
-    # shortest_distances = heapq.nsmallest(num_required_for_part_one, distance_between_points.items(), key=lambda x: x[0])
     shortest_distances = sorted(distance_between_points.items())
 
     circuits: list[set[int]] = []  # Each circuit is a list of junction box indices.
@@ -35,12 +27,12 @@ def solve(input_file: str, is_sample) -> tuple[int, int]:
     num_processed = 0
 
     for _, (id1, id2) in shortest_distances:
-        print(f"PROCESSING PAIR: {id1} {id2}:   {rows[id1]} and {rows[id2]}")
-        num_processed += 1 # Rename to num_processed
-        if in_same_set(id1, id2, circuits):
+        num_processed += 1
+        if any(id1 in circuit and id2 in circuit for circuit in circuits):
             # Skip if both already in the same set.
             continue
-        elif not jb_used[id1] and not jb_used[id2]:
+
+        if not jb_used[id1] and not jb_used[id2]:
             # Create a new circuit with these two junction boxes.
             circuits.append({id1, id2})
         elif not jb_used[id1] and jb_used[id2]:
@@ -68,21 +60,17 @@ def solve(input_file: str, is_sample) -> tuple[int, int]:
             circuits[circuit_id_1] |= circuits.pop(circuit_id_2)
         jb_used[id1] = True
         jb_used[id2] = True
-        print(circuits)
 
         if num_processed == num_required_for_part_one:
             sorted_circuits = sorted(circuits, key=len, reverse=True)
-            print(sorted_circuits)
             part_one_answer = math.prod(len(circuit) for circuit in sorted_circuits[:3])
 
         if len(circuits) == 1 and jb_used.count(False) == 0:
-            print("All junction boxes connected.")
-            print(rows)
             part_two_answer = int(rows[id1][0]) * int(rows[id2][0])
             break
 
     return part_one_answer, part_two_answer
 
-# 17152350 too low
+
 print(f"Sample: {solve('../input/2025/input08-sample', True)}")
 print(f"Answer: {solve('../input/2025/input08', False)}")
